@@ -1,12 +1,18 @@
 "use client";
 
 import { SessionProvider, useSession } from "next-auth/react";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
-export default function ChatContainer({ greeting }: { greeting: string }) {
+export default function ChatContainer({
+  greeting,
+  onSubmit,
+}: {
+  greeting: string;
+  onSubmit: (text: string) => Promise<string>;
+}) {
   return (
     <SessionProvider>
-      <Chat greeting={greeting} />
+      <Chat greeting={greeting} onSubmit={onSubmit} />
     </SessionProvider>
   );
 }
@@ -22,22 +28,35 @@ const BOT = {
     "inline-block rounded-lg rounded-bl-none bg-gray-300 px-4 py-2 text-gray-600",
 };
 
-export function Chat({ greeting }: { greeting: string }) {
+export function Chat({
+  greeting,
+  onSubmit,
+}: {
+  greeting: string;
+  onSubmit: (text: string) => Promise<string>;
+}) {
   const session = useSession();
-  const [messages, setMesages] = useState<Message[]>([
+  const [disabled, setDisabled] = useState(false);
+  const [text, setText] = useState("");
+  const [submission, setSubmission] = useState("");
+  const [messages, setMessages] = useState<Message[]>([
     {
-      text: session?.data?.user
-        ? greeting
-        : "Sorry, you must log in before chatting",
+      text: greeting,
       bot: true,
     },
-    {
-      text: session?.data?.user
-        ? greeting
-        : "Sorry, you must log in before chatting",
-      bot: false,
-    },
   ]);
+
+  useEffect(() => {
+    if (submission.trim().length > 0) {
+      setDisabled(true);
+      setText("");
+      setMessages([...messages, { text: submission, bot: false }]);
+      onSubmit(submission.trim()).then((text) => {
+        setMessages([...messages, { text: text, bot: true }]);
+        setDisabled(false);
+      });
+    }
+  }, [submission]);
 
   const userInfo = useMemo(() => {
     if (session.data?.user) {
@@ -199,12 +218,17 @@ export function Chat({ greeting }: { greeting: string }) {
           <input
             type="text"
             placeholder="Write your message!"
-            className="w-full rounded-md bg-gray-200 py-3 pl-12 text-gray-600 placeholder-gray-600 focus:placeholder-gray-400 focus:outline-none"
+            value={text}
+            onChange={(e) => setText(e.target.value)}
+            disabled={disabled}
+            className="w-full rounded-md bg-gray-200 py-3 pl-12 text-gray-600 placeholder-gray-600 focus:placeholder-gray-400 focus:outline-none disabled:text-slate-100"
           />
           <div className="absolute inset-y-0 right-0 hidden items-center sm:flex">
+            {/*
             <button
               type="button"
-              className="inline-flex h-10 w-10 items-center justify-center rounded-full text-gray-500 transition duration-500 ease-in-out hover:bg-gray-300 focus:outline-none"
+              disabled={disabled}
+              className="inline-flex h-10 w-10 items-center justify-center rounded-full text-gray-500 transition duration-500 ease-in-out hover:bg-gray-300 focus:outline-none "
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -264,10 +288,15 @@ export function Chat({ greeting }: { greeting: string }) {
                   d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
                 ></path>
               </svg>
-            </button>
+                      </button>
+                */}
             <button
               type="button"
-              className="inline-flex items-center justify-center rounded-lg bg-blue-500 px-4 py-3 text-white transition duration-500 ease-in-out hover:bg-blue-400 focus:outline-none"
+              disabled={disabled}
+              className="inline-flex items-center justify-center rounded-lg bg-blue-500 px-4 py-3 text-white transition duration-500 ease-in-out hover:bg-blue-400 focus:outline-none disabled:bg-gray-100 disabled:text-slate-500"
+              onClick={(evt) => {
+                setSubmission(text);
+              }}
             >
               <span className="font-bold">Send</span>
               <svg
