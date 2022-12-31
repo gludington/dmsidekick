@@ -1,5 +1,4 @@
 import React, { ReactNode } from "react";
-import SignIn from "./SignIn";
 import { unstable_getServerSession } from "next-auth/next";
 import { authOptions } from "../pages/api/auth/[...nextauth]";
 
@@ -19,9 +18,7 @@ export default async function Page({
         {leftColumn}
       </div>
       <div className="w-full p-4 md:w-1/2">
-        <h2>
-          <SignIn />
-        </h2>
+        <h2>home</h2>
         {rightColumn}
       </div>
     </div>

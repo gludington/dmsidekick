@@ -1,8 +1,9 @@
 "use client";
-import { Fragment } from "react";
+import { Fragment, useMemo } from "react";
 import { SessionProvider, signIn, signOut, useSession } from "next-auth/react";
 import { Disclosure, Menu, Transition } from "@headlessui/react";
 import { Bars3Icon, BellIcon, XMarkIcon } from "@heroicons/react/24/outline";
+import { usePathname } from "next/navigation";
 
 const user = {
   name: "Tom Cook",
@@ -11,11 +12,11 @@ const user = {
     "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
 };
 const navigation = [
-  { name: "Dashboard", href: "#", current: true },
-  { name: "Team", href: "#", current: false },
+  { name: "Home", href: "/", current: true },
+  { name: "Monster Helper", href: "/monsters", current: false },
   { name: "Projects", href: "#", current: false },
   { name: "Calendar", href: "#", current: false },
-  { name: "Reports", href: "#", current: false },
+  { name: "About", href: "/about", current: false },
 ];
 const userNavigation = [
   { name: "Your Profile", href: "#" },
@@ -36,6 +37,13 @@ export default function HeaderContainer() {
 }
 export function Header() {
   const session = useSession();
+  const path = usePathname();
+  const nav = useMemo(() => {
+    return navigation.map((item) => {
+      return { ...item, current: path == item.href };
+    });
+  }, [path]);
+  console.warn(nav);
   return (
     <>
       {/*
@@ -56,13 +64,13 @@ export function Header() {
                     <div className="flex-shrink-0">
                       <img
                         className="h-8 w-8"
-                        src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=500"
-                        alt="Your Company"
+                        src="dmsidekick.png"
+                        alt="DM Sidekick"
                       />
                     </div>
                     <div className="hidden md:block">
                       <div className="ml-10 flex items-baseline space-x-4">
-                        {navigation.map((item) => (
+                        {nav.map((item) => (
                           <a
                             key={item.name}
                             href={item.href}
@@ -168,7 +176,7 @@ export function Header() {
 
               <Disclosure.Panel className="md:hidden">
                 <div className="space-y-1 px-2 pt-2 pb-3 sm:px-3">
-                  {navigation.map((item) => (
+                  {nav.map((item) => (
                     <Disclosure.Button
                       key={item.name}
                       as="a"
@@ -227,23 +235,6 @@ export function Header() {
             </>
           )}
         </Disclosure>
-
-        <header className="bg-white shadow">
-          <div className="mx-auto max-w-7xl py-6 px-4 sm:px-6 lg:px-8">
-            <h1 className="text-3xl font-bold tracking-tight text-gray-900">
-              Dashboard
-            </h1>
-          </div>
-        </header>
-        <main>
-          <div className="mx-auto max-w-7xl py-6 sm:px-6 lg:px-8">
-            {/* Replace with your content */}
-            <div className="px-4 py-6 sm:px-0">
-              <div className="h-96 rounded-lg border-4 border-dashed border-gray-200" />
-            </div>
-            {/* /End replace */}
-          </div>
-        </main>
       </div>
     </>
   );
