@@ -43,7 +43,7 @@ export function Header() {
       return { ...item, current: path == item.href };
     });
   }, [path]);
-  console.warn(nav);
+
   return (
     <>
       {/*

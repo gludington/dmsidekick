@@ -51,8 +51,12 @@ export function Chat({
       setDisabled(true);
       setText("");
       setMessages([...messages, { text: submission, bot: false }]);
-      onSubmit(submission.trim()).then((text) => {
-        setMessages([...messages, { text: text, bot: true }]);
+      onSubmit(submission.trim()).then((rsp) => {
+        setMessages([
+          ...messages,
+          { text: submission, bot: false },
+          { text: rsp, bot: true },
+        ]);
         setDisabled(false);
       });
     }
@@ -220,6 +224,11 @@ export function Chat({
             placeholder="Write your message!"
             value={text}
             onChange={(e) => setText(e.target.value)}
+            onKeyUp={(e) => {
+              if (e.key === "Enter") {
+                setSubmission(text);
+              }
+            }}
             disabled={disabled}
             className="w-full rounded-md bg-gray-200 py-3 pl-12 text-gray-600 placeholder-gray-600 focus:placeholder-gray-400 focus:outline-none disabled:text-slate-100"
           />

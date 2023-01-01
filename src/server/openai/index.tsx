@@ -10,7 +10,6 @@ const configuration = new Configuration({
   apiKey: process.env.OPEN_AI_API_KEY,
 });
 
-console.warn("WTF", process.env);
 const openAi = new OpenAIApi(configuration);
 
 export const getEngines = async (): Promise<ListEnginesResponse> => {
@@ -29,7 +28,7 @@ export const getCompletion = async (
   const response = await openAi.createCompletion({
     model: "text-davinci-003",
     prompt: text,
-    max_tokens: 1000,
+    max_tokens: 2000,
     temperature: 0,
   });
   return response.data;

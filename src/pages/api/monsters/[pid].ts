@@ -21,7 +21,7 @@ export default async function index(req: NextApiRequest, res: NextApiResponse) {
 
 async function monsterChat(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== "POST") {
-    res.status(405).end();
+    res.status(405).json({ error: "method not supported" });
     return;
   }
   const text = req?.body?.text;
@@ -29,6 +29,8 @@ async function monsterChat(req: NextApiRequest, res: NextApiResponse) {
     res.status(400).json("json payload with a 'text' field is required");
     return;
   }
-  const completion = await getCompletion(req.body.text);
+  const textToComplete = (req.body.text +=
+    ". Please provide a Dungeons and Dragons 5e stat block in JSON format");
+  const completion = await getCompletion(textToComplete);
   res.status(200).json({ response: completion.choices[0]?.text });
 }
