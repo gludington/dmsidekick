@@ -2,17 +2,20 @@
 
 import { SessionProvider, useSession } from "next-auth/react";
 import { useEffect, useMemo, useState } from "react";
+import Loading from "../Loading";
 
 export default function ChatContainer({
   greeting,
   onSubmit,
+  isLoading,
 }: {
   greeting: string;
-  onSubmit: (text: string) => Promise<string>;
+  onSubmit: (messages: string[]) => Promise<string>;
+  isLoading: boolean;
 }) {
   return (
     <SessionProvider>
-      <Chat greeting={greeting} onSubmit={onSubmit} />
+      <Chat greeting={greeting} onSubmit={onSubmit} isLoading={isLoading} />
     </SessionProvider>
   );
 }
@@ -31,12 +34,13 @@ const BOT = {
 export function Chat({
   greeting,
   onSubmit,
+  isLoading,
 }: {
   greeting: string;
-  onSubmit: (text: string) => Promise<string>;
+  onSubmit: (messages: string[]) => Promise<string>;
+  isLoading: boolean;
 }) {
   const session = useSession();
-  const [disabled, setDisabled] = useState(false);
   const [text, setText] = useState("");
   const [submission, setSubmission] = useState("");
   const [messages, setMessages] = useState<Message[]>([
@@ -48,19 +52,24 @@ export function Chat({
 
   useEffect(() => {
     if (submission.trim().length > 0) {
-      setDisabled(true);
       setText("");
-      setMessages([...messages, { text: submission, bot: false }]);
-      onSubmit(submission.trim()).then((rsp) => {
-        setMessages([
-          ...messages,
-          { text: submission, bot: false },
-          { text: rsp, bot: true },
-        ]);
-        setDisabled(false);
-      });
+      setMessages((mes) => [...mes, { text: submission.trim(), bot: false }]);
     }
   }, [submission]);
+
+  useEffect(() => {
+    if (
+      messages &&
+      messages.length > 0 &&
+      messages[messages.length - 1]?.bot === false
+    ) {
+      onSubmit(
+        messages.filter((message) => !message.bot).map((m) => m.text)
+      ).then((rsp) => {
+        setMessages((mes) => [...mes, { text: rsp, bot: true }]);
+      });
+    }
+  }, [messages]);
 
   const userInfo = useMemo(() => {
     if (session.data?.user) {
@@ -221,7 +230,7 @@ export function Chat({
           </span>
           <input
             type="text"
-            placeholder="Write your message!"
+            placeholder="Describe your monster"
             value={text}
             onChange={(e) => setText(e.target.value)}
             onKeyUp={(e) => {
@@ -229,7 +238,7 @@ export function Chat({
                 setSubmission(text);
               }
             }}
-            disabled={disabled}
+            disabled={isLoading}
             className="w-full rounded-md bg-gray-200 py-3 pl-12 text-gray-600 placeholder-gray-600 focus:placeholder-gray-400 focus:outline-none disabled:text-slate-100"
           />
           <div className="absolute inset-y-0 right-0 hidden items-center sm:flex">
@@ -301,7 +310,7 @@ export function Chat({
                 */}
             <button
               type="button"
-              disabled={disabled}
+              disabled={isLoading}
               className="inline-flex items-center justify-center rounded-lg bg-blue-500 px-4 py-3 text-white transition duration-500 ease-in-out hover:bg-blue-400 focus:outline-none disabled:bg-gray-100 disabled:text-slate-500"
               onClick={(evt) => {
                 setSubmission(text);

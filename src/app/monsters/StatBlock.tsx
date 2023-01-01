@@ -1,4 +1,6 @@
 import styles from "./statblock.module.css";
+import { Transition } from "@headlessui/react";
+import Loading from "../Loading";
 
 type Monster = any;
 
@@ -189,7 +191,11 @@ function TopStats({ monster }: { monster: Monster }) {
   );
 }
 
-function ActionBlock({ values }: { values: { name: string; desc: string }[] }) {
+function ActionBlock({
+  values,
+}: {
+  values: { name: string; desc?: string; description?: string }[];
+}) {
   if (!values || values.length === 0) {
     return null;
   }
@@ -197,7 +203,7 @@ function ActionBlock({ values }: { values: { name: string; desc: string }[] }) {
     <>
       {values.map((ability) => (
         <div key={ability.name} className={styles.propertyBlock}>
-          <h4>{ability.name}</h4> <p>{ability.desc}</p>
+          <h4>{ability.name}</h4> <p>{ability.desc || ability.description}</p>
         </div>
       ))}
     </>
@@ -206,30 +212,47 @@ function ActionBlock({ values }: { values: { name: string; desc: string }[] }) {
 
 export default function StatBlock({
   monster = DEFAULT_MONSTER,
+  isLoading,
 }: {
   monster?: Monster;
+  isLoading: boolean;
 }) {
   return (
-    <div className={`${styles.statBlock} ${styles.wide}`}>
-      <hr className={styles.orangeBorder} />
-      <div className={styles.sectionLeft}>
-        <CreatureHeading monster={monster} />
-        <TopStats monster={monster} />
-        <ActionBlock values={monster.special_abilities} />
-      </div>
-      <div className={styles.sectionRight}>
-        {monster?.actions ? (
-          <div className={styles.actions}>
-            <h3>Actions</h3>
-            <ActionBlock values={monster.actions} />
-          </div>
-        ) : null}
-        {monster?.legendary_actions ? (
-          <div className={styles.actions}>
-            <h3>Legendary Actions</h3>
-            <ActionBlock values={monster.legendary_actions} />
-          </div>
-        ) : null}
+    <div className="relative">
+      <Transition
+        show={isLoading}
+        enter="transition-opacity duration-75"
+        enterFrom="opacity-0"
+        enterTo="opacity-100"
+        leave="transition-opacity duration-150"
+        leaveFrom="opacity-100"
+        leaveTo="opacity-0"
+      >
+        <div className="absolute z-10 m-5 flex h-full w-full items-center justify-center bg-black bg-opacity-50 p-0">
+          <Loading />
+        </div>
+      </Transition>
+      <div className={`${styles.statBlock} ${styles.wide}`}>
+        <hr className={styles.orangeBorder} />
+        <div className={styles.sectionLeft}>
+          <CreatureHeading monster={monster} />
+          <TopStats monster={monster} />
+          <ActionBlock values={monster.special_abilities} />
+        </div>
+        <div className={styles.sectionRight}>
+          {monster?.actions ? (
+            <div className={styles.actions}>
+              <h3>Actions</h3>
+              <ActionBlock values={monster.actions} />
+            </div>
+          ) : null}
+          {monster?.legendary_actions ? (
+            <div className={styles.actions}>
+              <h3>Legendary Actions</h3>
+              <ActionBlock values={monster.legendary_actions} />
+            </div>
+          ) : null}
+        </div>
       </div>
     </div>
   );
