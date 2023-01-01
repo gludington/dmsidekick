@@ -4,6 +4,7 @@ import { SessionProvider, useSession } from "next-auth/react";
 import { Fragment, useRef, useEffect, useMemo, useState } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
+import Image from "next/image";
 
 function DeleteModal({
   open,
@@ -169,7 +170,7 @@ export function Chat({
         setMessages((mes) => [...mes, { text: rsp, bot: true }]);
       });
     }
-  }, [messages]);
+  }, [messages, onSubmit]);
 
   const userInfo = useMemo(() => {
     if (session.data?.user) {
@@ -323,13 +324,21 @@ export function Chat({
                         </span>
                       </div>
                     </div>
-                    <img
-                      src={message.bot ? BOT.image : session?.data?.user?.image}
-                      alt="My profile"
-                      className={`order-${
-                        message.bot ? 1 : 2
-                      } h-6 w-6 rounded-full`}
-                    />
+                    {message.bot ? (
+                      <Image
+                        width="24"
+                        height="24"
+                        src={BOT.image}
+                        alt={BOT.alt}
+                        className="order-1 h-6 w-6 rounded-full"
+                      />
+                    ) : (
+                      <img
+                        src={session?.data?.user?.image}
+                        alt={session?.data?.user?.name}
+                        className="order-2 h-6 w-6 rounded-full"
+                      />
+                    )}
                   </div>
                 </div>
               ))

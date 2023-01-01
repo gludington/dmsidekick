@@ -48,6 +48,13 @@ function mod(value?: number): string {
   return `${value} (${value < 10 ? Math.floor(mod) : "+" + Math.floor(mod)})`;
 }
 
+function listOrMap(value: any): string {
+  try {
+    return list(value);
+  } catch (err) {
+    return listMap(value);
+  }
+}
 function list(value: string | string[] | undefined | null): string {
   if (!value) {
     return "-";
@@ -86,6 +93,7 @@ function listNumberMap(
     return value;
   }
   return Object.keys(value)
+    .filter((key) => value[key] !== 0)
     .map((key) => {
       return key + " " + (value[key] < 0 ? "-" : "+") + value[key];
     })
@@ -174,7 +182,7 @@ function TopStats({ monster }: { monster: Monster }) {
       <div className={styles.propertyLine}>
         <h4>Senses</h4>{" "}
         <p>
-          {list(monster?.senses)}
+          {listOrMap(monster?.senses)}
           {/*monster?.perception
             ? `passive Perception ${monster.perception}`
   : ""*/}
@@ -217,6 +225,7 @@ export default function StatBlock({
   monster?: Monster;
   isLoading: boolean;
 }) {
+  console.warn(monster);
   return (
     <div className="relative">
       <Transition

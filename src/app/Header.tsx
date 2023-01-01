@@ -4,13 +4,14 @@ import { SessionProvider, signIn, signOut, useSession } from "next-auth/react";
 import { Disclosure, Menu, Transition } from "@headlessui/react";
 import { Bars3Icon, BellIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import { usePathname } from "next/navigation";
+import Image from "next/image";
 
 const navigation = [
   { name: "Home", href: "/", current: true },
   { name: "Monster Helper", href: "/monsters", current: false },
   //{ name: "Projects", href: "#", current: false },
   //{ name: "Calendar", href: "#", current: false },
-  { name: "About", href: "/about", current: false },
+  //{ name: "About", href: "/about", current: false },
 ];
 const userNavigation = [
   //{ name: "Your Profile", href: "#" },
@@ -56,9 +57,11 @@ export function Header() {
                 <div className="flex h-16 items-center justify-between">
                   <div className="flex items-center">
                     <div className="flex-shrink-0">
-                      <img
+                      <Image
                         className="h-8 w-8"
-                        src="dmsidekick.png"
+                        width="40"
+                        height="40"
+                        src="/dmsidekick.png"
                         alt="DM Sidekick"
                       />
                     </div>
@@ -98,6 +101,7 @@ export function Header() {
                           <div>
                             <Menu.Button className="flex max-w-xs items-center rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
                               <span className="sr-only">Open user menu</span>
+                              {/* eslint-disable-next-line @next/next/no-img-element */}
                               <img
                                 className="h-8 w-8 rounded-full"
                                 src={session.data.user.image}
