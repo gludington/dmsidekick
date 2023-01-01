@@ -95,13 +95,8 @@ function listNumberMap(
   return Object.keys(value)
     .filter((key) => value[key] !== 0)
     .map((key) => {
-      return (
-        key +
-        " " +
-        (value[key] === undefined
-          ? "0"
-          : (value[key] < 0 ? "-" : "+") + value[key])
-      );
+      const val = value?.[key] || 0;
+      return key + " " + (val < 0 ? "-" : "+") + val;
     })
     .join(", ");
 }
@@ -169,27 +164,29 @@ function TopStats({ monster }: { monster: Monster }) {
         <p>
           {savingThrow(
             "STR",
-            monster?.strength_save || monster?.saving_throws["strength"]
+            monster?.strength_save || monster?.saving_throws?.["strength"]
           )}
           {savingThrow(
             "DEX",
-            monster?.dexterity_save || monster?.saving_throws["dexterity"]
+            monster?.dexterity_save || monster?.saving_throws?.["dexterity"]
           )}
           {savingThrow(
             "CON",
-            monster?.constitution_save || monster?.saving_throws["constitution"]
+            monster?.constitution_save ||
+              monster?.saving_throws?.["constitution"]
           )}
           {savingThrow(
             "INT",
-            monster?.intelligence_save || monster?.saving_throws["intelligence"]
+            monster?.intelligence_save ||
+              monster?.saving_throws?.["intelligence"]
           )}
           {savingThrow(
             "WIS",
-            monster?.wisdom_save || monster?.saving_throws["wisdom"]
+            monster?.wisdom_save || monster?.saving_throws?.["wisdom"]
           )}
           {savingThrow(
             "CHA",
-            monster?.charisma_sav || monster?.saving_throws["charisma"]
+            monster?.charisma_sav || monster?.saving_throws?.["charisma"]
           )}
         </p>
       </div>
