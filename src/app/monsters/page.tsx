@@ -33,7 +33,6 @@ export function Page() {
     return (messages: string[]) => {
       return submitChat({ text: messages.join(". ") }).then((response) => {
         const data = JSON.parse(response.data.response);
-        console.warn("MONSTER IS", data);
         return `Here is your ${data.name ? data.name : "request"}`;
       });
     };
@@ -44,6 +43,7 @@ export function Page() {
         <Chat
           greeting="Hello, let's build a monster"
           onSubmit={onSubmit}
+          onClear={() => setMonster(undefined)}
           isLoading={isMonsterLoading}
         />
       </div>

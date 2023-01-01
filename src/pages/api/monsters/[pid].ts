@@ -32,5 +32,13 @@ async function monsterChat(req: NextApiRequest, res: NextApiResponse) {
   const textToComplete = (req.body.text +=
     ". Please provide a Dungeons and Dragons 5e stat block in JSON format");
   const completion = await getCompletion(textToComplete);
-  res.status(200).json({ response: completion.choices[0]?.text });
+  let choice = completion.choices[0]?.text;
+  if (!choice) {
+    res.status(500).json({ error: "unable to get json from openai" });
+    return;
+  }
+  if (choice.indexOf("{") != 0) {
+    choice = choice.substring(choice.indexOf("{"));
+  }
+  res.status(200).json({ response: choice });
 }
