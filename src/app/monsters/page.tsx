@@ -18,7 +18,7 @@ export default function PageContainer() {
     </QueryClientProvider>
   );
 }
-export function Page() {
+function Page() {
   const [monster, setMonster] = useState();
   const { mutateAsync: submitChat, isLoading: isMonsterLoading } = useMutation(
     ["monsterChat"],

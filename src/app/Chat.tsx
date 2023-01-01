@@ -113,7 +113,12 @@ export default function ChatContainer({
 }) {
   return (
     <SessionProvider>
-      <Chat greeting={greeting} onSubmit={onSubmit} isLoading={isLoading} />
+      <Chat
+        greeting={greeting}
+        onSubmit={onSubmit}
+        isLoading={isLoading}
+        onClear={onClear}
+      />
     </SessionProvider>
   );
 }
