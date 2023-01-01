@@ -95,7 +95,7 @@ function listNumberMap(
   return Object.keys(value)
     .filter((key) => value[key] !== 0)
     .map((key) => {
-      return key + " " + (value[key] < 0 ? "-" : "+") + value[key];
+      return key + " " + (value?.[key] || 0 < 0 ? "-" : "+") + value[key];
     })
     .join(", ");
 }

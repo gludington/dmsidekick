@@ -339,8 +339,8 @@ export function Chat({
                       />
                     ) : (
                       <img
-                        src={session?.data?.user?.image}
-                        alt={session?.data?.user?.name}
+                        src={session?.data?.user?.image || ""}
+                        alt={session?.data?.user?.name || ""}
                         className="order-2 h-6 w-6 rounded-full"
                       />
                     )}

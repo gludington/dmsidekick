@@ -11,7 +11,7 @@ const navigation = [
   { name: "Monster Helper", href: "/monsters", current: false },
   //{ name: "Projects", href: "#", current: false },
   //{ name: "Calendar", href: "#", current: false },
-  //{ name: "About", href: "/about", current: false },
+  { name: "About", href: "/about", current: false },
 ];
 const userNavigation = [
   //{ name: "Your Profile", href: "#" },
@@ -19,7 +19,7 @@ const userNavigation = [
   { name: "Sign out", href: "#", onClick: () => signOut() },
 ];
 
-function classNames(...classes) {
+function classNames(...classes: any) {
   return classes.filter(Boolean).join(" ");
 }
 
@@ -104,8 +104,8 @@ export function Header() {
                               {/* eslint-disable-next-line @next/next/no-img-element */}
                               <img
                                 className="h-8 w-8 rounded-full"
-                                src={session.data.user.image}
-                                alt={session.data.user.name}
+                                src={session.data.user.image || ""}
+                                alt={session.data.user.name || ""}
                               />
                             </Menu.Button>
                           </div>

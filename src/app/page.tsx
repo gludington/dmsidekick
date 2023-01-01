@@ -2,6 +2,8 @@
 import React, { ReactNode } from "react";
 import Link from "next/link";
 
+const features: { name: string; icon: any; description: string }[] = [];
+
 export default function Page() {
   return (
     <div className="relative bg-white py-2 sm:py-1 lg:py-4">
