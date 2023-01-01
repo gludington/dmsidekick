@@ -1,5 +1,4 @@
-"use client";
-import React, { ReactNode } from "react";
+import React from "react";
 import Link from "next/link";
 
 const features: { name: string; icon: any; description: string }[] = [];
@@ -21,7 +20,7 @@ export default function Page() {
           , provides a chat interface to OpenAI, and transforms the results of
           the conversation into usable Dungeons and Dragons 5e Stat Blocks.
         </p>
-        <p>
+        <p className="mx-auto mt-5 max-w-prose text-left text-xl text-gray-500">
           At some point, this will likely have an issue tracker, but, at the
           moment, if you are here, you have been explicitly invited, and can
           talk to me about bugs you find. Most typically, they result from
