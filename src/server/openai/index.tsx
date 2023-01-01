@@ -79,26 +79,32 @@ export const streamCompletion = async (
     res.flushHeaders();
     res.write(Buffer.from("retry: 1000\n\n"));
     try {
-      for await (const chunk of response.body) {
-        const output = chunk.toString().substring(5);
-        if (output.indexOf("[DONE]") === 1) {
-          console.warn("DONE");
-          res.write(Buffer.from("data: [DONE]\n\n"));
+      for await (const chunk of response?.body as any) {
+        if (response.body) {
+          const output = chunk.toString().substring(5);
+          if (output.indexOf("[DONE]") === 1) {
+            console.warn("DONE");
+            res.write(Buffer.from("data: [DONE]\n\n"));
+            res.end();
+            resolve();
+          } else {
+            try {
+              const json = JSON.parse(output);
+              res.write(
+                Buffer.from("data: " + json.choices[0].text + "\n\n", "utf-8")
+              );
+            } catch (err) {
+              console.warn(err, "\n", output);
+            }
+          }
+        } else {
+          console.warn("No chunk");
           res.end();
           resolve();
-        } else {
-          try {
-            const json = JSON.parse(output);
-            res.write(
-              Buffer.from("data: " + json.choices[0].text + "\n\n", "utf-8")
-            );
-          } catch (err) {
-            console.warn(err, "\n", output);
-          }
         }
       }
     } catch (err: any) {
-      console.error(err.stack);
+      console.warn("error from ChatGPT", err.stack);
       res.end();
       resolve();
     }
