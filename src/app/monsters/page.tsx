@@ -31,10 +31,16 @@ function Page() {
   );
   const onSubmit = useMemo(() => {
     return (messages: string[]) => {
-      return submitChat({ text: messages.join(". ") }).then((response) => {
-        const data = JSON.parse(response.data.response);
-        return `Here is your ${data.name ? data.name : "request"}`;
-      });
+      return submitChat({ text: messages.join(". ") })
+        .then((response) => {
+          const data = JSON.parse(response.data.response);
+          console.debug("chatgpt returned", data);
+          return `Here is your ${data.name ? data.name : "request"}`;
+        })
+        .catch((err) => {
+          console.warn("chatgpt error", err);
+          return `There was an error processing your request`;
+        });
     };
   }, [submitChat]);
   return (

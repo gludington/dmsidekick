@@ -95,7 +95,13 @@ function listNumberMap(
   return Object.keys(value)
     .filter((key) => value[key] !== 0)
     .map((key) => {
-      return key + " " + (value?.[key] || 0 < 0 ? "-" : "+") + value[key];
+      return (
+        key +
+        " " +
+        (value[key] === undefined
+          ? "0"
+          : (value[key] < 0 ? "-" : "+") + value[key])
+      );
     })
     .join(", ");
 }
@@ -161,18 +167,43 @@ function TopStats({ monster }: { monster: Monster }) {
       <div className={`${styles.propertyLine} ${styles.first}`}>
         <h4>Saving Throws</h4>{" "}
         <p>
-          {savingThrow("STR", monster?.strength_save)}
-          {savingThrow("DEX", monster?.dexterity_save)}
-          {savingThrow("CON", monster?.constitution_save)}
-          {savingThrow("INT", monster?.intelligence_save)}
-          {savingThrow("WIS", monster?.wisdom_save)}
-          {savingThrow("CHA", monster?.charisma_save)}
+          {savingThrow(
+            "STR",
+            monster?.strength_save || monster?.saving_throws["strength"]
+          )}
+          {savingThrow(
+            "DEX",
+            monster?.dexterity_save || monster?.saving_throws["dexterity"]
+          )}
+          {savingThrow(
+            "CON",
+            monster?.constitution_save || monster?.saving_throws["constitution"]
+          )}
+          {savingThrow(
+            "INT",
+            monster?.intelligence_save || monster?.saving_throws["intelligence"]
+          )}
+          {savingThrow(
+            "WIS",
+            monster?.wisdom_save || monster?.saving_throws["wisdom"]
+          )}
+          {savingThrow(
+            "CHA",
+            monster?.charisma_sav || monster?.saving_throws["charisma"]
+          )}
         </p>
       </div>
       <div className={styles.propertyLine}>
         <h4>Skills</h4> <p>{listNumberMap(monster?.skills)}</p>
       </div>
-      <div className={`${styles.propertyLine} ${styles.first}`}>
+      <div className={`${styles.propertyLine}`}>
+        <h4>Damage Resistances</h4> <p>{list(monster?.damage_resistances)} </p>
+      </div>
+      <div
+        className={`${styles.propertyLine}${
+          monster?.damage_resistances?.length > 0 ? ` ${styles.first}` : ""
+        }`}
+      >
         <h4>Damage Immunities</h4> <p>{list(monster?.damage_immunities)} </p>
       </div>
       <div className={styles.propertyLine}>
@@ -225,7 +256,7 @@ export default function StatBlock({
   monster?: Monster;
   isLoading: boolean;
 }) {
-  console.warn(monster);
+  console.debug("stat block", monster);
   return (
     <div className="relative">
       <Transition
