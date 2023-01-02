@@ -32,11 +32,7 @@ async function streamTest(
       resolve();
     });
   }
-  return streamCompletion(
-    prompt +
-      ". Please provide a Dungeons and Dragons 5e stat block in JSON format",
-    res
-  );
+  return streamCompletion(prompt as string, res);
 }
 
 async function monsterChat(

@@ -103,11 +103,16 @@ function DeleteModal({
 export default function ChatContainer({
   greeting,
   onSubmit,
+  onActivate,
   onClear,
   isLoading,
 }: {
   greeting: string;
-  onSubmit: (messages: string[]) => Promise<string>;
+  onSubmit: (
+    messages: string[],
+    callback: (chunk: string) => void
+  ) => Promise<string>;
+  onActivate: (messages: string[]) => Promise<string>;
   onClear: () => void;
   isLoading: boolean;
 }) {
@@ -116,6 +121,7 @@ export default function ChatContainer({
       <Chat
         greeting={greeting}
         onSubmit={onSubmit}
+        onActivate={onActivate}
         isLoading={isLoading}
         onClear={onClear}
       />
@@ -137,11 +143,16 @@ const BOT = {
 export function Chat({
   greeting,
   onSubmit,
+  onActivate,
   onClear,
   isLoading,
 }: {
   greeting: string;
-  onSubmit: (messages: string[]) => Promise<string>;
+  onSubmit: (
+    messages: string[],
+    callback: (chunk: string) => void
+  ) => Promise<string>;
+  onActivate: (messages: string[]) => Promise<string>;
   onClear: () => void;
   isLoading: boolean;
 }) {
@@ -155,6 +166,7 @@ export function Chat({
       bot: true,
     },
   ]);
+  const messagesRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (submission.trim().length > 0) {
@@ -169,11 +181,30 @@ export function Chat({
       messages.length > 0 &&
       messages[messages.length - 1]?.bot === false
     ) {
+      const msg = { text: "...", bot: true };
+      setMessages((mes) => [...mes, msg]);
+      let text = "";
       onSubmit(
-        messages.filter((message) => !message.bot).map((m) => m.text)
+        messages.filter((message) => !message.bot).map((m) => m.text),
+        (chunk: string) => {
+          text += chunk;
+          setMessages((mes) => [
+            ...mes.splice(0, mes.length - 1),
+            { text, bot: true },
+          ]);
+          if (messagesRef?.current) {
+            messagesRef.current.scrollTop = messagesRef.current.scrollHeight;
+          }
+        }
       ).then((rsp) => {
-        setMessages((mes) => [...mes, { text: rsp, bot: true }]);
+        if (messagesRef?.current) {
+          messagesRef.current.scrollTop = messagesRef.current.scrollHeight;
+        }
       });
+    } else {
+      if (messagesRef?.current) {
+        messagesRef.current.scrollTop = messagesRef.current.scrollHeight;
+      }
     }
   }, [messages, onSubmit]);
 
@@ -243,69 +274,94 @@ export function Chat({
                 />
               </svg>
             </button>
+            <button
+              type="button"
+              className="inline-flex h-10 w-10 items-center justify-center rounded-lg border text-gray-500 transition duration-500 ease-in-out hover:bg-gray-300 focus:outline-none"
+              onClick={() =>
+                onActivate(
+                  messages.filter((message) => !message.bot).map((m) => m.text)
+                )
+              }
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke-width="1.5"
+                stroke="currentColor"
+                className="h-6 w-6"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M7.5 21L3 16.5m0 0L7.5 12M3 16.5h13.5m0-13.5L21 7.5m0 0L16.5 12M21 7.5H7.5"
+                />
+              </svg>
+            </button>
             {/*
-          <button
-            type="button"
-            className="inline-flex h-10 w-10 items-center justify-center rounded-lg border text-gray-500 transition duration-500 ease-in-out hover:bg-gray-300 focus:outline-none"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              className="h-6 w-6"
+            <button
+              type="button"
+              className="inline-flex h-10 w-10 items-center justify-center rounded-lg border text-gray-500 transition duration-500 ease-in-out hover:bg-gray-300 focus:outline-none"
             >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-              ></path>
-            </svg>
-          </button>
-          <button
-            type="button"
-            className="inline-flex h-10 w-10 items-center justify-center rounded-lg border text-gray-500 transition duration-500 ease-in-out hover:bg-gray-300 focus:outline-none"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              className="h-6 w-6"
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                className="h-6 w-6"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                ></path>
+              </svg>
+            </button>
+            <button
+              type="button"
+              className="inline-flex h-10 w-10 items-center justify-center rounded-lg border text-gray-500 transition duration-500 ease-in-out hover:bg-gray-300 focus:outline-none"
             >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
-              ></path>
-            </svg>
-          </button>
-          <button
-            type="button"
-            className="inline-flex h-10 w-10 items-center justify-center rounded-lg border text-gray-500 transition duration-500 ease-in-out hover:bg-gray-300 focus:outline-none"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              className="h-6 w-6"
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                className="h-6 w-6"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
+                ></path>
+              </svg>
+            </button>
+            <button
+              type="button"
+              className="inline-flex h-10 w-10 items-center justify-center rounded-lg border text-gray-500 transition duration-500 ease-in-out hover:bg-gray-300 focus:outline-none"
             >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"
-              ></path>
-            </svg>
-                  </button>
-  */}
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                className="h-6 w-6"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"
+                ></path>
+              </svg>
+            </button>
+      */}
           </div>
         </div>
         <div
           id="messages"
+          ref={messagesRef}
           className="scrollbar-thumb-blue scrollbar-thumb-rounded scrollbar-track-blue-lighter scrollbar-w-2 scrolling-touch flex h-full w-full flex-col space-y-4 overflow-y-auto p-3"
         >
           {messages

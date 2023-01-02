@@ -20,35 +20,77 @@ export default function PageContainer() {
 }
 function Page() {
   const [monster, setMonster] = useState();
-  const { mutateAsync: submitChat, isLoading: isMonsterLoading } = useMutation(
-    ["monsterChat"],
-    ({ text }: { text: string }) => axios.post("/api/monsters/chat", { text }),
-    {
-      onSuccess: (response) => {
-        setMonster(JSON.parse(response.data.response));
-      },
-    }
-  );
-  const onSubmit = useMemo(() => {
+  const { mutateAsync: submitMonster, isLoading: isMonsterLoading } =
+    useMutation(
+      ["monsterChat"],
+      ({ text }: { text: string }) =>
+        axios.post("/api/monsters/chat", { text }),
+      {
+        onSuccess: (response) => {
+          setMonster(JSON.parse(response.data.response));
+        },
+      }
+    );
+
+  const buildMonster = useMemo(() => {
     return (messages: string[]) => {
-      return submitChat({ text: messages.join(". ") })
-        .then((response) => {
-          const data = JSON.parse(response.data.response);
-          console.debug("chatgpt returned", data);
-          return `Here is your ${data.name ? data.name : "request"}`;
+      return submitMonster({ text: messages.join(". ") })
+        .then((chunk) => {
+          return `Here is your ${chunk}`;
         })
         .catch((err) => {
           console.warn("chatgpt error", err);
           return `There was an error processing your request`;
         });
     };
-  }, [submitChat]);
+  }, []);
+  const streamSubmit = useMemo(() => {
+    return ({
+      text,
+      callback,
+    }: {
+      text: string;
+      callback: (chunk: string) => void;
+    }) => {
+      return new Promise((resolve, reject) => {
+        const es: EventSource = new EventSource(
+          `/api/monsters/test?text=${text}`,
+          {}
+        );
+        es.addEventListener("open", () => console.debug("open"));
+        es.addEventListener("error", (e) =>
+          console.warn("eventsource error", e)
+        );
+        es.addEventListener("message", (evt: MessageEvent) => {
+          if (evt.data === "[DONE]") {
+            es.close();
+            resolve("DONE");
+          } else {
+            callback(evt.data);
+          }
+        });
+      });
+    };
+  }, []);
+  const onChatInput = useMemo(() => {
+    return (messages: string[], callback: (chunk: string) => void) => {
+      return streamSubmit({ text: messages.join(". "), callback })
+        .then((chunk) => {
+          return `Here is your ${chunk}`;
+        })
+        .catch((err) => {
+          console.warn("chatgpt error", err);
+          return `There was an error processing your request`;
+        });
+    };
+  }, [streamSubmit]);
   return (
     <div className="grid grid-cols-2">
       <div className="h-96">
         <Chat
-          greeting="Hello, let's build a monster"
-          onSubmit={onSubmit}
+          greeting="Hello, let's have a conversation and build a monster.  Start your first line with 'Describe a' to kick it off.  At any time, use the sync arrows to generate a stat block from our chat"
+          onSubmit={onChatInput}
+          onActivate={buildMonster}
           onClear={() => setMonster(undefined)}
           isLoading={isMonsterLoading}
         />
