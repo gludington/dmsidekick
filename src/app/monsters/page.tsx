@@ -63,7 +63,6 @@ function Page() {
           `/api/monsters/test?text=${text}`,
           {}
         );
-        console.warn("ES?", es);
         es.addEventListener("open", () => console.debug("open"));
         es.addEventListener("error", (e) => {
           callback("Please log in if you have not done so.");

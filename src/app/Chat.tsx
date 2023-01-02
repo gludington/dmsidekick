@@ -175,6 +175,11 @@ export function Chat({
     }
   }, [submission]);
 
+  const toSend = useMemo(() => {
+    return messages
+      ? messages.filter((message) => !message.bot).map((m) => m.text)
+      : [];
+  }, [messages]);
   useEffect(() => {
     if (
       messages &&
@@ -277,12 +282,12 @@ export function Chat({
             <button
               type="button"
               className="inline-flex h-10 w-10 items-center justify-center rounded-lg border text-gray-500 transition duration-500 ease-in-out hover:bg-gray-300 focus:outline-none disabled:opacity-20"
-              disabled={isLoading || !session.data?.user}
+              disabled={isLoading || !session.data?.user || toSend.length === 0}
               onClick={() =>
                 onActivate(
                   messages.filter((message) => !message.bot).map((m) => m.text)
                 )
-                  .then((succes) => console.warn("SUCCESS", succes))
+                  .then((succes) => console.debug("SUCCESS", succes))
                   .catch((error) =>
                     setMessages((mess) => [...mess, { text: error, bot: true }])
                   )
