@@ -429,9 +429,8 @@ export function Chat({
             </button>
           </span>
                   */}
-            <input
-              type="text"
-              placeholder="Describe your monster"
+            <textarea
+              placeholder="Describe your monster..."
               value={text}
               onChange={(e) => setText(e.target.value)}
               onKeyUp={(e) => {
@@ -440,7 +439,8 @@ export function Chat({
                 }
               }}
               disabled={isLoading}
-              className="w-full rounded-md bg-gray-200 py-3 pl-12 text-gray-600 placeholder-gray-600 focus:placeholder-gray-400 focus:outline-none disabled:text-slate-100"
+              overflow-y={false}
+              className="w-full rounded-md bg-gray-200 py-2 pl-2 pr-2 text-gray-600 placeholder-gray-600 focus:placeholder-gray-400 focus:outline-none disabled:text-slate-100"
             />
             <div className="absolute inset-y-0 right-0 hidden items-center sm:flex">
               {/*
@@ -512,12 +512,11 @@ export function Chat({
               <button
                 type="button"
                 disabled={isLoading}
-                className="inline-flex items-center justify-center rounded-lg bg-blue-500 px-4 py-3 text-white transition duration-500 ease-in-out hover:bg-blue-400 focus:outline-none disabled:bg-gray-100 disabled:text-slate-500"
+                className="inline-flex h-full items-center justify-center rounded-lg bg-blue-500 px-1 py-2 text-white transition duration-500 ease-in-out hover:bg-blue-400 focus:outline-none disabled:bg-gray-100 disabled:text-slate-500"
                 onClick={(evt) => {
                   setSubmission(text);
                 }}
               >
-                <span className="font-bold">Send</span>
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   viewBox="0 0 20 20"
