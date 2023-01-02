@@ -5,7 +5,7 @@ import {
   QueryClientProvider,
   useMutation,
 } from "@tanstack/react-query";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import StatBlock from "./StatBlock";
 import { useState, useMemo } from "react";
 
@@ -34,14 +34,20 @@ function Page() {
 
   const buildMonster = useMemo(() => {
     return (messages: string[]) => {
-      return submitMonster({ text: messages.join(". ") })
-        .then((chunk) => {
-          return `Here is your ${chunk}`;
-        })
-        .catch((err) => {
-          console.warn("chatgpt error", err);
-          return `There was an error processing your request`;
-        });
+      return new Promise<string>((resolve, reject) => {
+        return submitMonster({ text: messages.join(". ") })
+          .then((chunk) => {
+            resolve(chunk.data);
+          })
+          .catch((err: AxiosError) => {
+            console.warn("chatgpt error", err);
+            reject(
+              err.status === 403
+                ? "Please log in before building any monster"
+                : "There was an error processing your request"
+            );
+          });
+      });
     };
   }, []);
   const streamSubmit = useMemo(() => {
@@ -57,10 +63,12 @@ function Page() {
           `/api/monsters/test?text=${text}`,
           {}
         );
+        console.warn("ES?", es);
         es.addEventListener("open", () => console.debug("open"));
-        es.addEventListener("error", (e) =>
-          console.warn("eventsource error", e)
-        );
+        es.addEventListener("error", (e) => {
+          callback("Please log in if you have not done so.");
+          resolve("DONE");
+        });
         es.addEventListener("message", (evt: MessageEvent) => {
           if (evt.data === "[DONE]") {
             es.close();
@@ -88,7 +96,7 @@ function Page() {
     <div className="grid grid-cols-2">
       <div className="h-96">
         <Chat
-          greeting="Hello, let's have a conversation and build a monster.  Start your first line with 'Describe a' to kick it off.  At any time, use the sync arrows to generate a stat block from our chat"
+          greeting="Hello, let's have a conversation and build a monster.  Start by asking me to describe your monster, as in: describe a kobold with an eye patch.  At any time, use the sync arrows to generate a stat block from our chat"
           onSubmit={onChatInput}
           onActivate={buildMonster}
           onClear={() => setMonster(undefined)}

@@ -6,6 +6,7 @@ import { getCompletion, streamCompletion } from "../../../server/openai";
 export default async function index(req: NextApiRequest, res: NextApiResponse) {
   const session = await unstable_getServerSession(req, res, authOptions);
   const { pid } = req.query;
+
   if (!session?.user) {
     res.status(403).end();
     return;

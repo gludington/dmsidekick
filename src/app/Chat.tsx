@@ -276,11 +276,16 @@ export function Chat({
             </button>
             <button
               type="button"
-              className="inline-flex h-10 w-10 items-center justify-center rounded-lg border text-gray-500 transition duration-500 ease-in-out hover:bg-gray-300 focus:outline-none"
+              className="inline-flex h-10 w-10 items-center justify-center rounded-lg border text-gray-500 transition duration-500 ease-in-out hover:bg-gray-300 focus:outline-none disabled:opacity-20"
+              disabled={isLoading || !session.data?.user}
               onClick={() =>
                 onActivate(
                   messages.filter((message) => !message.bot).map((m) => m.text)
                 )
+                  .then((succes) => console.warn("SUCCESS", succes))
+                  .catch((error) =>
+                    setMessages((mess) => [...mess, { text: error, bot: true }])
+                  )
               }
             >
               <svg
@@ -438,11 +443,12 @@ export function Chat({
                   setSubmission(text);
                 }
               }}
-              disabled={isLoading}
+              maxLength={200}
+              disabled={isLoading || !session.data?.user}
               overflow-y={false}
-              className="w-full rounded-md bg-gray-200 py-2 pl-2 pr-2 text-gray-600 placeholder-gray-600 focus:placeholder-gray-400 focus:outline-none disabled:text-slate-100"
+              className="mr-5 w-11/12 rounded-md bg-gray-200 py-2 px-2 pl-4 text-gray-600 placeholder-gray-600 focus:placeholder-gray-400 focus:outline-none disabled:text-slate-100"
             />
-            <div className="absolute inset-y-0 right-0 hidden items-center sm:flex">
+            <div className="absolute inset-y-0 right-0 hidden w-1/12 items-center sm:flex">
               {/*
             <button
               type="button"
@@ -511,8 +517,8 @@ export function Chat({
                 */}
               <button
                 type="button"
-                disabled={isLoading}
-                className="inline-flex h-full items-center justify-center rounded-lg bg-blue-500 px-1 py-2 text-white transition duration-500 ease-in-out hover:bg-blue-400 focus:outline-none disabled:bg-gray-100 disabled:text-slate-500"
+                disabled={isLoading || !session.data?.user}
+                className="inline-flex h-full items-center justify-center rounded-lg bg-blue-500 px-1 py-2 text-white transition duration-500 ease-in-out hover:bg-blue-400 focus:outline-none disabled:opacity-20"
                 onClick={(evt) => {
                   setSubmission(text);
                 }}
