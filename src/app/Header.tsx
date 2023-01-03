@@ -89,7 +89,9 @@ export default function Header() {
                       </button>
                         
                       {/* Profile dropdown */}
-                      {session?.data?.user ? (
+                      {!session ||
+                      session.status === "loading" ? null : session.status ===
+                        "authenticated" ? (
                         <Menu as="div" className="relative ml-3">
                           <div>
                             <Menu.Button className="flex max-w-xs items-center rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
@@ -97,8 +99,8 @@ export default function Header() {
                               {/* eslint-disable-next-line @next/next/no-img-element */}
                               <img
                                 className="h-8 w-8 rounded-full"
-                                src={session.data.user.image || ""}
-                                alt={session.data.user.name || ""}
+                                src={session.data?.user?.image || ""}
+                                alt={session.data?.user?.name || ""}
                               />
                             </Menu.Button>
                           </div>
@@ -136,10 +138,16 @@ export default function Header() {
                         <>
                           <span className="sr-only">Open user menu</span>
                           <button
-                            className="h-8 w-28 rounded-full bg-blue-50"
+                            type="button"
+                            className="dark:focus:ring-[#3b5998]/55 mr-2 mb-2 inline-flex items-center rounded-full bg-[#5865F2] px-5 py-2.5 text-center text-sm font-medium text-white hover:bg-[#3b5998]/90 focus:outline-none focus:ring-4 focus:ring-[#3b5998]/50"
                             onClick={() => signIn()}
                           >
-                            Login
+                            Sign in with{" "}
+                            <img
+                              src="/discord-logo-white.svg"
+                              className="h-5 pl-2"
+                              alt="Sign in with Discord"
+                            />
                           </button>
                         </>
                       )}
