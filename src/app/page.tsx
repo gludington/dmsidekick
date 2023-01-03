@@ -17,8 +17,8 @@ export default function Page() {
           <Link className="u text-blue-600" href="/monsters">
             Monster Helper
           </Link>
-          , provides a chat interface to OpenAI, and transforms the results of
-          the conversation into usable Dungeons and Dragons 5e Stat Blocks.
+          , is the most fun way to build a custom monster, allowing you to
+          create a stat block by conversing with an AI.
         </p>
         <p className="mx-auto mt-5 max-w-prose text-left text-xl text-gray-500">
           At some point, this will likely have an issue tracker, but, at the
