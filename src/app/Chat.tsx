@@ -200,7 +200,11 @@ export default function Chat({
       <DeleteModal
         open={showDeleteModal}
         onDelete={() => {
-          setMessages([{ text: greeting, bot: true }]);
+          setMessages(
+            greeting.map((greet) => {
+              return { text: greet, bot: true };
+            })
+          );
           setShowDeleteModal(false);
           onClear();
         }}
