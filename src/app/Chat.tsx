@@ -99,35 +99,6 @@ function DeleteModal({
     </Transition.Root>
   );
 }
-
-export default function ChatContainer({
-  greeting,
-  onSubmit,
-  onActivate,
-  onClear,
-  isLoading,
-}: {
-  greeting: string;
-  onSubmit: (
-    messages: string[],
-    callback: (chunk: string) => void
-  ) => Promise<string>;
-  onActivate: (messages: string[]) => Promise<string>;
-  onClear: () => void;
-  isLoading: boolean;
-}) {
-  return (
-    <SessionProvider>
-      <Chat
-        greeting={greeting}
-        onSubmit={onSubmit}
-        onActivate={onActivate}
-        isLoading={isLoading}
-        onClear={onClear}
-      />
-    </SessionProvider>
-  );
-}
 export type Message = {
   text: string;
   bot: boolean;
@@ -140,14 +111,14 @@ const BOT = {
     "inline-block rounded-lg rounded-bl-none bg-gray-300 px-4 py-2 text-gray-600",
 };
 
-export function Chat({
+export default function Chat({
   greeting,
   onSubmit,
   onActivate,
   onClear,
   isLoading,
 }: {
-  greeting: string;
+  greeting: string[];
   onSubmit: (
     messages: string[],
     callback: (chunk: string) => void
@@ -160,12 +131,11 @@ export function Chat({
   const [text, setText] = useState("");
   const [submission, setSubmission] = useState("");
   const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const [messages, setMessages] = useState<Message[]>([
-    {
-      text: greeting,
-      bot: true,
-    },
-  ]);
+  const [messages, setMessages] = useState<Message[]>(
+    greeting.map((greet) => {
+      return { text: greet, bot: true };
+    })
+  );
   const messagesRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {

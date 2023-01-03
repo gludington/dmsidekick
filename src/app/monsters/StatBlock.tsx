@@ -266,10 +266,14 @@ export default function StatBlock({
         leaveTo="opacity-0"
       >
         <div className="absolute z-10 m-5 flex h-full w-full items-center justify-center bg-black bg-opacity-50 p-0">
-          <Loading />
+          <Loading text="Preparing Stat block" />
         </div>
       </Transition>
-      <div className={`${styles.statBlock} ${styles.wide}`}>
+      <div
+        className={`${styles.statBlock} ${styles.wide}${
+          isLoading ? " opacity-10" : ""
+        }`}
+      >
         <hr className={styles.orangeBorder} />
         <div className={styles.sectionLeft}>
           <CreatureHeading monster={monster} />

@@ -8,6 +8,8 @@ import {
 import axios, { AxiosError } from "axios";
 import StatBlock from "./StatBlock";
 import { useState, useMemo } from "react";
+import { useSession } from "next-auth/react";
+import Loading from "../Loading";
 
 const queryClient = new QueryClient();
 
@@ -18,6 +20,18 @@ export default function PageContainer() {
     </QueryClientProvider>
   );
 }
+
+const GREETING = [
+  "Hello, let's have a conversation and build a monster.",
+  "Start by asking me to describe your monster, like: describe a kobold with an eye patch.",
+  "At any time, use the sync arrows to generate a stat block from our chat",
+];
+
+const NOT_LOGGED_IN_GREETING = [
+  "Before we have a conversation and build a monster,  you will have to log in.",
+  "Use the button in the upper right.",
+];
+
 function Page() {
   const [monster, setMonster] = useState();
   const { mutateAsync: submitMonster, isLoading: isMonsterLoading } =
@@ -91,20 +105,32 @@ function Page() {
         });
     };
   }, [streamSubmit]);
+  const session = useSession();
+  const greeting = useMemo(
+    () => (session.data?.user ? GREETING : NOT_LOGGED_IN_GREETING),
+    [session.data?.user]
+  );
+
   return (
     <div className="grid grid-cols-2">
-      <div className="h-96">
-        <Chat
-          greeting="Hello, let's have a conversation and build a monster.  Start by asking me to describe your monster, as in: describe a kobold with an eye patch.  At any time, use the sync arrows to generate a stat block from our chat"
-          onSubmit={onChatInput}
-          onActivate={buildMonster}
-          onClear={() => setMonster(undefined)}
-          isLoading={isMonsterLoading}
-        />
-      </div>
-      <div>
-        <StatBlock monster={monster} isLoading={isMonsterLoading} />
-      </div>
+      {!session || session.status === "loading" ? (
+        <Loading />
+      ) : (
+        <>
+          <div className="h-96">
+            <Chat
+              greeting={greeting}
+              onSubmit={onChatInput}
+              onActivate={buildMonster}
+              onClear={() => setMonster(undefined)}
+              isLoading={isMonsterLoading}
+            />
+          </div>
+          <div>
+            <StatBlock monster={monster} isLoading={isMonsterLoading} />
+          </div>
+        </>
+      )}
     </div>
   );
 }

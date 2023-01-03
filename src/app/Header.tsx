@@ -1,6 +1,6 @@
 "use client";
 import { Fragment, useMemo } from "react";
-import { SessionProvider, signIn, signOut, useSession } from "next-auth/react";
+import { signIn, signOut, useSession } from "next-auth/react";
 import { Disclosure, Menu, Transition } from "@headlessui/react";
 import { Bars3Icon, BellIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import { usePathname } from "next/navigation";
@@ -23,14 +23,7 @@ function classNames(...classes: any) {
   return classes.filter(Boolean).join(" ");
 }
 
-export default function HeaderContainer() {
-  return (
-    <SessionProvider>
-      <Header />
-    </SessionProvider>
-  );
-}
-export function Header() {
+export default function Header() {
   const session = useSession();
   const path = usePathname();
   const nav = useMemo(() => {
