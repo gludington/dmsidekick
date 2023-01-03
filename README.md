@@ -26,3 +26,9 @@ You can check out the [create-t3-app GitHub repository](https://github.com/t3-os
 ## How do I deploy this?
 
 Follow our deployment guides for [Vercel](https://create.t3.gg/en/deployment/vercel) and [Docker](https://create.t3.gg/en/deployment/docker) for more information.
+
+### Acknowledgements. While I scramble to get this into shape, projects to thanks:
+
+- create-t3-app. While we are not using most of its features, its combination of nextjs and docker has been crucial in getting this built quickly
+- @retractedhack for his beautiful Stat Block CSS https://codepen.io/retractedhack
+- OpenAI. Does much of the heavy lifting here
