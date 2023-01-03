@@ -20,9 +20,9 @@ const DEFAULT_MONSTER = {
   charisma: 20,
   strength_save: -4,
   damage_immunities: [],
-  condition_immunities: ["shame"],
+  condition_immunities: ["Shame"],
   senses: "Common",
-  languages: "Typescript",
+  languages: "Common, Java, Typescript",
   challenge_rating: "Not much",
 };
 function CreatureHeading({ monster }: { monster: Monster }) {
@@ -57,55 +57,55 @@ function listOrMap(value: any): string {
 }
 function list(value: string | string[] | undefined | null): string {
   if (!value) {
-    return "-";
+    return ":";
   }
   if (typeof value === "string") {
-    return `- ${value}`;
+    return `: ${value}`;
   }
-  if (value.length === 0) return "-";
+  if (value.length === 0) return ":";
 
-  return `- ${value.join(", ")}`;
+  return `: ${value.join(", ")}`;
 }
 
 function listMap(
   value: string | { [key: string]: any } | undefined | null
 ): string {
   if (!value) {
-    return "";
+    return ":";
   }
   if (typeof value === "string") {
-    return value;
+    return `: ${value}`;
   }
-  return Object.keys(value)
+  return `: ${Object.keys(value)
     .map((key) => {
       return key + " " + value[key];
     })
-    .join(", ");
+    .join(", ")}`;
 }
 
 function listNumberMap(
   value: string | { [key: string]: number } | undefined | null
 ): string {
   if (!value) {
-    return "";
+    return ":";
   }
   if (typeof value === "string") {
-    return value;
+    return `: ${value}`;
   }
-  return Object.keys(value)
+  return `: ${Object.keys(value)
     .filter((key) => value[key] !== 0)
     .map((key) => {
       const val = value?.[key] || 0;
       return key + " " + (val < 0 ? "-" : "+") + val;
     })
-    .join(", ");
+    .join(", ")}`;
 }
 
 function savingThrow(ability: string, value: number | undefined): string {
   if (!value) {
     return "";
   }
-  return `${ability} ${value < 0 ? "-" : "+"}${value} `;
+  return `${ability} ${value < 0 ? "" : "+"}${value} `;
 }
 
 function TaperedRule() {
@@ -220,7 +220,7 @@ function TopStats({ monster }: { monster: Monster }) {
         <h4>Languages</h4> <p>{list(monster?.languages)}</p>
       </div>
       <div className={`${styles.propertyLine} ${styles.last}`}>
-        <h4>Challenge</h4> <p>{monster?.challenge_rating}</p>
+        <h4>Challenge</h4> <p>: {monster?.challenge_rating}</p>
       </div>
       <TaperedRule />
     </div>
