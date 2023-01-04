@@ -5,6 +5,7 @@ import { Fragment, useRef, useEffect, useMemo, useState } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
 import Image from "next/image";
+import { hasRole } from "../utils/session";
 
 function DeleteModal({
   open,
@@ -113,12 +114,14 @@ const BOT = {
 
 export default function Chat({
   greeting,
+  authorized,
   onSubmit,
   onActivate,
   onClear,
   isLoading,
 }: {
   greeting: string[];
+  authorized: boolean;
   onSubmit: (
     messages: string[],
     callback: (chunk: string) => void
@@ -137,7 +140,6 @@ export default function Chat({
     })
   );
   const messagesRef = useRef<HTMLDivElement>(null);
-
   useEffect(() => {
     if (submission.trim().length > 0) {
       setText("");
@@ -150,6 +152,11 @@ export default function Chat({
       ? messages.filter((message) => !message.bot).map((m) => m.text)
       : [];
   }, [messages]);
+
+  const disabled = useMemo(() => {
+    return isLoading || !authorized;
+  }, [isLoading, authorized]);
+
   useEffect(() => {
     if (
       messages &&
@@ -256,7 +263,7 @@ export default function Chat({
             <button
               type="button"
               className="inline-flex h-10 w-10 items-center justify-center rounded-lg border text-gray-500 transition duration-500 ease-in-out hover:bg-gray-300 focus:outline-none disabled:opacity-20"
-              disabled={isLoading || !session.data?.user || toSend.length === 0}
+              disabled={disabled || toSend.length === 0}
               onClick={() =>
                 onActivate(
                   messages.filter((message) => !message.bot).map((m) => m.text)
@@ -423,7 +430,7 @@ export default function Chat({
                 }
               }}
               maxLength={200}
-              disabled={isLoading || !session.data?.user}
+              disabled={disabled}
               overflow-y={false}
               className="mr-5 w-11/12 rounded-md bg-gray-200 py-2 px-2 pl-4 text-gray-600 placeholder-gray-600 focus:placeholder-gray-400 focus:outline-none disabled:text-slate-100"
             />
@@ -496,7 +503,7 @@ export default function Chat({
                 */}
               <button
                 type="button"
-                disabled={isLoading || !session.data?.user}
+                disabled={disabled}
                 className="inline-flex h-full items-center justify-center rounded-lg bg-blue-500 px-1 py-2 text-white transition duration-500 ease-in-out hover:bg-blue-400 focus:outline-none disabled:opacity-20"
                 onClick={(evt) => {
                   setSubmission(text);

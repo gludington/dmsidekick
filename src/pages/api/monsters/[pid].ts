@@ -2,12 +2,12 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import { unstable_getServerSession } from "next-auth";
 import { authOptions } from "../auth/[...nextauth]";
 import { getCompletion, streamCompletion } from "../../../server/openai";
-
+import { hasRole } from "../../../utils/session";
 export default async function index(req: NextApiRequest, res: NextApiResponse) {
   const session = await unstable_getServerSession(req, res, authOptions);
   const { pid } = req.query;
 
-  if (!session?.user) {
+  if (!session?.user || !hasRole(session, "MONSTER_CREATOR")) {
     res.status(403).end();
     return;
   }

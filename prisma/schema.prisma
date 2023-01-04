@@ -38,6 +38,7 @@ model Account {
   user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([provider, providerAccountId])
+  @@index([userId])
 }
 
 model Session {
@@ -46,6 +47,8 @@ model Session {
   userId       String
   expires      DateTime
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
 }
 
 model User {
@@ -56,6 +59,7 @@ model User {
   image         String?
   accounts      Account[]
   sessions      Session[]
+  roles         RolesOnUsers[]
 }
 
 model VerificationToken {
@@ -65,3 +69,31 @@ model VerificationToken {
 
   @@unique([identifier, token])
 }
+
+model Role {
+  id     String  @id @unique @default(cuid())
+  code   String  @unique
+  users  RolesOnUsers[]
+  userId String?
+
+  @@index([userId])
+}
+
+model RolesOnUsers {
+    userId String
+    roleId String
+    User   User?    @relation(fields: [userId], references: [id])
+    Role   Role?    @relation(fields: [roleId], references: [id])
+
+    @@id([userId, roleId])
+    @@index([userId])
+    @@index([roleId])
+}
+
+model Invited {
+    id     String  @id @unique @default(cuid())
+    email   String @unique
+
+    @@index(email)
+}
+
