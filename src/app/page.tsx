@@ -10,7 +10,7 @@ export default function Page() {
         <p className="mt-2 text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
           About DM Sidekick
         </p>
-        <p className="mx-auto mt-5 max-w-prose text-left text-xl text-gray-500">
+        <p className="mx-auto mt-5 max-w-prose text-left text-base text-gray-500">
           DM Sidekick aims to bring interesting tools to Dungeons and Dragons
           players while giving me the opportunity to play with fun technology.
           The first effort,{" "}
@@ -20,7 +20,15 @@ export default function Page() {
           , is the most fun way to build a custom monster, allowing you to
           create a stat block by conversing with an AI.
         </p>
-        <p className="mx-auto mt-5 max-w-prose text-left text-xl text-gray-500">
+        <p className="mx-auto mt-5 max-w-prose text-left text-base text-gray-500">
+          Monster Creator is currently invite-only, both while we work some
+          kinks out and to keep AI costs under control. If you would like an
+          invite,{" "}
+          <a className="u text-blue-600" href="mailto:admin@dmsidekick.com">
+            Contact us.
+          </a>
+        </p>
+        <p className="mx-auto mt-5 max-w-prose text-left text-base text-gray-500">
           At some point, this will likely have an issue tracker, but, at the
           moment, if you are here, you have been explicitly invited, and can
           talk to me about bugs you find. Most typically, they result from

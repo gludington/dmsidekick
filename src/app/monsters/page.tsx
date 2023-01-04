@@ -5,11 +5,13 @@ import {
   QueryClientProvider,
   useMutation,
 } from "@tanstack/react-query";
-import axios, { AxiosError } from "axios";
+import type { AxiosError } from "axios";
+import axios from "axios";
 import StatBlock from "./StatBlock";
 import { useState, useMemo } from "react";
 import { useSession } from "next-auth/react";
 import Loading from "../Loading";
+import { hasRole } from "../../utils/session";
 
 const queryClient = new QueryClient();
 
@@ -28,8 +30,13 @@ const GREETING = [
 ];
 
 const NOT_LOGGED_IN_GREETING = [
-  "Before we have a conversation and build a monster,  you will have to log in.",
+  "Before we have a conversation and build a monster, you will have to log in.",
   "Use the button in the upper right.",
+];
+
+const NOT_AUTHORIZED_GREETING = [
+  "I apologize, but to keep AI costs under control, I am currently under invite-only.",
+  "If you would like an invite, please use the link on the home page.",
 ];
 
 function Page() {
@@ -106,9 +113,20 @@ function Page() {
     };
   }, [streamSubmit]);
   const session = useSession();
+
   const greeting = useMemo(
-    () => (session.data?.user ? GREETING : NOT_LOGGED_IN_GREETING),
-    [session.data?.user]
+    () =>
+      session.data?.user
+        ? hasRole(session.data, "MONSTER_CREATOR")
+          ? GREETING
+          : NOT_AUTHORIZED_GREETING
+        : NOT_LOGGED_IN_GREETING,
+    [session.data]
+  );
+
+  const authorized = useMemo(
+    () => hasRole(session.data, "MONSTER_CREATOR"),
+    [session.data]
   );
 
   return (
@@ -120,6 +138,7 @@ function Page() {
           <div className="h-96">
             <Chat
               greeting={greeting}
+              authorized={authorized}
               onSubmit={onChatInput}
               onActivate={buildMonster}
               onClear={() => setMonster(undefined)}

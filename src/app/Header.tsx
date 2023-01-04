@@ -142,12 +142,7 @@ export default function Header() {
                             className="dark:focus:ring-[#3b5998]/55 mr-2 mb-2 inline-flex items-center rounded-full bg-[#5865F2] px-5 py-2.5 text-center text-sm font-medium text-white hover:bg-[#3b5998]/90 focus:outline-none focus:ring-4 focus:ring-[#3b5998]/50"
                             onClick={() => signIn()}
                           >
-                            Sign in with{" "}
-                            <img
-                              src="/discord-logo-white.svg"
-                              className="h-5 pl-2"
-                              alt="Sign in with Discord"
-                            />
+                            Sign In
                           </button>
                         </>
                       )}
