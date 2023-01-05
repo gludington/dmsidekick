@@ -28,21 +28,23 @@ const OGRE = {
   special_abilities: [
     {
       name: "Keen Smell",
-      desc: "The ogre has advantage on Wisdom (Perception) checks that rely on smell.",
+      description:
+        "The ogre has advantage on Wisdom (Perception) checks that rely on smell.",
     },
     {
       name: "Labyrinthine Recall",
-      desc: "The ogre can perfectly recall any path it has traveled.",
+      description: "The ogre can perfectly recall any path it has traveled.",
     },
   ],
   actions: [
     {
       name: "Multiattack",
-      desc: "The ogre makes two greatclub attacks.",
+      description: "The ogre makes two greatclub attacks.",
     },
     {
       name: "Greatclub",
-      desc: "Melee Weapon Attack: +6 to hit, reach 5 ft., one target. Hit: 13 (2d8 + 4) bludgeoning damage.",
+      description:
+        "Melee Weapon Attack: +6 to hit, reach 5 ft., one target. Hit: 13 (2d8 + 4) bludgeoning damage.",
     },
   ],
 };
@@ -70,13 +72,15 @@ const KOBOLD = {
   special_abilities: [
     {
       name: "Sunlight Sensitivity",
-      desc: "While in sunlight, the kobold has disadvantage on attack rolls, as well as on Wisdom (Perception) checks that rely on sight.",
+      description:
+        "While in sunlight, the kobold has disadvantage on attack rolls, as well as on Wisdom (Perception) checks that rely on sight.",
     },
   ],
   actions: [
     {
       name: "Dagger",
-      desc: "Melee Weapon Attack: +4 to hit, reach 5 ft., one target. Hit: 4 (1d4 + 2) piercing damage.",
+      description:
+        "Melee Weapon Attack: +4 to hit, reach 5 ft., one target. Hit: 4 (1d4 + 2) piercing damage.",
       attack_bonus: 4,
       damage_dice: "1d4",
       damage_bonus: 2,
@@ -116,37 +120,43 @@ const TWO_HEADED_DRAKE = {
   special_abilities: [
     {
       name: "Two Heads",
-      desc: "The drake has two heads, each of which can breathe fire out of one head and cold out of the other.",
+      description:
+        "The drake has two heads, each of which can breathe fire out of one head and cold out of the other.",
     },
   ],
   actions: [
     {
       name: "Multiattack",
-      desc: "The drake makes two attacks: one with its bite and one with its claws.",
+      description:
+        "The drake makes two attacks: one with its bite and one with its claws.",
     },
     {
       name: "Bite",
-      desc: "Melee Weapon Attack: +7 to hit, reach 10 ft., one target. Hit: 15 (2d10 + 4) piercing damage.",
+      description:
+        "Melee Weapon Attack: +7 to hit, reach 10 ft., one target. Hit: 15 (2d10 + 4) piercing damage.",
       attack_bonus: 7,
       damage_dice: "2d10",
       damage_bonus: 4,
     },
     {
       name: "Claws",
-      desc: "Melee Weapon Attack: +7 to hit, reach 5 ft., one target. Hit: 11 (2d6 + 4) slashing damage.",
+      description:
+        "Melee Weapon Attack: +7 to hit, reach 5 ft., one target. Hit: 11 (2d6 + 4) slashing damage.",
       attack_bonus: 7,
       damage_dice: "2d6",
       damage_bonus: 4,
     },
     {
       name: "Fire Breath (Recharge 5-6)",
-      desc: "The drake exhales fire in a 15-foot cone. Each creature in that area must make a DC 14 Dexterity saving throw, taking 42 (12d6) fire damage on a failed save, or half as much damage on a successful one.",
+      description:
+        "The drake exhales fire in a 15-foot cone. Each creature in that area must make a DC 14 Dexterity saving throw, taking 42 (12d6) fire damage on a failed save, or half as much damage on a successful one.",
       attack_bonus: 0,
       damage_dice: "12d6",
     },
     {
       name: "Cold Breath (Recharge 5-6)",
-      desc: "The drake exhales cold in a 15-foot cone. Each creature in that area must make a DC 14 Constitution saving throw, taking 42 (12d6) cold damage on a failed save, or half as much damage on a successful one.",
+      description:
+        "The drake exhales cold in a 15-foot cone. Each creature in that area must make a DC 14 Constitution saving throw, taking 42 (12d6) cold damage on a failed save, or half as much damage on a successful one.",
       attack_bonus: 0,
       damage_dice: "12d6",
     },
@@ -192,24 +202,124 @@ const VAMPIRE = {
   special_abilities: [
     {
       name: "Cursed Dagger",
-      desc: "The vampire carries a cursed dagger that can cast wizard spells. It has a +2 bonus to attack and damage rolls made with this magic weapon.",
+      description:
+        "The vampire carries a cursed dagger that can cast wizard spells. It has a +2 bonus to attack and damage rolls made with this magic weapon.",
     },
     {
       name: "Regeneration",
-      desc: "The vampire regains 10 hit points at the start of its turn if it has at least 1 hit point.",
+      description:
+        "The vampire regains 10 hit points at the start of its turn if it has at least 1 hit point.",
     },
     {
       name: "Spider Climb",
-      desc: "The vampire can climb difficult surfaces, including upside down on ceilings, without needing to make an ability check.",
+      description:
+        "The vampire can climb difficult surfaces, including upside down on ceilings, without needing to make an ability check.",
     },
     {
       name: "Vampire Weaknesses",
-      desc: "The vampire has the following flaws: Forbiddance. The vampire can't enter a residence without an invitation from one of the occupants. Harmed by Running Water. The vampire takes 20 acid damage when it ends its turn in running water. Stake to the Heart. If a piercing weapon made of wood is driven into the vampire's heart while the vampire is incapacitated in its resting place, the vampire is paralyzed until the stake is removed. Sunlight Hypersensitivity. The vampire takes 20 radiant damage when it starts its turn in sunlight. While in sunlight, it has disadvantage on attack rolls and ability checks.",
+      description:
+        "The vampire has the following flaws: Forbiddance. The vampire can't enter a residence without an invitation from one of the occupants. Harmed by Running Water. The vampire takes 20 acid damage when it ends its turn in running water. Stake to the Heart. If a piercing weapon made of wood is driven into the vampire's heart while the vampire is incapacitated in its resting place, the vampire is paralyzed until the stake is removed. Sunlight Hypersensitivity. The vampire takes 20 radiant damage when it starts its turn in sunlight. While in sunlight, it has disadvantage on attack rolls and ability checks.",
+    },
+  ],
+};
+
+const DRAGON = {
+  name: "Ancient Blue Dragon",
+  size: "Gargantuan",
+  type: "Dragon",
+  subtype: "",
+  alignment: "Lawful Evil",
+  armor_class: 22,
+  hit_points: 481,
+  hit_dice: "26d20 + 208",
+  speed: {
+    fly: 80,
+    swim: 40,
+  },
+  strength: 30,
+  dexterity: 10,
+  constitution: 29,
+  intelligence: 18,
+  wisdom: 15,
+  charisma: 23,
+  dexterity_save: 7,
+  constitution_save: 16,
+  wisdom_save: 9,
+  charisma_save: 13,
+  perception: 16,
+  damage_vulnerabilities: "",
+  damage_resistances: "",
+  damage_immunities: "Lightning",
+  condition_immunities: "",
+  senses: "Blindsight 60 ft., Darkvision 120 ft., Passive Perception 26",
+  languages: "Common, Draconic",
+  challenge_rating: 21,
+  special_abilities: [
+    {
+      name: "Legendary Resistance (3/Day)",
+      description:
+        "If the dragon fails a saving throw, it can choose to succeed instead.",
+    },
+    {
+      name: "Amphibious",
+      description: "The dragon can breathe air and water.",
+    },
+    {
+      name: "Actions",
+      description:
+        "The dragon can take 3 legendary actions, choosing from the options below. Only one legendary action option can be used at a time and only at the end of another creature's turn. The dragon regains spent legendary actions at the start of its turn.",
+    },
+  ],
+  actions: [
+    {
+      name: "Multiattack",
+      description:
+        "The dragon can use its Frightful Presence. It then makes three attacks: one with its bite and two with its claws.",
+    },
+    {
+      name: "Bite",
+      description:
+        "Melee Weapon Attack: +17 to hit, reach 15 ft., one target. Hit: 21 (2d10 + 10) piercing damage plus 14 (4d6) lightning damage.",
+    },
+    {
+      name: "Claw",
+      description:
+        "Melee Weapon Attack: +17 to hit, reach 10 ft., one target. Hit: 17 (2d6 + 10) slashing damage.",
+    },
+    {
+      name: "Tail",
+      description:
+        "Melee Weapon Attack: +17 to hit, reach 20 ft., one target. Hit: 19 (2d8 + 10) bludgeoning damage.",
+    },
+    {
+      name: "Frightful Presence",
+      description:
+        "Each creature of the dragon's choice that is within 120 feet of the dragon and aware of it must succeed on a DC 21 Wisdom saving throw or become frightened for 1 minute. A creature can repeat the saving throw at the end of each of its turns, ending the effect on itself on a success. If a creature's saving throw is successful or the effect ends for it, the creature is immune to the dragon's Frightful Presence for the next 24 hours.",
+    },
+    {
+      name: "Lightning Breath (Recharge 5-6)",
+      description:
+        "The dragon exhales lightning in a 90-foot line that is 10 feet wide. Each creature in that line must make a DC 24 Dexterity saving throw, taking 88 (16d10) lightning damage on a failed save, or half as much damage on a successful one.",
+    },
+  ],
+  legendary_actions: [
+    {
+      name: "Detect",
+      description: "The dragon makes a Wisdom (Perception) check.",
+    },
+    {
+      name: "Tail Attack",
+      description: "The dragon makes a tail attack.",
+    },
+    {
+      name: "Wing Attack (Costs 2 Actions)",
+      description:
+        "The dragon beats its wings. Each creature within 15 feet of the dragon must succeed on a DC 25 Dexterity saving throw or take 17 (2d6 + 10) bludgeoning damage and be knocked prone. The dragon can then fly up to half its flying speed.",
     },
   ],
 };
 describe("Parsing Tests Tests", () => {
-  it("Can convert a basic monster", () => {
+  it("Can convert a basic Ogre", () => {
     const monster = convert(OGRE);
     assert.equal(monster.name, "Yellow Ogre");
     assert.equal(monster.size, "Large");
@@ -260,7 +370,7 @@ describe("Parsing Tests Tests", () => {
     ]);
   });
 
-  it("Can convert a monster with delimited senses", () => {
+  it("Can convert a Kobold with delimited senses", () => {
     const monster = convert(KOBOLD);
     assert.deepEqual(monster.senses, [
       "darkvision 60 ft.",
@@ -276,7 +386,7 @@ describe("Parsing Tests Tests", () => {
     ]);
   });
 
-  it("Can Convert a monster with object speed and separate saving throws", () => {
+  it("Can Convert a drake with object speed and separate saving throws", () => {
     const monster = convert(TWO_HEADED_DRAKE);
     assert.deepEqual(monster.speed, { walk: "30 ft.", fly: "60 ft." });
     assert.deepEqual(monster.saves, {
@@ -349,6 +459,83 @@ describe("Parsing Tests Tests", () => {
         name: "Vampire Weaknesses",
         description:
           "The vampire has the following flaws: Forbiddance. The vampire can't enter a residence without an invitation from one of the occupants. Harmed by Running Water. The vampire takes 20 acid damage when it ends its turn in running water. Stake to the Heart. If a piercing weapon made of wood is driven into the vampire's heart while the vampire is incapacitated in its resting place, the vampire is paralyzed until the stake is removed. Sunlight Hypersensitivity. The vampire takes 20 radiant damage when it starts its turn in sunlight. While in sunlight, it has disadvantage on attack rolls and ability checks.",
+      },
+    ]);
+  });
+
+  it("Can handle a dragon with legendary resistances", () => {
+    const monster = convert(DRAGON);
+    assert.equal(monster.name, "Ancient Blue Dragon");
+    assert.equal(monster.hitDice, "26d20 + 208");
+    assert.deepEqual(monster.speed, { fly: 80, swim: 40 });
+    assert.deepEqual(monster.damageImmunities, ["Lightning"]);
+    assert.deepEqual(monster.senses, [
+      "Blindsight 60 ft.",
+      "Darkvision 120 ft.",
+      "Passive Perception 26",
+    ]);
+
+    assert.deepEqual(monster.specialAbilities, [
+      {
+        name: "Legendary Resistance (3/Day)",
+        description:
+          "If the dragon fails a saving throw, it can choose to succeed instead.",
+      },
+      {
+        name: "Amphibious",
+        description: "The dragon can breathe air and water.",
+      },
+      {
+        name: "Actions",
+        description:
+          "The dragon can take 3 legendary actions, choosing from the options below. Only one legendary action option can be used at a time and only at the end of another creature's turn. The dragon regains spent legendary actions at the start of its turn.",
+      },
+    ]);
+    assert.deepEqual(monster.actions, [
+      {
+        name: "Multiattack",
+        description:
+          "The dragon can use its Frightful Presence. It then makes three attacks: one with its bite and two with its claws.",
+      },
+      {
+        name: "Bite",
+        description:
+          "Melee Weapon Attack: +17 to hit, reach 15 ft., one target. Hit: 21 (2d10 + 10) piercing damage plus 14 (4d6) lightning damage.",
+      },
+      {
+        name: "Claw",
+        description:
+          "Melee Weapon Attack: +17 to hit, reach 10 ft., one target. Hit: 17 (2d6 + 10) slashing damage.",
+      },
+      {
+        name: "Tail",
+        description:
+          "Melee Weapon Attack: +17 to hit, reach 20 ft., one target. Hit: 19 (2d8 + 10) bludgeoning damage.",
+      },
+      {
+        name: "Frightful Presence",
+        description:
+          "Each creature of the dragon's choice that is within 120 feet of the dragon and aware of it must succeed on a DC 21 Wisdom saving throw or become frightened for 1 minute. A creature can repeat the saving throw at the end of each of its turns, ending the effect on itself on a success. If a creature's saving throw is successful or the effect ends for it, the creature is immune to the dragon's Frightful Presence for the next 24 hours.",
+      },
+      {
+        name: "Lightning Breath (Recharge 5-6)",
+        description:
+          "The dragon exhales lightning in a 90-foot line that is 10 feet wide. Each creature in that line must make a DC 24 Dexterity saving throw, taking 88 (16d10) lightning damage on a failed save, or half as much damage on a successful one.",
+      },
+    ]);
+    assert.deepEqual(monster.legendaryActions, [
+      {
+        name: "Detect",
+        description: "The dragon makes a Wisdom (Perception) check.",
+      },
+      {
+        name: "Tail Attack",
+        description: "The dragon makes a tail attack.",
+      },
+      {
+        name: "Wing Attack (Costs 2 Actions)",
+        description:
+          "The dragon beats its wings. Each creature within 15 feet of the dragon must succeed on a DC 25 Dexterity saving throw or take 17 (2d6 + 10) bludgeoning damage and be knocked prone. The dragon can then fly up to half its flying speed.",
       },
     ]);
   });

@@ -110,6 +110,13 @@ function actions(input: any): NameAndDescription[] {
   return [];
 }
 
+function legendaryActions(input: any): NameAndDescription[] {
+  if (input["legendary_actions"]) {
+    return toNameAndDescription(input["legendary_actions"]);
+  }
+  return [];
+}
+
 function specialAbilities(input: any): NameAndDescription[] {
   if (input["special_abilities"]) {
     return toNameAndDescription(input["special_abilities"]);
@@ -147,6 +154,7 @@ export function convert(input: any): Monster {
     challengeRating: input.challenge_rating,
     specialAbilities: specialAbilities(input),
     actions: actions(input),
+    legendaryActions: legendaryActions(input),
   };
 
   return monster;

@@ -38,4 +38,5 @@ export type Monster = {
   challengeRating: string;
   specialAbilities: NameAndDescription[];
   actions: NameAndDescription[];
+  legendaryActions: NameAndDescription[];
 };
