@@ -1,6 +1,5 @@
 import { assert } from "chai";
-import deepEqual from "deep-equal-in-any-order";
-import { convert } from "../../src/utils/conversions";
+import { convert, toJSON } from "../../src/utils/conversions";
 
 const OGRE = {
   name: "Yellow Ogre",
@@ -538,5 +537,30 @@ describe("Parsing Tests Tests", () => {
           "The dragon beats its wings. Each creature within 15 feet of the dragon must succeed on a DC 25 Dexterity saving throw or take 17 (2d6 + 10) bludgeoning damage and be knocked prone. The dragon can then fly up to half its flying speed.",
       },
     ]);
+  });
+});
+
+const GOBLIN_WITH_FRACTION =
+  '{\n    "name": "Wise Goblin",\n    "size": "Small",\n    "type": "Humanoid (Goblinoid)",\n    "alignment": "Lawful Neutral",\n    "armor_class": 14,\n    "hit_points": 11,\n    "speed": "30 ft.",\n    "strength": 8,\n    "dexterity": 14,\n    "constitution": 10,\n    "intelligence": 16,\n    "wisdom": 18,\n    "charisma": 8,\n    "saving_throws": {\n        "dexterity": 4,\n        "intelligence": 5\n    },\n    "skills": {\n        "perception": 6,\n        "stealth": 4\n    },\n    "senses": "darkvision 60 ft., passive Perception 16",\n    "languages": "Common, Goblin",\n    "challenge_rating": 1/2,\n    "special_abilities": [\n        {\n            "name": "Nimble Escape",\n            "desc": "The goblin can take the Disengage or Hide action as a bonus action on each of its turns."\n        }\n    ],\n    "actions": [\n        {\n            "name": "Rapier",\n            "desc": "Melee Weapon Attack: +4 to hit, reach 5 ft., one target. Hit: 5 (1d8 + 1) piercing damage.",\n            "attack_bonus": 4,\n            "damage_dice": "1d8",\n            "damage_bonus": 1\n        },\n        {\n            "name": "Dagger",\n            "desc": "Melee Weapon Attack: +4 to hit, reach 5 ft., one target. Hit: 4 (1d4 + 2) piercing damage.",\n            "attack_bonus": 4,\n            "damage_dice": "1d4",\n            "damage_bonus": 2\n        }\n    ]\n}';
+
+describe("Preparsing", () => {
+  it("can do basic JSON conversion", () => {
+    assert.deepEqual(toJSON('{"hello": 12}'), { hello: 12 });
+  });
+
+  it("can handle GPT sending fractions thinking they are whole numbers", () => {
+    try {
+      JSON.parse(GOBLIN_WITH_FRACTION);
+      assert.equal("bad json was let through", "yes it was");
+    } catch (err) {
+      //this should happen, the chatGPT json is bad
+    }
+    const json = toJSON(GOBLIN_WITH_FRACTION);
+    console.warn(json);
+    assert.equal(json.name, "Wise Goblin");
+    assert.equal(json.challenge_rating, "1/2");
+    const monster = convert(json);
+    assert.equal(monster.name, "Wise Goblin");
+    assert.equal(monster.challengeRating, "1/2");
   });
 });

@@ -3,6 +3,7 @@ import { unstable_getServerSession } from "next-auth";
 import { authOptions } from "../auth/[...nextauth]";
 import { getCompletion, streamCompletion } from "../../../server/openai";
 import { hasRole } from "../../../utils/session";
+import { convert, toJSON } from "../../../utils/conversions";
 export default async function index(req: NextApiRequest, res: NextApiResponse) {
   const session = await unstable_getServerSession(req, res, authOptions);
   const { pid } = req.query;
@@ -12,17 +13,17 @@ export default async function index(req: NextApiRequest, res: NextApiResponse) {
     return;
   }
   switch (pid) {
-    case "chat":
-      await monsterChat(req, res);
+    case "build":
+      await buildMonster(req, res);
       break;
-    case "test":
-      await streamTest(req, res);
+    case "chat":
+      await streamChat(req, res);
       break;
     default:
       res.status(404).end();
   }
 }
-async function streamTest(
+async function streamChat(
   req: NextApiRequest,
   res: NextApiResponse
 ): Promise<void> {
@@ -36,7 +37,7 @@ async function streamTest(
   return streamCompletion(prompt as string, res);
 }
 
-async function monsterChat(
+async function buildMonster(
   req: NextApiRequest,
   res: NextApiResponse
 ): Promise<void> {
@@ -60,6 +61,7 @@ async function monsterChat(
   if (choice.indexOf("{") != 0) {
     choice = choice.substring(choice.indexOf("{"));
   }
-  res.status(200).json({ response: choice });
+
+  res.status(200).json(convert(toJSON(choice)));
   return new Promise((resolve) => resolve());
 }

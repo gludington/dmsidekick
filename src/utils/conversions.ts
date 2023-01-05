@@ -1,5 +1,10 @@
 import { Monster, NameAndDescription } from "../types/monster";
 
+export function toJSON(input: string): any {
+  const val = input.replaceAll(/: ?(\d+\/\d+)/g, ': "$1"');
+  return JSON.parse(val);
+}
+
 function toList(
   value: string | string[] | { [key: string]: any } | undefined | null
 ): string[] {
