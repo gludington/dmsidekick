@@ -12,7 +12,6 @@ import { useState, useMemo } from "react";
 import { useSession } from "next-auth/react";
 import Loading from "../Loading";
 import { hasRole } from "../../utils/session";
-import { convert, toJSON } from "../../utils/conversions";
 
 const queryClient = new QueryClient();
 
@@ -46,7 +45,7 @@ function Page() {
     useMutation(
       ["monsterChat"],
       ({ text }: { text: string }) =>
-        axios.post("/api/monsters/build", { text }),
+        axios.post("/api/monsters/build", { text }, { timeout: 60000 }),
       {
         onSuccess: (response) => {
           setMonster(response.data);

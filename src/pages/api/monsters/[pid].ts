@@ -61,7 +61,12 @@ async function buildMonster(
   if (choice.indexOf("{") != 0) {
     choice = choice.substring(choice.indexOf("{"));
   }
+  try {
+    const parsed = convert(toJSON(choice));
+    res.status(200).json(parsed);
+  } catch (err) {
+    res.status(500).json({ error: err, rawResponse: choice });
+  }
 
-  res.status(200).json(convert(toJSON(choice)));
   return new Promise((resolve) => resolve());
 }
