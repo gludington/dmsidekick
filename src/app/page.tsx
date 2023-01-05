@@ -17,9 +17,18 @@ export default function Page() {
           <Link className="u text-blue-600" href="/monsters">
             Monster Helper
           </Link>
-          , is the most fun way to build a custom monster, allowing you to
-          create a stat block by conversing with an AI.
+          , is a fun way to build a custom monster, chatting with an AI and
+          building a Dungeons and Dragons 5e Stat Block from the conversation.
         </p>
+        <iframe
+          width="560"
+          height="315"
+          src="https://www.youtube.com/embed/sK7Ux-o5j6E"
+          title="Monster Helpler demo in YouTube video player"
+          frameBorder="0"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+          allowFullScreen
+        ></iframe>
         <p className="mx-auto mt-5 max-w-prose text-left text-base text-gray-500">
           Monster Creator is currently invite-only, both while we work some
           kinks out and to keep AI costs under control. If you would like an
