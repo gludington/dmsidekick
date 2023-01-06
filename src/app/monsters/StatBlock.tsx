@@ -2,8 +2,6 @@ import styles from "./statblock.module.css";
 import { Transition } from "@headlessui/react";
 import Loading from "../Loading";
 import type { Monster } from "../../types/monster";
-import { useContext } from "react";
-import { MonsterContext } from "../../hooks/monsters";
 
 function CreatureHeading({ monster }: { monster: Monster }) {
   return (

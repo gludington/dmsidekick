@@ -9,14 +9,7 @@ import type { AxiosResponse } from "axios";
 import { AxiosError } from "axios";
 import axios from "axios";
 import StatBlock from "./StatBlock";
-import {
-  useState,
-  useMemo,
-  useRef,
-  useContext,
-  useCallback,
-  useEffect,
-} from "react";
+import { useState, useMemo, useRef, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import Loading from "../Loading";
 import { hasRole } from "../../utils/session";
@@ -50,7 +43,8 @@ const NOT_AUTHORIZED_GREETING = [
 ];
 
 function Page() {
-  const chatRef = useRef();
+  const chatRef = useRef<{ sendBotMessage: (text: string) => void }>();
+
   const [idAndDate, setIdAndDate] = useState<{
     id: string | undefined;
     time: Date;
