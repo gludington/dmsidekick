@@ -1,4 +1,4 @@
-import { Monster, NameAndDescription } from "../types/monster";
+import type { Monster, NameAndDescription } from "../types/monster";
 
 export function toJSON(input: string): any {
   const val = input.replaceAll(/: ?(\d+\/\d+)/g, ': "$1"');

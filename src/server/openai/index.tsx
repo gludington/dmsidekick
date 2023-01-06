@@ -6,6 +6,7 @@ import type {
 } from "openai";
 import { Configuration, OpenAIApi } from "openai";
 import fetch from "node-fetch";
+import logger from "../common/logger";
 
 const configuration = new Configuration({
   organization: process.env.OPEN_AI_ORGANIZATION_ID,
@@ -83,7 +84,7 @@ export const streamCompletion = async (
         if (response.body) {
           const output = chunk.toString().substring(5);
           if (output.indexOf("[DONE]") === 1) {
-            console.warn("DONE");
+            logger.debug("DONE");
             res.write(Buffer.from("data: [DONE]\n\n"));
             res.end();
             resolve();
@@ -94,11 +95,11 @@ export const streamCompletion = async (
                 Buffer.from("data: " + json.choices[0].text + "\n\n", "utf-8")
               );
             } catch (err) {
-              console.warn(err, "\n", output);
+              logger.warn({ error: err, output: output });
             }
           }
         } else {
-          console.warn("No chunk");
+          logger.warn("No chunk, aborting");
           res.end();
           resolve();
         }

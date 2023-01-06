@@ -1,17 +1,20 @@
 "use client";
-import Chat from "../Chat";
+
 import {
   QueryClient,
   QueryClientProvider,
   useMutation,
 } from "@tanstack/react-query";
-import type { AxiosError } from "axios";
+import type { AxiosResponse } from "axios";
+import { AxiosError } from "axios";
 import axios from "axios";
 import StatBlock from "./StatBlock";
-import { useState, useMemo } from "react";
+import { useState, useMemo, useRef, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import Loading from "../Loading";
 import { hasRole } from "../../utils/session";
+import { useFetchMonster } from "../../hooks/monsters";
+import { Chat } from "../Chat";
 
 const queryClient = new QueryClient();
 
@@ -40,35 +43,78 @@ const NOT_AUTHORIZED_GREETING = [
 ];
 
 function Page() {
-  const [monster, setMonster] = useState();
-  const { mutateAsync: submitMonster, isLoading: isMonsterLoading } =
-    useMutation(
-      ["monsterChat"],
-      ({ text }: { text: string }) =>
-        axios.post("/api/monsters/build", { text }, { timeout: 60000 }),
-      {
-        onSuccess: (response) => {
-          setMonster(response.data);
-        },
-      }
-    );
+  const chatRef = useRef<{ sendBotMessage: (text: string) => void }>();
 
-  const buildMonster = useMemo(() => {
+  const [idAndDate, setIdAndDate] = useState<{
+    id: string | undefined;
+    time: Date;
+  }>({
+    id: undefined,
+    time: new Date(),
+  });
+  const { data: monster, isLoading, isError } = useFetchMonster(idAndDate);
+  useEffect(() => {
+    if (idAndDate?.id && isLoading) {
+      const interval = setInterval(() => {
+        chatRef.current?.sendBotMessage("Im still thinking...");
+      }, 20000);
+      return () => {
+        clearInterval(interval);
+      };
+    }
+  }, [idAndDate, isLoading]);
+
+  useEffect(() => {
+    if (Boolean(isError)) {
+      chatRef.current?.sendBotMessage("Something went wrong.");
+    }
+  }, [isError]);
+
+  const { mutateAsync: submitMonster } = useMutation(
+    ["monsterChat"],
+    ({ text }: { text: string }) => {
+      return axios.post("/api/monsters/build", { id: idAndDate.id, text });
+    },
+    {
+      onSuccess: (response) => {
+        if (response.data.id) {
+          setIdAndDate({ id: response.data.id, time: new Date() });
+          chatRef?.current?.sendBotMessage(
+            "Building a beast, this may take a while"
+          );
+        }
+      },
+    }
+  );
+
+  const buildMonster: (messages: string[]) => void = useMemo(() => {
     return (messages: string[]) => {
-      return new Promise<string>((resolve, reject) => {
-        return submitMonster({ text: messages.join(". ") })
-          .then((chunk) => {
-            resolve(chunk.data);
-          })
-          .catch((err: AxiosError) => {
-            console.warn("chatgpt error", err);
-            reject(
-              err.status === 403
-                ? "Please log in before building any monster"
-                : "There was an error processing your request"
+      submitMonster({ text: messages.join(". ") })
+        .then(async function (response: AxiosResponse) {
+          if (response.status !== 201) {
+            const err = new AxiosError(
+              "Error",
+              undefined,
+              undefined,
+              undefined,
+              response
             );
-          });
-      });
+            err.status = response.status;
+            chatRef?.current?.sendBotMessage(
+              "There was an error in this request"
+            );
+          } else {
+            setIdAndDate({ id: response.data.id, time: new Date() });
+          }
+        })
+        .catch(function (err: AxiosError) {
+          console.warn("chatgpt error", err);
+          chatRef?.current?.sendBotMessage(
+            err.status === 403
+              ? "Please log in before building any monster"
+              : "There was an error processing your request"
+          );
+        });
     };
   }, []);
   const streamSubmit = useMemo(() => {
@@ -137,16 +183,17 @@ function Page() {
         <>
           <div className="h-96">
             <Chat
+              ref={chatRef}
               greeting={greeting}
               authorized={authorized}
               onSubmit={onChatInput}
               onActivate={buildMonster}
-              onClear={() => setMonster(undefined)}
-              isLoading={isMonsterLoading}
+              onClear={() => setIdAndDate({ id: undefined, time: new Date() })}
+              isLoading={isLoading}
             />
           </div>
           <div>
-            <StatBlock monster={monster} isLoading={isMonsterLoading} />
+            <StatBlock monster={monster} isLoading={isLoading} />
           </div>
         </>
       )}
