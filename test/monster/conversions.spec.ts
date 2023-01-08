@@ -222,7 +222,7 @@ const VAMPIRE = {
   ],
 };
 
-const DRAGON = {
+const ANCIENT_BLUE_DRAGON = {
   name: "Ancient Blue Dragon",
   size: "Gargantuan",
   type: "Dragon",
@@ -365,6 +365,15 @@ describe("Parsing Tests Tests", () => {
         name: "Greatclub",
         description:
           "Melee Weapon Attack: +6 to hit, reach 5 ft., one target. Hit: 13 (2d8 + 4) bludgeoning damage.",
+        attack: {
+          type: "Weapon",
+          rangeType: "Melee",
+          reach: "5 ft",
+          target: "one target",
+          toHit: 6,
+          damage: "2d8 + 4",
+          damageType: "bludgeoning",
+        },
       },
     ]);
   });
@@ -381,6 +390,15 @@ describe("Parsing Tests Tests", () => {
         name: "Dagger",
         description:
           "Melee Weapon Attack: +4 to hit, reach 5 ft., one target. Hit: 4 (1d4 + 2) piercing damage.",
+        attack: {
+          type: "Weapon",
+          rangeType: "Melee",
+          reach: "5 ft",
+          target: "one target",
+          toHit: 4,
+          damage: "1d4 + 2",
+          damageType: "piercing",
+        },
       },
     ]);
   });
@@ -399,7 +417,7 @@ describe("Parsing Tests Tests", () => {
     assert.deepEqual(monster.damageResistances, []);
   });
 
-  it("Can conver a vampire with lots of different attributes", () => {
+  it("Can convert a vampire with lots of different attributes", () => {
     const monster = convert(VAMPIRE);
     assert.equal(monster.name, "Vampire with Cursed Dagger");
     assert.equal(monster.size, "Medium");
@@ -424,7 +442,7 @@ describe("Parsing Tests Tests", () => {
       wisdom: 4,
     });
     assert.deepEqual(monster.skills, { perception: 6, stealth: 8, arcana: 6 });
-    assert.deepEqual(monster.damaveVulnerabilities, ["radiant"]);
+    assert.deepEqual(monster.damageVulnerabilities, ["radiant"]);
     assert.deepEqual(monster.damageImmunities, ["poison"]);
     assert.deepEqual(monster.damageResistances, [
       "necrotic",
@@ -463,7 +481,7 @@ describe("Parsing Tests Tests", () => {
   });
 
   it("Can handle a dragon with legendary resistances", () => {
-    const monster = convert(DRAGON);
+    const monster = convert(ANCIENT_BLUE_DRAGON);
     assert.equal(monster.name, "Ancient Blue Dragon");
     assert.equal(monster.hitDice, "26d20 + 208");
     assert.deepEqual(monster.speed, { fly: 80, swim: 40 });
@@ -500,16 +518,45 @@ describe("Parsing Tests Tests", () => {
         name: "Bite",
         description:
           "Melee Weapon Attack: +17 to hit, reach 15 ft., one target. Hit: 21 (2d10 + 10) piercing damage plus 14 (4d6) lightning damage.",
+        attack: {
+          type: "Weapon",
+          rangeType: "Melee",
+          reach: "15 ft",
+          target: "one target",
+          toHit: 17,
+          damage: "2d10 + 10",
+          damageType: "piercing",
+          damageTwo: "4d6",
+          damageTwoType: "lightning",
+        },
       },
       {
         name: "Claw",
         description:
           "Melee Weapon Attack: +17 to hit, reach 10 ft., one target. Hit: 17 (2d6 + 10) slashing damage.",
+        attack: {
+          type: "Weapon",
+          rangeType: "Melee",
+          reach: "10 ft",
+          target: "one target",
+          toHit: 17,
+          damage: "2d6 + 10",
+          damageType: "slashing",
+        },
       },
       {
         name: "Tail",
         description:
           "Melee Weapon Attack: +17 to hit, reach 20 ft., one target. Hit: 19 (2d8 + 10) bludgeoning damage.",
+        attack: {
+          type: "Weapon",
+          rangeType: "Melee",
+          reach: "20 ft",
+          target: "one target",
+          toHit: 17,
+          damage: "2d8 + 10",
+          damageType: "bludgeoning",
+        },
       },
       {
         name: "Frightful Presence",
@@ -559,7 +606,7 @@ describe("Preparsing", () => {
       //this should happen, the chatGPT json is bad
     }
     const json = toJSON(GOBLIN_WITH_FRACTION);
-    console.warn(json);
+
     assert.equal(json.name, "Wise Goblin");
     assert.equal(json.challenge_rating, "1/2");
     const monster = convert(json);
@@ -570,6 +617,70 @@ describe("Preparsing", () => {
   it("can handle the peg leg", () => {
     const json = toJSON(VAMPIRE_WITH_PEG_LEG);
     const monster = convert(json);
-    console.warn("FUCK YOU", monster);
+    assert.equal(monster.name, "Vampire with a Peg Leg");
+    assert.equal(monster.size, "Medium");
+    assert.equal(monster.type, "Undead");
+    assert.equal(monster.subType, "Vampire");
+    assert.equal(monster.alignment, "Lawful Evil");
+    assert.equal(monster.armorClass, 16);
+    assert.equal(monster.hitPoints, 144);
+    assert.equal(monster.hitDice, "18d8");
+    assert.equal(monster.speed["walk"], 30);
+    assert.equal(monster.speed["climb"], 30);
+    assert.equal(monster.attributes.strength, 18);
+    assert.equal(monster.attributes.dexterity, 18);
+    assert.equal(monster.attributes.constitution, 18);
+    assert.equal(monster.attributes.intelligence, 18);
+    assert.equal(monster.attributes.wisdom, 18);
+    assert.equal(monster.attributes.charisma, 18);
+    assert.deepEqual(monster.skills, {
+      perception: 9,
+      stealth: 9,
+      intimidation: 9,
+    });
+    assert.deepEqual(monster.languages, ["Common", "Infernal", "Abyssal"]);
+    assert.deepEqual(monster.damageImmunities, ["poison"]);
+    assert.deepEqual(monster.damageResistances, [
+      "necrotic",
+      "bludgeoning, piercing, and slashing from nonmagical weapons",
+    ]);
+    assert.deepEqual(monster.damageVulnerabilities, []);
+    assert.deepEqual(monster.conditionImmunities, [
+      "charmed",
+      "exhaustion",
+      "frightened",
+      "paralyzed",
+      "poisoned",
+    ]);
+
+    assert.deepEqual(monster.specialAbilities, [
+      {
+        name: "Spider Climb",
+        description:
+          "The vampire can climb difficult surfaces, including upside down on ceilings, without needing to make an ability check.",
+      },
+      {
+        name: "Vampire Weaknesses",
+        description:
+          "The vampire has the following flaws:            -Forbiddance. The vampire can't enter a residence without an invitation from one of the occupants.            -Harmed by Running Water. The vampire takes 20 acid damage when it ends its turn in running water.            -Stake to the Heart. The vampire is destroyed if a piercing weapon made of wood is driven into its heart while it is incapacitated in its resting place.            -Sunlight Hypersensitivity. The vampire takes 20 radiant damage when it starts its turn in sunlight. While in sunlight, it has disadvantage on attack rolls and ability checks.",
+      },
+      {
+        name: "Wall Walking",
+        description:
+          "The vampire can walk through walls as if they were not there.",
+      },
+      {
+        name: "Shapechanger",
+        description:
+          "The vampire can use its action to polymorph into a Tiny bat or a Medium cloud of mist, or back into its true form.",
+      },
+      {
+        name: "Regeneration",
+        description:
+          "The vampire regains 10 hit points at the start of its turn if it has at least 1 hit point.",
+      },
+    ]);
+    assert.deepEqual(monster.actions, []);
+    assert.deepEqual(monster.legendaryActions, []);
   });
 });

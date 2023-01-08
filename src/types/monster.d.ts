@@ -14,6 +14,22 @@ export type Attributes = {
 
 export type Saves = Partial<Attributes>;
 
+export type Attack = Partial<{
+  type: string;
+  rangeType: string;
+  toHit: number;
+  reach: string;
+  target: string;
+  damage: string;
+  damageType: string;
+  damageTwo: string;
+  damageTwoType: string;
+}>;
+
+export type Action = NameAndDescription & {
+  attack?: Attack;
+};
+
 export type Monster = {
   name: string;
   size?: string;
@@ -30,13 +46,13 @@ export type Monster = {
     [key: string]: number;
   };
   senses?: string[];
-  damaveVulnerabilities: string[];
+  damageVulnerabilities: string[];
   damageImmunities: string[];
   damageResistances: string[];
   conditionImmunities: string[];
   languages: string[];
   challengeRating: string;
   specialAbilities: NameAndDescription[];
-  actions: NameAndDescription[];
-  legendaryActions: NameAndDescription[];
+  actions: Action[];
+  legendaryActions: Action[];
 };

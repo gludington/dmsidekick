@@ -15,7 +15,7 @@ const navigation = [
 ];
 const userNavigation = [
   //{ name: "Your Profile", href: "#" },
-  //{ name: "Settings", href: "#" },
+  { name: "My Monsters", href: "/profile/monsters" },
   { name: "Sign out", href: "#", onClick: () => signOut() },
 ];
 

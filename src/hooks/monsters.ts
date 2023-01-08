@@ -35,7 +35,7 @@ export const DEFAULT_MONSTER: Monster = {
   senses: ["Common"],
   languages: ["Common", "Java", "Typescript"],
   challengeRating: "1/64",
-  damaveVulnerabilities: [],
+  damageVulnerabilities: [],
   specialAbilities: [
     {
       name: "Crash",
@@ -80,7 +80,7 @@ export const useFetchMonster = ({
       if (id) {
         setIsFetching(true);
         return await axios
-          .get("/api/monsters/get", { params: { id: id } })
+          .get(`/api/monsters/${id}`)
           .then((response) => response.data);
       } else {
         monsterRef.current = DEFAULT_MONSTER;

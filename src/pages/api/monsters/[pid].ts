@@ -23,24 +23,16 @@ export default async function index(req: NextApiRequest, res: NextApiResponse) {
     case "chat":
       await streamChat(req, res);
       break;
-    case "get":
-      await getMonster(req, res);
     default:
-      res.status(404).end();
+      await getMonster(pid, req, res);
   }
 }
 
 async function getMonster(
+  id: string,
   req: NextApiRequest,
   res: NextApiResponse
 ): Promise<void> {
-  const param = req.query.id;
-  let id;
-  if (Array.isArray(param)) {
-    id = param[0];
-  } else {
-    id = param;
-  }
   if (!id) {
     res.status(400).json({ error: "an monster id is required" });
     return;
