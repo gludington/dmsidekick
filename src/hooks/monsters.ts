@@ -57,13 +57,7 @@ export const DEFAULT_MONSTER: Monster = {
   legendaryActions: [],
 };
 
-export const useFetchMonster = ({
-  id,
-  time,
-}: {
-  id: string | undefined;
-  time: Date;
-}) => {
+export const useFetchMonster = (id: string | undefined) => {
   const monsterRef = useRef<Monster>(DEFAULT_MONSTER);
   const counterRef = useRef<number>(0);
   const queryClient = useQueryClient();
@@ -71,10 +65,10 @@ export const useFetchMonster = ({
   useEffect(() => {
     counterRef.current = 1;
     queryClient.invalidateQueries(["getMonster", id]);
-  }, [id, time, queryClient]);
+  }, [id, queryClient]);
   const [isFetching, setIsFetching] = useState(false);
   useQuery(
-    ["getMonster", id, time],
+    ["getMonster", id],
     async () => {
       setIsError(false);
       if (id) {
