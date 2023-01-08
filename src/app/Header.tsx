@@ -11,7 +11,7 @@ const navigation = [
   { name: "Monster Helper", href: "/monsters", current: false },
   //{ name: "Projects", href: "#", current: false },
   //{ name: "Calendar", href: "#", current: false },
-  //{ name: "About", href: "/about", current: false },
+  { name: "About", href: "/about", current: false },
 ];
 const userNavigation = [
   //{ name: "Your Profile", href: "#" },
