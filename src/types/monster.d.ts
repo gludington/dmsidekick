@@ -31,6 +31,7 @@ export type Action = NameAndDescription & {
 };
 
 export type Monster = {
+  id: string;
   name: string;
   size?: string;
   type?: string;

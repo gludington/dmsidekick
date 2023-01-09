@@ -21,6 +21,7 @@
     "@next/mdx": "^13.1.1",
     "@prisma/client": "^4.5.0",
     "@tanstack/react-query": "^4.16.0",
+    "@tanstack/react-table": "^8.7.4",
     "@trpc/client": "^10.0.0",
     "@trpc/next": "^10.0.0",
     "@trpc/react-query": "^10.0.0",

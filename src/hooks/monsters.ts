@@ -1,5 +1,6 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
+import { useSession } from "next-auth/react";
 import { useEffect, useRef, useState } from "react";
 import type { Monster } from "../types/monster";
 
@@ -55,6 +56,26 @@ export const DEFAULT_MONSTER: Monster = {
     },
   ],
   legendaryActions: [],
+};
+
+export const useFetchMonsters = ({
+  page,
+  size,
+}: {
+  page: number;
+  size: number;
+}) => {
+  const queryClient = useQueryClient();
+
+  const { data, isLoading, isError } = useQuery(
+    ["getMonsters", page, size],
+    () => axios.get(`/api/monsters`).then((response) => response.data)
+  );
+  return {
+    data,
+    isLoading,
+    isError,
+  };
 };
 
 export const useFetchMonster = (id: string | undefined) => {
