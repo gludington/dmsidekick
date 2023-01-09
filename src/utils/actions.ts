@@ -1,5 +1,5 @@
 import logger from "../server/common/logger";
-import { Attack } from "../types/monster";
+import { Attack } from "../types/global";
 
 const ATTACK = /attack/i;
 

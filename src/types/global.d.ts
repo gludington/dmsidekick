@@ -1,3 +1,12 @@
+export type SearchResults<T> = {
+  page: number;
+  size: number;
+  total: number;
+  content: T[];
+};
+
+export type MonsterSearchResults = SearchResults<Monster>;
+
 export type NameAndDescription = {
   name: string;
   description?: string;
@@ -31,7 +40,7 @@ export type Action = NameAndDescription & {
 };
 
 export type Monster = {
-  id: string;
+  id?: string;
   name: string;
   size?: string;
   type?: string;

@@ -1,8 +1,9 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import { useSession } from "next-auth/react";
+import { useSearchParams } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
-import type { Monster } from "../types/monster";
+import type { Monster, MonsterSearchResults } from "../types/global";
 
 const MAX_ATTEMPTS = 20;
 const GET_INTERVAL = 4000;
@@ -58,18 +59,18 @@ export const DEFAULT_MONSTER: Monster = {
   legendaryActions: [],
 };
 
-export const useFetchMonsters = ({
-  page,
-  size,
-}: {
-  page: number;
-  size: number;
-}) => {
+export const useFetchMonsters = () => {
+  const searchParams = useSearchParams();
+  const page = searchParams.get("page") || 1;
+  const size = searchParams.get("size") || 10;
   const queryClient = useQueryClient();
 
   const { data, isLoading, isError } = useQuery(
     ["getMonsters", page, size],
-    () => axios.get(`/api/monsters`).then((response) => response.data)
+    () =>
+      axios
+        .get(`/api/monsters`, { params: { page, size } })
+        .then((response) => response.data as MonsterSearchResults)
   );
   return {
     data,

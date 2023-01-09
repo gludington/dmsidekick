@@ -3,7 +3,7 @@ import type {
   Attack,
   Monster,
   NameAndDescription,
-} from "../types/monster";
+} from "../types/global";
 import { parseAction } from "./actions";
 
 export function toJSON(input: string): any {
