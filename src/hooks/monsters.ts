@@ -63,14 +63,14 @@ export const useFetchMonsters = () => {
   const searchParams = useSearchParams();
   const page = searchParams.get("page") || 1;
   const size = searchParams.get("size") || 10;
-  const queryClient = useQueryClient();
 
   const { data, isLoading, isError } = useQuery(
     ["getMonsters", page, size],
     () =>
       axios
         .get(`/api/monsters`, { params: { page, size } })
-        .then((response) => response.data as MonsterSearchResults)
+        .then((response) => response.data as MonsterSearchResults),
+    { suspense: false }
   );
   return {
     data,

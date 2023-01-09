@@ -244,7 +244,9 @@ export const Chat = forwardRef(
                     <circle cx="8" cy="8" r="8" fill="currentColor"></circle>
                   </svg>
                 </span>
-                <img
+                <Image
+                  width="40"
+                  height="40"
                   src="/dmsidekick.png"
                   alt=""
                   className="h-10 w-10 rounded-full sm:h-16 sm:w-16"
@@ -401,7 +403,9 @@ export const Chat = forwardRef(
                           className="order-1 h-6 w-6 rounded-full"
                         />
                       ) : (
-                        <img
+                        <Image
+                          width="24"
+                          height="24"
                           src={session?.data?.user?.image || ""}
                           alt={session?.data?.user?.name || ""}
                           className="order-2 h-6 w-6 rounded-full"

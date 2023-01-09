@@ -18,7 +18,9 @@ export default function Page() {
   return (
     <>
       {!session || session.status === "loading" ? (
-        <Loading />
+        <>
+          <Loading />
+        </>
       ) : (
         <>
           {authorized ? <Monsters /> : <NotAuthorized role="Monster Creator" />}

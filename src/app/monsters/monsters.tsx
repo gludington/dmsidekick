@@ -1,9 +1,6 @@
 "use client";
-import { useSearchParams } from "next/navigation";
-import { useMemo } from "react";
 import { useFetchMonsters } from "../../hooks/monsters";
 import type { Monster, MonsterSearchResults } from "../../types/global";
-import Loading from "../Loading";
 
 import {
   createColumnHelper,
@@ -13,6 +10,7 @@ import {
 } from "@tanstack/react-table";
 import Link from "next/link";
 import TableFooter from "../TableFooter";
+import { useMemo } from "react";
 const HELPER = createColumnHelper<Monster>();
 
 const columns = [
@@ -55,6 +53,7 @@ const columns = [
     footer: (info) => info.column.id,
   }),
 ];
+
 export default function Monsters() {
   const { data, isLoading, isError } = useFetchMonsters();
 
@@ -72,6 +71,12 @@ export default function Monsters() {
     },
   });
 
+  const rows = useMemo(() => {
+    if (data?.content) {
+      return data.content;
+    }
+    return [];
+  }, [data]);
   return (
     <>
       <div className="px-4 sm:px-6 lg:px-8">

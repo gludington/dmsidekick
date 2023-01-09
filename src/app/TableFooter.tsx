@@ -49,6 +49,7 @@ export default function TableFooter<T>({ data }: { data?: SearchResults<T> }) {
       <div className={`flex flex-1 justify-between sm:hidden`}>
         {params.showPrev ? (
           <Link
+            shallow={true}
             href={{
               pathname,
               query: {
@@ -63,6 +64,7 @@ export default function TableFooter<T>({ data }: { data?: SearchResults<T> }) {
         ) : null}
         {params.showNext ? (
           <Link
+            shallow={true}
             href={{
               pathname,
               query: {
@@ -91,6 +93,7 @@ export default function TableFooter<T>({ data }: { data?: SearchResults<T> }) {
           >
             {params.showPrev ? (
               <Link
+                shallow={true}
                 href={{
                   pathname,
                   query: {
@@ -118,6 +121,7 @@ export default function TableFooter<T>({ data }: { data?: SearchResults<T> }) {
                   </a>
                 ) : (
                   <Link
+                    shallow={true}
                     href={{
                       pathname,
                       query: {
@@ -134,6 +138,7 @@ export default function TableFooter<T>({ data }: { data?: SearchResults<T> }) {
             ))}
             {params.showNext ? (
               <Link
+                shallow={true}
                 href={{
                   pathname,
                   query: {
