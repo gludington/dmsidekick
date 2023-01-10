@@ -10,7 +10,9 @@ import {
 } from "@tanstack/react-table";
 import Link from "next/link";
 import TableFooter from "../TableFooter";
-import { useMemo } from "react";
+import { Fragment, useMemo } from "react";
+import { Transition } from "@headlessui/react";
+import Loading from "../Loading";
 const HELPER = createColumnHelper<Monster>();
 
 const columns = [
@@ -55,8 +57,8 @@ const columns = [
 ];
 
 export default function Monsters() {
-  const { data, isLoading, isError } = useFetchMonsters();
-
+  const { data, isLoading, isError, isPreviousData } = useFetchMonsters();
+  console.warn(data, isLoading, isPreviousData);
   const table = useReactTable({
     data: data?.content || [],
     columns,
@@ -71,14 +73,13 @@ export default function Monsters() {
     },
   });
 
-  const rows = useMemo(() => {
-    if (data?.content) {
-      return data.content;
-    }
-    return [];
-  }, [data]);
   return (
     <>
+      {isLoading || isPreviousData ? (
+        <div className="h-53 w-53 fixed top-0 left-0 right-0 bottom-0 z-50 flex flex-col items-center justify-center overflow-hidden bg-gray-700 opacity-75">
+          <Loading />
+        </div>
+      ) : null}
       <div className="px-4 sm:px-6 lg:px-8">
         <div className="sm:flex sm:items-center">
           <div className="sm:flex-auto">
@@ -108,7 +109,7 @@ export default function Monsters() {
           <div className="-my-2 -mx-4 overflow-x-auto sm:-mx-6 lg:-mx-8">
             <div className="inline-block min-w-full py-2 align-middle md:px-6 lg:px-8">
               <div className="overflow-hidden shadow ring-1 ring-black ring-opacity-5 md:rounded-lg">
-                <table className="min-w-full divide-y divide-gray-300">
+                <table className="table min-w-full divide-y divide-gray-300">
                   <thead className="bg-gray-50">
                     {table.getHeaderGroups().map((headerGroup) => (
                       <tr key={headerGroup.id}>
@@ -174,57 +175,6 @@ export default function Monsters() {
         </div>
       </div>
       <TableFooter<MonsterSearchResults> data={data} />
-      {/* a dynamic example
-      <div className="p-2">
-        <table>
-          <thead>
-            {table.getHeaderGroups().map((headerGroup) => (
-              <tr key={headerGroup.id}>
-                {headerGroup.headers.map((header) => (
-                  <th key={header.id}>
-                    {header.isPlaceholder
-                      ? null
-                      : flexRender(
-                          header.column.columnDef.header,
-                          header.getContext()
-                        )}
-                  </th>
-                ))}
-              </tr>
-            ))}
-          </thead>
-          <tbody>
-            {table.getRowModel().rows.map((row) => (
-              <tr key={row.id}>
-                {row.getVisibleCells().map((cell) => (
-                  <td key={cell.id}>
-                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                  </td>
-                ))}
-              </tr>
-            ))}
-          </tbody>
-          <tfoot>
-            {table.getFooterGroups().map((footerGroup) => (
-              <tr key={footerGroup.id}>
-                {footerGroup.headers.map((header) => (
-                  <th key={header.id}>
-                    {header.isPlaceholder
-                      ? null
-                      : flexRender(
-                          header.column.columnDef.footer,
-                          header.getContext()
-                        )}
-                  </th>
-                ))}
-              </tr>
-            ))}
-          </tfoot>
-        </table>
-        <h2>bottom</h2>
-        <div className="h-4" />
-          </div>
-                      */}
     </>
   );
 }

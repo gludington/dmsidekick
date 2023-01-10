@@ -64,18 +64,19 @@ export const useFetchMonsters = () => {
   const page = searchParams.get("page") || 1;
   const size = searchParams.get("size") || 10;
 
-  const { data, isLoading, isError } = useQuery(
+  const { data, isLoading, isError, isPreviousData } = useQuery(
     ["getMonsters", page, size],
     () =>
       axios
         .get(`/api/monsters`, { params: { page, size } })
         .then((response) => response.data as MonsterSearchResults),
-    { suspense: false }
+    { keepPreviousData: true }
   );
   return {
     data,
     isLoading,
     isError,
+    isPreviousData,
   };
 };
 
