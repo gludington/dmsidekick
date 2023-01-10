@@ -9,7 +9,7 @@ import Link from "next/link";
 
 const navigation = [
   { name: "Home", href: "/", current: true },
-  //{ name: "Monsters", href: "/monsters", current: false },
+  { name: "Monsters", href: "/monsters", current: false },
   { name: "Monster Helper", href: "/monsters/helper", current: false },
   //{ name: "Projects", href: "#", current: false },
   //{ name: "Calendar", href: "#", current: false },
@@ -17,7 +17,7 @@ const navigation = [
 ];
 const userNavigation = [
   //{ name: "Your Profile", href: "#" },
-  //{ name: "My Monsters", href: "/profile/monsters" },
+  { name: "My Monsters", href: "/profile/monsters" },
   { name: "Sign out", href: "#", onClick: () => signOut() },
 ];
 

@@ -161,13 +161,14 @@ export default function Page() {
     [session.data]
   );
 
+  const [panel, setPanel] = useState(1);
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2">
       {!session || session.status === "loading" ? (
         <Loading />
       ) : (
         <>
-          <div className="h-96">
+          <div className={`h-full${panel === 1 ? "" : " hidden sm:block"}`}>
             <Chat
               ref={chatRef}
               greeting={greeting}
@@ -178,7 +179,7 @@ export default function Page() {
               isLoading={isLoading}
             />
           </div>
-          <div>
+          <div className={`h-full${panel === 2 ? "" : " hidden sm:block"}`}>
             <StatBlock
               monster={monster}
               loadingText="Preparing Stat block"

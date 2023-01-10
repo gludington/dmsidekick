@@ -215,7 +215,7 @@ export default function StatBlock({
 }) {
   console.debug("stat block", monster);
   return (
-    <div className="relative">
+    <div className="pb-203 flex h-[calc(100vh-40px)] flex-1 flex-col">
       <Transition
         show={isLoading}
         enter="transition-opacity duration-75"
