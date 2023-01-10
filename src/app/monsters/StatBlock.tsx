@@ -2,15 +2,35 @@ import styles from "./statblock.module.css";
 import { Transition } from "@headlessui/react";
 import Loading from "../Loading";
 import type { Monster } from "../../types/global";
+import { ChatBubbleLeftEllipsisIcon } from "@heroicons/react/24/outline";
 
-function CreatureHeading({ monster }: { monster: Monster }) {
+function CreatureHeading({
+  monster,
+  onToggle,
+}: {
+  monster: Monster;
+  onToggle?: () => void;
+}) {
   return (
     <>
-      <div className={styles.creatureHeading}>
-        <h1>{monster?.name}</h1>
-        <h2>
-          {monster?.size} {monster?.type}, {monster.alignment}
-        </h2>
+      <div
+        className={`${styles.creatureHeading} flex flex-row justify-between`}
+      >
+        <div>
+          <h1>{monster?.name}</h1>
+          <h2>
+            {monster?.size} {monster?.type}, {monster.alignment}
+          </h2>
+        </div>
+        {onToggle ? (
+          <button
+            type="button"
+            className="inline-flex h-6 w-6 items-center justify-center rounded-lg border text-gray-500 transition duration-500 ease-in-out hover:bg-gray-300 focus:outline-none sm:hidden sm:h-10 sm:w-10"
+            onClick={() => onToggle()}
+          >
+            <ChatBubbleLeftEllipsisIcon />
+          </button>
+        ) : null}
       </div>
       <svg height="5" width="100%" className={styles.taperedRule}>
         <polyline points="0,0 400,2.5 0,5"></polyline>
@@ -208,10 +228,12 @@ export default function StatBlock({
   monster,
   isLoading,
   loadingText = "Loading Monster",
+  onToggle,
 }: {
   monster: Monster;
   isLoading: boolean;
   loadingText?: string;
+  onToggle?: () => void;
 }) {
   console.debug("stat block", monster);
   return (
@@ -236,7 +258,7 @@ export default function StatBlock({
       >
         <hr className={styles.orangeBorder} />
         <div className={styles.sectionLeft}>
-          <CreatureHeading monster={monster} />
+          <CreatureHeading monster={monster} onToggle={onToggle} />
           <TopStats monster={monster} />
           <ActionBlock values={monster.specialAbilities} />
         </div>

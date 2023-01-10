@@ -32,11 +32,10 @@ export default function Page() {
   const chatRef = useRef<{ sendBotMessage: (text: string) => void }>();
 
   const queryClient = useQueryClient();
-  const [id, setId] = useState<string | undefined>();
-
-  const { data: monster, isLoading, isError } = useFetchMonster(id);
+  const [id, setId] = useState();
+  console.warn(id);
+  const { data: monster, isLoading, isError, refetch } = useFetchMonster(id);
   useEffect(() => {
-    console.warn(id, isLoading);
     if (id && isLoading) {
       const interval = setInterval(() => {
         chatRef.current?.sendBotMessage("Im still thinking...");
@@ -61,8 +60,6 @@ export default function Page() {
     {
       onSuccess: (response) => {
         if (response.data.id) {
-          setId(response.data.id);
-          queryClient.invalidateQueries(["getMonster", response.data.id]);
           chatRef?.current?.sendBotMessage(
             "Building a beast, this may take a while"
           );
@@ -88,9 +85,11 @@ export default function Page() {
               "There was an error in this request"
             );
           } else {
-            //queryClient.invalidateQueries(["getMonster", response.data.id]);
-
-            setId(response.data.id);
+            if (response.data.id) {
+              refetch();
+            } else {
+              setId(response.data.id);
+            }
           }
         })
         .catch(function (err: AxiosError) {
@@ -161,29 +160,31 @@ export default function Page() {
     [session.data]
   );
 
-  const [panel, setPanel] = useState(1);
+  const [panel, setPanel] = useState(true);
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2">
       {!session || session.status === "loading" ? (
         <Loading />
       ) : (
         <>
-          <div className={`h-full${panel === 1 ? "" : " hidden sm:block"}`}>
+          <div className={`h-full${panel ? "" : " hidden sm:block"}`}>
             <Chat
               ref={chatRef}
               greeting={greeting}
               authorized={authorized}
               onSubmit={onChatInput}
+              onToggle={() => setPanel(!panel)}
               onActivate={buildMonster}
               onClear={() => setId(undefined)}
               isLoading={isLoading}
             />
           </div>
-          <div className={`h-full${panel === 2 ? "" : " hidden sm:block"}`}>
+          <div className={`h-full${!panel ? "" : " hidden sm:block"}`}>
             <StatBlock
               monster={monster}
               loadingText="Preparing Stat block"
               isLoading={isLoading}
+              onToggle={() => setPanel(!panel)}
             />
           </div>
         </>
