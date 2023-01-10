@@ -5,6 +5,7 @@ import { Disclosure, Menu, Transition } from "@headlessui/react";
 import { Bars3Icon, BellIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import { usePathname } from "next/navigation";
 import Image from "next/image";
+import Link from "next/link";
 
 const navigation = [
   { name: "Home", href: "/", current: true },
@@ -62,9 +63,10 @@ export default function Header() {
                     <div className="hidden md:block">
                       <div className="ml-10 flex items-baseline space-x-4">
                         {nav.map((item) => (
-                          <a
+                          <Link
                             key={item.name}
                             href={item.href}
+                            shallow={true}
                             className={classNames(
                               item.current
                                 ? "bg-gray-900 text-white"
@@ -74,7 +76,7 @@ export default function Header() {
                             aria-current={item.current ? "page" : undefined}
                           >
                             {item.name}
-                          </a>
+                          </Link>
                         ))}
                       </div>
                     </div>
@@ -119,8 +121,9 @@ export default function Header() {
                               {userNavigation.map((item) => (
                                 <Menu.Item key={item.name}>
                                   {({ active }) => (
-                                    <a
+                                    <Link
                                       href={item.href}
+                                      shallow={true}
                                       onClick={item.onClick}
                                       className={classNames(
                                         active ? "bg-gray-100" : "",
@@ -128,7 +131,7 @@ export default function Header() {
                                       )}
                                     >
                                       {item.name}
-                                    </a>
+                                    </Link>
                                   )}
                                 </Menu.Item>
                               ))}
