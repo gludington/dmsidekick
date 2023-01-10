@@ -17,7 +17,7 @@ const navigation = [
 ];
 const userNavigation = [
   //{ name: "Your Profile", href: "#" },
-  { name: "My Monsters", href: "/profile/monsters" },
+  //{ name: "My Monsters", href: "/profile/monsters" },
   { name: "Sign out", href: "#", onClick: () => signOut() },
 ];
 
@@ -192,40 +192,49 @@ export default function Header() {
                   ))}
                 </div>
                 <div className="border-t border-gray-700 pt-4 pb-3">
-                  <div className="flex items-center px-5">
-                    <div className="flex-shrink-0">
+                  {!session ||
+                  session.status === "loading" ? null : session.status ===
+                    "authenticated" ? (
+                    <div className="mt-3 space-y-1 px-2">
+                      {userNavigation.map((item) => (
+                        <Disclosure.Button
+                          key={item.name}
+                          className="block rounded-md px-3 py-2 text-base font-medium text-gray-400 hover:bg-gray-700 hover:text-white"
+                        >
+                          <Link
+                            shallow={true}
+                            href={item.href}
+                            onClick={item.onClick}
+                          >
+                            {item.name}
+                          </Link>
+                        </Disclosure.Button>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="flex items-center px-5">
+                      <div className="flex-shrink-0">
+                        <button
+                          className={classNames(
+                            false
+                              ? "bg-gray-900 text-white"
+                              : "text-gray-300 hover:bg-gray-700 hover:text-white",
+                            "block rounded-md px-3 py-2 text-base font-medium"
+                          )}
+                          onClick={() => signIn()}
+                        >
+                          Sign In
+                        </button>
+                      </div>
                       <button
-                        className={classNames(
-                          false
-                            ? "bg-gray-900 text-white"
-                            : "text-gray-300 hover:bg-gray-700 hover:text-white",
-                          "block rounded-md px-3 py-2 text-base font-medium"
-                        )}
-                        onClick={() => signIn()}
+                        type="button"
+                        className="ml-auto flex-shrink-0 rounded-full bg-gray-800 p-1 text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
                       >
-                        Login
+                        <span className="sr-only">View notifications</span>
+                        <BellIcon className="h-6 w-6" aria-hidden="true" />
                       </button>
                     </div>
-                    <button
-                      type="button"
-                      className="ml-auto flex-shrink-0 rounded-full bg-gray-800 p-1 text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
-                    >
-                      <span className="sr-only">View notifications</span>
-                      <BellIcon className="h-6 w-6" aria-hidden="true" />
-                    </button>
-                  </div>
-                  <div className="mt-3 space-y-1 px-2">
-                    {userNavigation.map((item) => (
-                      <Disclosure.Button
-                        key={item.name}
-                        as="a"
-                        href={item.href}
-                        className="block rounded-md px-3 py-2 text-base font-medium text-gray-400 hover:bg-gray-700 hover:text-white"
-                      >
-                        {item.name}
-                      </Disclosure.Button>
-                    ))}
-                  </div>
+                  )}
                 </div>
               </Disclosure.Panel>
             </>
