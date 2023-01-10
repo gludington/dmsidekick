@@ -87,7 +87,6 @@ export const useFetchMonster = (id: string | undefined) => {
 
   const [isError, setIsError] = useState(false);
   useEffect(() => {
-    console.warn("SHIT");
     counterRef.current = 1;
     queryClient.invalidateQueries(["getMonster", id]);
   }, [id, queryClient]);
@@ -95,7 +94,6 @@ export const useFetchMonster = (id: string | undefined) => {
   const { refetch } = useQuery(
     ["getMonster", id],
     async () => {
-      console.warn("SSSdS");
       setIsError(false);
       if (id) {
         setIsFetching(true);

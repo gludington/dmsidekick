@@ -33,7 +33,7 @@ export default function Page() {
 
   const queryClient = useQueryClient();
   const [id, setId] = useState();
-  console.warn(id);
+
   const { data: monster, isLoading, isError, refetch } = useFetchMonster(id);
   useEffect(() => {
     if (id && isLoading) {
