@@ -207,9 +207,11 @@ function ActionBlock({
 export default function StatBlock({
   monster,
   isLoading,
+  loadingText = "Loading Monster",
 }: {
   monster: Monster;
   isLoading: boolean;
+  loadingText?: string;
 }) {
   console.debug("stat block", monster);
   return (
@@ -224,7 +226,7 @@ export default function StatBlock({
         leaveTo="opacity-0"
       >
         <div className="absolute z-10 m-5 flex h-full w-full items-center justify-center bg-black bg-opacity-50 p-0">
-          <Loading text="Preparing Stat block" />
+          <Loading text={loadingText} />
         </div>
       </Transition>
       <div

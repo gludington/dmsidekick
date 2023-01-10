@@ -58,7 +58,7 @@ const columns = [
 
 export default function Monsters() {
   const { data, isLoading, isError, isPreviousData } = useFetchMonsters();
-  console.warn(data, isLoading, isPreviousData);
+
   const table = useReactTable({
     data: data?.content || [],
     columns,

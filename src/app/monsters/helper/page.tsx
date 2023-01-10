@@ -162,7 +162,7 @@ export default function Page() {
   );
 
   return (
-    <div className="grid grid-cols-2">
+    <div className="grid grid-cols-1 sm:grid-cols-2">
       {!session || session.status === "loading" ? (
         <Loading />
       ) : (
@@ -179,7 +179,11 @@ export default function Page() {
             />
           </div>
           <div>
-            <StatBlock monster={monster} isLoading={isLoading} />
+            <StatBlock
+              monster={monster}
+              loadingText="Preparing Stat block"
+              isLoading={isLoading}
+            />
           </div>
         </>
       )}

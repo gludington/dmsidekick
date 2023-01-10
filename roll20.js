@@ -88,7 +88,6 @@ function createNPC(name) {
 }
 
 function join(prop) {
-  log("FUCKING JOIN " + prop);
   if (!prop) {
     return "";
   }

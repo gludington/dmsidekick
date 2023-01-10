@@ -1,10 +1,9 @@
 "use client";
 
-import { useMemo } from "react";
-import { useSession } from "next-auth/react";
+import { useFetchMonster } from "../../../hooks/monsters";
+import StatBlock from "../StatBlock";
 
-export default function Page() {
-  const session = useSession();
-
-  return <h2>hi</h2>;
+export default function Page(props: any) {
+  const { data, isLoading } = useFetchMonster(props.params.mid);
+  return <StatBlock monster={data} isLoading={isLoading} />;
 }

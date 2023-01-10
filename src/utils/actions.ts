@@ -54,7 +54,6 @@ export function parseAction(action?: string): Attack | undefined {
 
     const damageTwoResults = DAMAGE_TWO.exec(action);
     if (damageTwoResults !== null) {
-      console.warn(damageTwoResults);
       type = {
         ...type,
         damageTwo: damageTwoResults[2],
