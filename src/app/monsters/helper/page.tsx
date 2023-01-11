@@ -31,7 +31,6 @@ const NOT_AUTHORIZED_GREETING = [
 export default function Page() {
   const chatRef = useRef<{ sendBotMessage: (text: string) => void }>();
 
-  const queryClient = useQueryClient();
   const [id, setId] = useState();
 
   const { data: monster, isLoading, isError, refetch } = useFetchMonster(id);
@@ -85,7 +84,7 @@ export default function Page() {
               "There was an error in this request"
             );
           } else {
-            if (response.data.id) {
+            if (id) {
               refetch();
             } else {
               setId(response.data.id);

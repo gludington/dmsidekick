@@ -247,7 +247,9 @@ export default function StatBlock({
         leaveFrom="opacity-100"
         leaveTo="opacity-0"
       >
-        <div className="absolute z-10 m-5 flex h-full w-full items-center justify-center bg-black bg-opacity-50 p-0">
+        <div
+          className={`$styles.wide} absolute z-10 m-5 flex h-full w-full items-center justify-center bg-black bg-opacity-50 p-0 sm:w-1/2`}
+        >
           <Loading text={loadingText} />
         </div>
       </Transition>
