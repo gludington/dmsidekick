@@ -11,7 +11,7 @@
   box-shadow: 0 0 1.5em #867453;
 }
 .statBlock.wide {
-  width: 46.5%;
+  width: 100%;
   min-width: 560px;
   text-align: center;
 }

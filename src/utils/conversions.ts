@@ -1,4 +1,10 @@
-import type { Monster, NameAndDescription } from "../types/monster";
+import type {
+  Action,
+  Attack,
+  Monster,
+  NameAndDescription,
+} from "../types/global";
+import { parseAction } from "./actions";
 
 export function toJSON(input: string): any {
   const val = input.replaceAll(/: ?(\d+\/\d+)/g, ': "$1"');
@@ -108,18 +114,27 @@ function skills(input: any) {
   return skills;
 }
 
-function actions(input: any): NameAndDescription[] {
-  if (input["actions"]) {
-    return toNameAndDescription(input["actions"]);
+function toActions(input: any): Action[] {
+  if (!input) {
+    return [];
   }
-  return [];
+  const bases = toNameAndDescription(input);
+  return bases.map((base) => {
+    const action = parseAction(base.description);
+    if (action) {
+      return { ...base, attack: action };
+    } else {
+      return base;
+    }
+  });
 }
 
-function legendaryActions(input: any): NameAndDescription[] {
-  if (input["legendary_actions"]) {
-    return toNameAndDescription(input["legendary_actions"]);
-  }
-  return [];
+function actions(input: any): Action[] {
+  return toActions(input["actions"]);
+}
+
+function legendaryActions(input: any): Action[] {
+  return toActions(input["legendary_actions"]);
 }
 
 function specialAbilities(input: any): NameAndDescription[] {
@@ -151,7 +166,7 @@ export function convert(input: any): Monster {
     saves: saves(input),
     skills: skills(input),
     conditionImmunities: toListFromDelimited(input.condition_immunities, ","),
-    damaveVulnerabilities: toList(input.damage_vulnerabilities),
+    damageVulnerabilities: toList(input.damage_vulnerabilities),
     damageImmunities: toList(input.damage_immunities),
     damageResistances: toListFromDelimited(input.damage_resistances, ";"),
     senses: toListFromDelimited(input.senses, ","),

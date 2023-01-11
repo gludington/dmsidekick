@@ -1,7 +1,9 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
+import { useSession } from "next-auth/react";
+import { useSearchParams } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
-import type { Monster } from "../types/monster";
+import type { Monster, MonsterSearchResults } from "../types/global";
 
 const MAX_ATTEMPTS = 20;
 const GET_INTERVAL = 4000;
@@ -35,7 +37,7 @@ export const DEFAULT_MONSTER: Monster = {
   senses: ["Common"],
   languages: ["Common", "Java", "Typescript"],
   challengeRating: "1/64",
-  damaveVulnerabilities: [],
+  damageVulnerabilities: [],
   specialAbilities: [
     {
       name: "Crash",
@@ -57,30 +59,46 @@ export const DEFAULT_MONSTER: Monster = {
   legendaryActions: [],
 };
 
-export const useFetchMonster = ({
-  id,
-  time,
-}: {
-  id: string | undefined;
-  time: Date;
-}) => {
+export const useFetchMonsters = () => {
+  const searchParams = useSearchParams();
+  const page = searchParams.get("page") || 1;
+  const size = searchParams.get("size") || 10;
+
+  const { data, isLoading, isError, isPreviousData } = useQuery(
+    ["getMonsters", page, size],
+    () =>
+      axios
+        .get(`/api/monsters`, { params: { page, size } })
+        .then((response) => response.data as MonsterSearchResults),
+    { keepPreviousData: true }
+  );
+  return {
+    data,
+    isLoading,
+    isError,
+    isPreviousData,
+  };
+};
+
+export const useFetchMonster = (id: string | undefined) => {
   const monsterRef = useRef<Monster>(DEFAULT_MONSTER);
   const counterRef = useRef<number>(0);
   const queryClient = useQueryClient();
+
   const [isError, setIsError] = useState(false);
   useEffect(() => {
     counterRef.current = 1;
     queryClient.invalidateQueries(["getMonster", id]);
-  }, [id, time, queryClient]);
+  }, [id, queryClient]);
   const [isFetching, setIsFetching] = useState(false);
-  useQuery(
-    ["getMonster", id, time],
+  const { refetch } = useQuery(
+    ["getMonster", id],
     async () => {
       setIsError(false);
       if (id) {
         setIsFetching(true);
         return await axios
-          .get("/api/monsters/get", { params: { id: id } })
+          .get(`/api/monsters/${id}`)
           .then((response) => response.data);
       } else {
         monsterRef.current = DEFAULT_MONSTER;
@@ -116,5 +134,6 @@ export const useFetchMonster = ({
     data: monsterRef.current,
     isLoading: isFetching,
     isError,
+    refetch,
   };
 };

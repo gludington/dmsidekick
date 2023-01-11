@@ -5,17 +5,19 @@ import { Disclosure, Menu, Transition } from "@headlessui/react";
 import { Bars3Icon, BellIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import { usePathname } from "next/navigation";
 import Image from "next/image";
+import Link from "next/link";
 
 const navigation = [
   { name: "Home", href: "/", current: true },
-  { name: "Monster Helper", href: "/monsters", current: false },
+  //{ name: "Monsters", href: "/monsters", current: false },
+  { name: "Monster Helper", href: "/monsters/helper", current: false },
   //{ name: "Projects", href: "#", current: false },
   //{ name: "Calendar", href: "#", current: false },
-  //{ name: "About", href: "/about", current: false },
+  { name: "About", href: "/about", current: false },
 ];
 const userNavigation = [
   //{ name: "Your Profile", href: "#" },
-  //{ name: "Settings", href: "#" },
+  //{ name: "My Monsters", href: "/profile/monsters" },
   { name: "Sign out", href: "#", onClick: () => signOut() },
 ];
 
@@ -61,9 +63,10 @@ export default function Header() {
                     <div className="hidden md:block">
                       <div className="ml-10 flex items-baseline space-x-4">
                         {nav.map((item) => (
-                          <a
+                          <Link
                             key={item.name}
                             href={item.href}
+                            shallow={true}
                             className={classNames(
                               item.current
                                 ? "bg-gray-900 text-white"
@@ -73,7 +76,7 @@ export default function Header() {
                             aria-current={item.current ? "page" : undefined}
                           >
                             {item.name}
-                          </a>
+                          </Link>
                         ))}
                       </div>
                     </div>
@@ -118,8 +121,9 @@ export default function Header() {
                               {userNavigation.map((item) => (
                                 <Menu.Item key={item.name}>
                                   {({ active }) => (
-                                    <a
+                                    <Link
                                       href={item.href}
+                                      shallow={true}
                                       onClick={item.onClick}
                                       className={classNames(
                                         active ? "bg-gray-100" : "",
@@ -127,7 +131,7 @@ export default function Header() {
                                       )}
                                     >
                                       {item.name}
-                                    </a>
+                                    </Link>
                                   )}
                                 </Menu.Item>
                               ))}
@@ -188,40 +192,49 @@ export default function Header() {
                   ))}
                 </div>
                 <div className="border-t border-gray-700 pt-4 pb-3">
-                  <div className="flex items-center px-5">
-                    <div className="flex-shrink-0">
+                  {!session ||
+                  session.status === "loading" ? null : session.status ===
+                    "authenticated" ? (
+                    <div className="mt-3 space-y-1 px-2">
+                      {userNavigation.map((item) => (
+                        <Disclosure.Button
+                          key={item.name}
+                          className="block rounded-md px-3 py-2 text-base font-medium text-gray-400 hover:bg-gray-700 hover:text-white"
+                        >
+                          <Link
+                            shallow={true}
+                            href={item.href}
+                            onClick={item.onClick}
+                          >
+                            {item.name}
+                          </Link>
+                        </Disclosure.Button>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="flex items-center px-5">
+                      <div className="flex-shrink-0">
+                        <button
+                          className={classNames(
+                            false
+                              ? "bg-gray-900 text-white"
+                              : "text-gray-300 hover:bg-gray-700 hover:text-white",
+                            "block rounded-md px-3 py-2 text-base font-medium"
+                          )}
+                          onClick={() => signIn()}
+                        >
+                          Sign In
+                        </button>
+                      </div>
                       <button
-                        className={classNames(
-                          false
-                            ? "bg-gray-900 text-white"
-                            : "text-gray-300 hover:bg-gray-700 hover:text-white",
-                          "block rounded-md px-3 py-2 text-base font-medium"
-                        )}
-                        onClick={() => signIn()}
+                        type="button"
+                        className="ml-auto flex-shrink-0 rounded-full bg-gray-800 p-1 text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
                       >
-                        Login
+                        <span className="sr-only">View notifications</span>
+                        <BellIcon className="h-6 w-6" aria-hidden="true" />
                       </button>
                     </div>
-                    <button
-                      type="button"
-                      className="ml-auto flex-shrink-0 rounded-full bg-gray-800 p-1 text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
-                    >
-                      <span className="sr-only">View notifications</span>
-                      <BellIcon className="h-6 w-6" aria-hidden="true" />
-                    </button>
-                  </div>
-                  <div className="mt-3 space-y-1 px-2">
-                    {userNavigation.map((item) => (
-                      <Disclosure.Button
-                        key={item.name}
-                        as="a"
-                        href={item.href}
-                        className="block rounded-md px-3 py-2 text-base font-medium text-gray-400 hover:bg-gray-700 hover:text-white"
-                      >
-                        {item.name}
-                      </Disclosure.Button>
-                    ))}
-                  </div>
+                  )}
                 </div>
               </Disclosure.Panel>
             </>

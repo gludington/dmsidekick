@@ -12,6 +12,7 @@ import {
 } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
+import { EyeIcon } from "@heroicons/react/24/outline";
 import Image from "next/image";
 
 function DeleteModal({
@@ -127,6 +128,7 @@ export const Chat = forwardRef(
       authorized,
       onSubmit,
       onActivate,
+      onToggle,
       onClear,
       isLoading,
     }: {
@@ -137,6 +139,7 @@ export const Chat = forwardRef(
         callback: (chunk: string) => void
       ) => Promise<string>;
       onActivate: (messages: string[]) => void;
+      onToggle: () => void;
       onClear: () => void;
       isLoading: boolean;
     },
@@ -235,26 +238,28 @@ export const Chat = forwardRef(
           }}
           onClose={() => setShowDeleteModal(false)}
         />
-        <div className="min-h-100 flex h-full flex-1 flex-col justify-between">
-          <div className="flex justify-between border-b-2 border-gray-200 sm:items-center">
+        <div className="flex h-[calc(100vh-80px)] flex-1 flex-col sm:h-[calc(100vh-110px)]">
+          <div className="flex h-20 justify-between border-b-2 border-gray-200 sm:items-center">
             <div className="relative flex items-center space-x-4">
               <div className="relative">
-                <span className="absolute right-0 bottom-0 text-green-500">
+                <span className="absolute right-0 bottom-0 h-4 w-4 text-green-500 sm:h-6 sm:w-6">
                   <svg width="20" height="20">
                     <circle cx="8" cy="8" r="8" fill="currentColor"></circle>
                   </svg>
                 </span>
-                <img
+                <Image
+                  width="40"
+                  height="40"
                   src="/dmsidekick.png"
                   alt=""
-                  className="h-10 w-10 rounded-full sm:h-16 sm:w-16"
+                  className="h-8 w-8 rounded-full sm:h-16 sm:w-16"
                 />
               </div>
               <div className="flex flex-col leading-tight">
-                <div className="mt-1 flex items-center text-2xl">
+                <div className="mt-1 flex items-center text-lg sm:text-2xl">
                   <span className="mr-3 text-gray-700">DM Sidekick</span>
                 </div>
-                <span className="text-lg text-gray-600">
+                <span className="text-base text-gray-600 sm:text-lg">
                   Junior Monster Creator
                 </span>
               </div>
@@ -262,7 +267,7 @@ export const Chat = forwardRef(
             <div className="flex items-center space-x-2">
               <button
                 type="button"
-                className="inline-flex h-10 w-10 items-center justify-center rounded-lg border text-gray-500 transition duration-500 ease-in-out hover:bg-gray-300 focus:outline-none"
+                className="h:6 w:6 inline-flex items-center justify-center rounded-lg border text-gray-500 transition duration-500 ease-in-out hover:bg-gray-300 focus:outline-none sm:h-10 sm:w-10"
                 onClick={() => setShowDeleteModal(true)}
               >
                 <svg
@@ -280,7 +285,14 @@ export const Chat = forwardRef(
               </button>
               <button
                 type="button"
-                className="inline-flex h-10 w-10 items-center justify-center rounded-lg border text-gray-500 transition duration-500 ease-in-out hover:bg-gray-300 focus:outline-none disabled:opacity-20"
+                className="inline-flex h-6 w-6 items-center justify-center rounded-lg border text-gray-500 transition duration-500 ease-in-out hover:bg-gray-300 focus:outline-none sm:h-10 sm:w-10"
+                onClick={() => onToggle()}
+              >
+                <EyeIcon className="v-6 h-6" />
+              </button>
+              <button
+                type="button"
+                className="inline-flex h-6 w-6 items-center justify-center rounded-lg border text-gray-500 transition duration-500 ease-in-out hover:bg-gray-300 focus:outline-none disabled:opacity-20 sm:h-10 sm:w-10"
                 disabled={disabled || toSend.length === 0}
                 onClick={() =>
                   onActivate(
@@ -402,6 +414,8 @@ export const Chat = forwardRef(
                         />
                       ) : (
                         <img
+                          width="24"
+                          height="24"
                           src={session?.data?.user?.image || ""}
                           alt={session?.data?.user?.name || ""}
                           className="order-2 h-6 w-6 rounded-full"
@@ -412,30 +426,8 @@ export const Chat = forwardRef(
                 ))
               : null}
           </div>
-          <div className="mb-2 border-t-2 border-gray-200 px-4 pt-4 sm:mb-0">
+          <div className="mb-20 h-14 border-t-2 border-gray-200 px-4 pt-4 sm:mb-0 sm:h-20">
             <div className="relative flex">
-              {/*<span className="absolute inset-y-0 flex items-center">
-            {<button
-              type="button"
-              className="inline-flex h-12 w-12 items-center justify-center rounded-full text-gray-500 transition duration-500 ease-in-out hover:bg-gray-300 focus:outline-none"
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                className="h-6 w-6 text-gray-600"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"
-                ></path>
-              </svg>
-            </button>
-          </span>
-                  */}
               <textarea
                 placeholder="Describe your monster..."
                 value={text}
@@ -450,73 +442,7 @@ export const Chat = forwardRef(
                 overflow-y={false}
                 className="mr-5 w-11/12 rounded-md bg-gray-200 py-2 px-2 pl-4 text-gray-600 placeholder-gray-600 focus:placeholder-gray-400 focus:outline-none disabled:text-slate-100"
               />
-              <div className="absolute inset-y-0 right-0 hidden w-1/12 items-center sm:flex">
-                {/*
-            <button
-              type="button"
-              disabled={disabled}
-              className="inline-flex h-10 w-10 items-center justify-center rounded-full text-gray-500 transition duration-500 ease-in-out hover:bg-gray-300 focus:outline-none "
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                className="h-6 w-6 text-gray-600"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"
-                ></path>
-              </svg>
-            </button>
-            <button
-              type="button"
-              className="inline-flex h-10 w-10 items-center justify-center rounded-full text-gray-500 transition duration-500 ease-in-out hover:bg-gray-300 focus:outline-none"
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                className="h-6 w-6 text-gray-600"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"
-                ></path>
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"
-                ></path>
-              </svg>
-            </button>
-            <button
-              type="button"
-              className="inline-flex h-10 w-10 items-center justify-center rounded-full text-gray-500 transition duration-500 ease-in-out hover:bg-gray-300 focus:outline-none"
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                className="h-6 w-6 text-gray-600"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                ></path>
-              </svg>
-                      </button>
-                */}
+              <div className="absolute inset-y-0 right-0  w-1/12 items-center sm:flex">
                 <button
                   type="button"
                   disabled={disabled}

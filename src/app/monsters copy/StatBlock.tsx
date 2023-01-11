@@ -2,35 +2,15 @@ import styles from "./statblock.module.css";
 import { Transition } from "@headlessui/react";
 import Loading from "../Loading";
 import type { Monster } from "../../types/global";
-import { ChatBubbleLeftEllipsisIcon } from "@heroicons/react/24/outline";
 
-function CreatureHeading({
-  monster,
-  onToggle,
-}: {
-  monster: Monster;
-  onToggle?: () => void;
-}) {
+function CreatureHeading({ monster }: { monster: Monster }) {
   return (
     <>
-      <div
-        className={`${styles.creatureHeading} flex flex-row justify-between`}
-      >
-        <div>
-          <h1>{monster?.name}</h1>
-          <h2>
-            {monster?.size} {monster?.type}, {monster.alignment}
-          </h2>
-        </div>
-        {onToggle ? (
-          <button
-            type="button"
-            className="inline-flex h-6 w-6 items-center justify-center rounded-lg border text-gray-500 transition duration-500 ease-in-out hover:bg-gray-300 focus:outline-none sm:hidden sm:h-10 sm:w-10"
-            onClick={() => onToggle()}
-          >
-            <ChatBubbleLeftEllipsisIcon />
-          </button>
-        ) : null}
+      <div className={styles.creatureHeading}>
+        <h1>{monster?.name}</h1>
+        <h2>
+          {monster?.size} {monster?.type}, {monster.alignment}
+        </h2>
       </div>
       <svg height="5" width="100%" className={styles.taperedRule}>
         <polyline points="0,0 400,2.5 0,5"></polyline>
@@ -227,17 +207,13 @@ function ActionBlock({
 export default function StatBlock({
   monster,
   isLoading,
-  loadingText = "Loading Monster",
-  onToggle,
 }: {
   monster: Monster;
   isLoading: boolean;
-  loadingText?: string;
-  onToggle?: () => void;
 }) {
   console.debug("stat block", monster);
   return (
-    <div className="pb-203 flex h-[calc(100vh-40px)] flex-1 flex-col">
+    <div className="relative">
       <Transition
         show={isLoading}
         enter="transition-opacity duration-75"
@@ -248,7 +224,7 @@ export default function StatBlock({
         leaveTo="opacity-0"
       >
         <div className="absolute z-10 m-5 flex h-full w-full items-center justify-center bg-black bg-opacity-50 p-0">
-          <Loading text={loadingText} />
+          <Loading text="Preparing Stat block" />
         </div>
       </Transition>
       <div
@@ -258,7 +234,7 @@ export default function StatBlock({
       >
         <hr className={styles.orangeBorder} />
         <div className={styles.sectionLeft}>
-          <CreatureHeading monster={monster} onToggle={onToggle} />
+          <CreatureHeading monster={monster} />
           <TopStats monster={monster} />
           <ActionBlock values={monster.specialAbilities} />
         </div>

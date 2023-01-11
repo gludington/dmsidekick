@@ -1,6 +1,7 @@
+import Image from "next/image";
 export default function Loading({ text = "Loading..." }: { text?: string }) {
   return (
-    <div role="status">
+    <div role="status" className="flex-cols flex gap-2">
       <svg
         className="mr-2 inline h-8 w-8 animate-spin fill-blue-600 text-gray-200 dark:text-gray-600"
         viewBox="0 0 100 101"
@@ -16,6 +17,7 @@ export default function Loading({ text = "Loading..." }: { text?: string }) {
           fill="currentFill"
         />
       </svg>
+      <Image width="32" height="32" src="/dmsidekick.png" alt="DM Sidekick" />
       <span className="fill-blue-600 text-xl">{text}</span>
       <span className="sr-only">{text}</span>
     </div>

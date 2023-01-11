@@ -7,10 +7,10 @@ export default function Page() {
   return (
     <div className="relative bg-white py-2 sm:py-1 lg:py-4">
       <div className="mx-auto max-w-md px-6 text-center sm:max-w-3xl lg:max-w-7xl lg:px-8">
-        <p className="mb-8 text-4xl font-extrabold tracking-tight  text-gray-600">
+        <p className="mt-2 text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
           About DM Sidekick
         </p>
-        <p className="mx-auto mt-5 max-w-prose text-left text-base text-gray-600">
+        <p className="mx-auto mt-5 max-w-prose text-left text-base text-gray-500">
           DM Sidekick aims to bring interesting tools to Dungeons and Dragons
           players while giving me the opportunity to play with fun technology.
           The first effort,{" "}
@@ -29,7 +29,7 @@ export default function Page() {
           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
           allowFullScreen
         ></iframe>
-        <p className="mx-auto mt-5 max-w-prose text-left text-base text-gray-600">
+        <p className="mx-auto mt-5 max-w-prose text-left text-base text-gray-500">
           Monster Creator is currently invite-only, both while we work some
           kinks out and to keep AI costs under control. If you would like an
           invite,{" "}
@@ -37,7 +37,7 @@ export default function Page() {
             Contact us.
           </a>
         </p>
-        <p className="mx-auto mt-5 max-w-prose text-left text-base text-gray-600">
+        <p className="mx-auto mt-5 max-w-prose text-left text-base text-gray-500">
           At some point, this will likely have an issue tracker, but, at the
           moment, if you are here, you have been explicitly invited, and can
           talk to me about bugs you find. Most typically, they result from

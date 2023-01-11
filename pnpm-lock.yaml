@@ -10,6 +10,7 @@ specifiers:
   '@next/mdx': ^13.1.1
   '@prisma/client': ^4.5.0
   '@tanstack/react-query': ^4.16.0
+  '@tanstack/react-table': ^8.7.4
   '@trpc/client': ^10.0.0
   '@trpc/next': ^10.0.0
   '@trpc/react-query': ^10.0.0
@@ -62,6 +63,7 @@ dependencies:
   '@next/mdx': 13.1.1_vvg67iglxhejglpl7nsv3pjzui
   '@prisma/client': 4.8.0_prisma@4.8.0
   '@tanstack/react-query': 4.20.4_biqbaboplfbrettd7655fr4n2y
+  '@tanstack/react-table': 8.7.4_biqbaboplfbrettd7655fr4n2y
   '@trpc/client': 10.7.0_@trpc+server@10.7.0
   '@trpc/next': 10.7.0_gmaturtqmtlrknaw65ek5pmv2i
   '@trpc/react-query': 10.7.0_x4ie6nhblo2vtx2aafrgzlfqy4
@@ -877,6 +879,23 @@ packages:
       react: 18.2.0
       react-dom: 18.2.0_react@18.2.0
       use-sync-external-store: 1.2.0_react@18.2.0
+    dev: false
+
+  /@tanstack/react-table/8.7.4_biqbaboplfbrettd7655fr4n2y:
+    resolution: {integrity: sha512-4Q1OV3kUSxbtekclS3sqjCyCDowqCPruUCfHm1nGoPSmVLRCHoQ1E2rmzTVGeocEKgV9TDnj39tOgGwcADPuPA==}
+    engines: {node: '>=12'}
+    peerDependencies:
+      react: '>=16'
+      react-dom: '>=16'
+    dependencies:
+      '@tanstack/table-core': 8.7.4
+      react: 18.2.0
+      react-dom: 18.2.0_react@18.2.0
+    dev: false
+
+  /@tanstack/table-core/8.7.4:
+    resolution: {integrity: sha512-OPhzca7e83KGukxLpZ+4F9OBp9CZXi9b/OGJBH8dlC3wpffcSSDczYGUGJKG7wirXQ6cUVYL+9G6UrrdnblKNQ==}
+    engines: {node: '>=12'}
     dev: false
 
   /@trpc/client/10.7.0_@trpc+server@10.7.0:
