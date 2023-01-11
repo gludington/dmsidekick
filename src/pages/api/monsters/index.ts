@@ -28,7 +28,7 @@ export default async function index(req: NextApiRequest, res: NextApiResponse) {
 
   const results = await prisma.$transaction([
     prisma.monster.count(params),
-    prisma.monster.findMany({ ...params, skip: page, take: size }),
+    prisma.monster.findMany({ ...params, skip: page * size, take: size }),
   ]);
   res.status(200).send({
     page: page,

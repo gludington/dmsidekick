@@ -94,22 +94,93 @@ function join(prop) {
   return prop.join(", ");
 }
 
+function createAction(npc, action, stem) {
+  const uuid = generateUUID();
+  createOrSetAttribute(npc, `${stem}_{uuid}_name`, action.name);
+  createOrSetAttribute(npc, `${stem}_{uuid}_description`, action.description);
+
+  if (action.attack) {
+    createOrSetAttribute(npc, `${stem}_{uuid}_attack_flag`, "on");
+    if (action.attack.rangeType) {
+      createOrSetAttribute(
+        npc,
+        `${stem}_{uuid}_attack_type`,
+        action.attack.rangeType
+      );
+    }
+    if (action.attack.toHit) {
+      createOrSetAttribute(
+        npc,
+        `${stem}_{uuid}_attack_tohit`,
+        action.attack.toHit
+      );
+    }
+    if (action.attack.reach) {
+      createOrSetAttribute(
+        npc,
+        `${stem}_{uuid}_attack_range`,
+        action.attack.reach
+      );
+    }
+    if (action.attack.target) {
+      createOrSetAttribute(
+        npc,
+        `${stem}_{uuid}_attack_target`,
+        action.attack.target
+      );
+    }
+
+    if (action.attack.damage) {
+      createOrSetAttribute(
+        npc,
+        `${stem}_{uuid}_attack_damage`,
+        action.attack.damage
+      );
+      createOrSetAttribute(
+        npc,
+        `${stem}_{uuid}_attack_crit`,
+        action.attack.damage
+      );
+    }
+    if (action.attack.damageType) {
+      createOrSetAttribute(
+        npc,
+        `${stem}_{uuid}_attack_damagetype`,
+        action.attack.damageType
+      );
+    }
+    if (action.attack.damageTwo) {
+      createOrSetAttribute(
+        npc,
+        `${stem}_{uuid}_attack_damage2`,
+        action.attack.damageTwo
+      );
+      createOrSetAttribute(
+        npc,
+        `${stem}_{uuid}_attack_crit2`,
+        action.attack.damage
+      );
+    }
+    if (action.attack.damageTwoType) {
+      createOrSetAttribute(
+        npc,
+        `${stem}_{uuid}_attack_damagetype2`,
+        action.attack.damageTwo
+      );
+    }
+  }
+}
 on("chat:message", function (msg) {
   log("-------");
   if (msg.type === "api" && msg.content.startsWith("!ack")) {
     const char = findObjs({
-      _type: "character",
-      name: "testing",
+      name: "Ancient Blue Dragon",
     });
     const attributes = findObjs({
       _characterid: "-NLCshx4aiZMIzFfDwZa",
     });
     log(attributes);
-    log(
-      findObjs({
-        _type: "character",
-      })
-    );
+    log(findObjs({}));
   }
   if (msg.type === "api" && msg.content.startsWith("!dmsidekick")) {
     const input = msg.content.substring("!dmsidekick".length).trim();
@@ -180,92 +251,10 @@ on("chat:message", function (msg) {
       );
     });
     json.actions.forEach((action) => {
-      const uuid = generateUUID();
-      createOrSetAttribute(
-        npc,
-        `repeating_npcaction_${uuid}_name`,
-        action.name
-      );
-      createOrSetAttribute(
-        npc,
-        `repeating_npcaction_${uuid}_description`,
-        action.description
-      );
-
-      if (action.attack) {
-        createOrSetAttribute(
-          npc,
-          `repeating_npcaction_${uuid}_attack_flag`,
-          "on"
-        );
-        if (action.attack.rangeType) {
-          createOrSetAttribute(
-            npc,
-            `repeating_npcaction_${uuid}_attack_type`,
-            action.attack.rangeType
-          );
-        }
-        if (action.attack.toHit) {
-          createOrSetAttribute(
-            npc,
-            `repeating_npcaction_${uuid}_attack_tohit`,
-            action.attack.toHit
-          );
-        }
-        if (action.attack.reach) {
-          createOrSetAttribute(
-            npc,
-            `repeating_npcaction_${uuid}_attack_range`,
-            action.attack.reach
-          );
-        }
-        if (action.attack.target) {
-          createOrSetAttribute(
-            npc,
-            `repeating_npcaction_${uuid}_attack_target`,
-            action.attack.target
-          );
-        }
-
-        if (action.attack.damage) {
-          createOrSetAttribute(
-            npc,
-            `repeating_npcaction_${uuid}_attack_damage`,
-            action.attack.damage
-          );
-          createOrSetAttribute(
-            npc,
-            `repeating_npcaction_${uuid}_attack_crit`,
-            action.attack.damage
-          );
-        }
-        if (action.attack.damageType) {
-          createOrSetAttribute(
-            npc,
-            `repeating_npcaction_${uuid}_attack_damagetype`,
-            action.attack.damageType
-          );
-        }
-        if (action.attack.damageTwo) {
-          createOrSetAttribute(
-            npc,
-            `repeating_npcaction_${uuid}_attack_damage2`,
-            action.attack.damageTwo
-          );
-          createOrSetAttribute(
-            npc,
-            `repeating_npcaction_${uuid}_attack_crit2`,
-            action.attack.damage
-          );
-        }
-        if (action.attack.damageTwoType) {
-          createOrSetAttribute(
-            npc,
-            `repeating_npcaction_${uuid}_attack_damagetype2`,
-            action.attack.damageTwo
-          );
-        }
-      }
+      createAction(npc, action, "repeating_npcaction");
+    });
+    json.legendaryActions.forEach((action) => {
+      createAction(npc, action, "repeating_npcaction-l");
     });
   }
   log("--------");
