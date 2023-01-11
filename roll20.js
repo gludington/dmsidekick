@@ -115,16 +115,17 @@ on("chat:message", function (msg) {
     const input = msg.content.substring("!dmsidekick".length).trim();
     const json = JSON.parse(input);
     const npc = createNPC(json.name);
-    createOrSetAttribute(npc, "npc_ac", json.armorClass);
-    createOrSetAttribute(npc, "hp", json.hitPoints, json.hitPoints);
-    createOrSetAttribute(npc, "npc_hpformula", json.hitDice);
+    createOrSetAttribute(npc, "npc_name", json.name);
     createOrSetAttribute(
       npc,
       "npc_type",
-      `${json.size ? `${json.size} ` : ""}${json.type ? `${json.type} ` : ""}${
-        json.subType ? `(${json.subType}) ` : ""
-      }${json.alignment ? `, ${json.alignment} ` : ""}`
+      `${json.type}${json.subType ? ` ${json.subType}` : ""}${
+        json.alignment ? `, ${json.alignment}` : ""
+      }`
     );
+    createOrSetAttribute(npc, "npc_ac", json.armorClass);
+    createOrSetAttribute(npc, "hp", json.hitPoints, json.hitPoints);
+    createOrSetAttribute(npc, "npc_hpformula", json.hitDice);
     Object.keys(json.attributes).forEach((att) => {
       createOrSetAttribute(npc, att, json.attributes[att]);
     });
@@ -177,6 +178,94 @@ on("chat:message", function (msg) {
         `repeating_npctrait_${uuid}_description`,
         spec.description
       );
+    });
+    json.actions.forEach((action) => {
+      const uuid = generateUUID();
+      createOrSetAttribute(
+        npc,
+        `repeating_npcaction_${uuid}_name`,
+        action.name
+      );
+      createOrSetAttribute(
+        npc,
+        `repeating_npcaction_${uuid}_description`,
+        action.description
+      );
+
+      if (action.attack) {
+        createOrSetAttribute(
+          npc,
+          `repeating_npcaction_${uuid}_attack_flag`,
+          "on"
+        );
+        if (action.attack.rangeType) {
+          createOrSetAttribute(
+            npc,
+            `repeating_npcaction_${uuid}_attack_type`,
+            action.attack.rangeType
+          );
+        }
+        if (action.attack.toHit) {
+          createOrSetAttribute(
+            npc,
+            `repeating_npcaction_${uuid}_attack_tohit`,
+            action.attack.toHit
+          );
+        }
+        if (action.attack.reach) {
+          createOrSetAttribute(
+            npc,
+            `repeating_npcaction_${uuid}_attack_range`,
+            action.attack.reach
+          );
+        }
+        if (action.attack.target) {
+          createOrSetAttribute(
+            npc,
+            `repeating_npcaction_${uuid}_attack_target`,
+            action.attack.target
+          );
+        }
+
+        if (action.attack.damage) {
+          createOrSetAttribute(
+            npc,
+            `repeating_npcaction_${uuid}_attack_damage`,
+            action.attack.damage
+          );
+          createOrSetAttribute(
+            npc,
+            `repeating_npcaction_${uuid}_attack_crit`,
+            action.attack.damage
+          );
+        }
+        if (action.attack.damageType) {
+          createOrSetAttribute(
+            npc,
+            `repeating_npcaction_${uuid}_attack_damagetype`,
+            action.attack.damageType
+          );
+        }
+        if (action.attack.damageTwo) {
+          createOrSetAttribute(
+            npc,
+            `repeating_npcaction_${uuid}_attack_damage2`,
+            action.attack.damageTwo
+          );
+          createOrSetAttribute(
+            npc,
+            `repeating_npcaction_${uuid}_attack_crit2`,
+            action.attack.damage
+          );
+        }
+        if (action.attack.damageTwoType) {
+          createOrSetAttribute(
+            npc,
+            `repeating_npcaction_${uuid}_attack_damagetype2`,
+            action.attack.damageTwo
+          );
+        }
+      }
     });
   }
   log("--------");
