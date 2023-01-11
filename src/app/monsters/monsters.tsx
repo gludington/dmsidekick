@@ -1,6 +1,6 @@
 "use client";
 import { useFetchMonsters } from "../../hooks/monsters";
-import type { Monster, MonsterSearchResults } from "../../types/global";
+import type { Monster } from "../../types/global";
 
 import {
   createColumnHelper,
@@ -10,8 +10,6 @@ import {
 } from "@tanstack/react-table";
 import Link from "next/link";
 import TableFooter from "../TableFooter";
-import { Fragment, useMemo } from "react";
-import { Transition } from "@headlessui/react";
 import Loading from "../Loading";
 const HELPER = createColumnHelper<Monster>();
 
@@ -174,7 +172,7 @@ export default function Monsters() {
           </div>
         </div>
       </div>
-      <TableFooter<MonsterSearchResults> data={data} />
+      <TableFooter<Monster> data={data} />
     </>
   );
 }

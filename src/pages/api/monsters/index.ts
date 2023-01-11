@@ -30,13 +30,16 @@ export default async function index(req: NextApiRequest, res: NextApiResponse) {
     prisma.monster.count(params),
     prisma.monster.findMany({ ...params, skip: page, take: size }),
   ]);
-
   res.status(200).send({
     page: page,
     size: size,
     total: results[0],
     content: results[1].map((m) => {
-      return { id: m.id, ...JSON.parse(m.output) };
+      if (m.output) {
+        return { id: m.id, ...JSON.parse(m.output) };
+      } else {
+        return m;
+      }
     }),
   });
 }

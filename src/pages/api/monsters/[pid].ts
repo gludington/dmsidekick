@@ -24,7 +24,8 @@ export default async function index(req: NextApiRequest, res: NextApiResponse) {
       await streamChat(req, res);
       break;
     default:
-      await getMonster(pid, req, res);
+      const id = (Array.isArray(pid) ? pid[0] : pid) as string;
+      await getMonster(id, req, res);
   }
 }
 
