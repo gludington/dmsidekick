@@ -5,6 +5,8 @@ import { ReactElement, ReactNode, useState } from "react";
 import { useFetchMonster } from "../../../hooks/monsters";
 import StatBlock from "../StatBlock";
 import { ClipboardDocumentIcon } from "@heroicons/react/24/outline";
+import { useQuery } from "@tanstack/react-query";
+import axios from "axios";
 
 function Circle() {
   return (
@@ -41,8 +43,18 @@ function copyText(text: string) {
   navigator.clipboard.writeText(text);
 }
 
+function useRoll20Loader() {
+  const { data, isLoading } = useQuery(["loadRoll20"], async () =>
+    axios.get("/scripts/roll20.js").then((response) => response.data)
+  );
+
+  return { data, isLoading };
+}
+
 export default function Page(props: any) {
   const { data, isLoading } = useFetchMonster(props.params.mid);
+  const { data: roll20, isLoading: isRoll20Loading } = useRoll20Loader();
+
   const [panel, setPanel] = useState(true);
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2">
@@ -51,53 +63,59 @@ export default function Page(props: any) {
           <h1 className="mb-8 text-4xl font-extrabold tracking-tight  text-gray-600">
             {isLoading ? <Loading /> : data.name}
           </h1>
-          <h2 className="mb-8 text-xl font-extrabold tracking-tight  text-gray-600">
-            Exporting - Roll20
-          </h2>
-          <ul className="max-w-md list-inside space-y-1">
-            <ListItem
-              text={
-                <span>
-                  Copy the API script to clipboard (sorry no one-click install
-                  yet; you may also find it{" "}
-                  <Link href="/scripts/roll20.js" target="_new">
-                    Here
-                  </Link>
-                </span>
-              }
-              icon={
-                <ClipboardDocumentIcon
-                  className="float-right h-8 w-8"
-                  onClick={() => {
-                    console.warn(JSON.stringify(data));
-                  }}
+          {isLoading || isRoll20Loading ? (
+            <Loading />
+          ) : (
+            <>
+              <h2 className="mb-8 text-xl font-extrabold tracking-tight  text-gray-600">
+                Exporting - Roll20
+              </h2>
+              <ul className="max-w-md list-inside space-y-1">
+                <ListItem
+                  text={
+                    <span>
+                      Copy the API script to clipboard (sorry no one-click
+                      install yet; you may also find it{" "}
+                      <Link href="/scripts/roll20.js" target="_new">
+                        Here
+                      </Link>
+                    </span>
+                  }
+                  icon={
+                    <ClipboardDocumentIcon
+                      className="float-right h-8 w-8"
+                      onClick={() => {
+                        copyText(roll20);
+                      }}
+                    />
+                  }
                 />
-              }
-            />
-            <ListItem text="Go to the script/mods section of your Roll20 game. API Access is required, so you must have Roll20 Pro Account" />
-            <ListItem text="Create a new script, and paste the content in" />
-            <ListItem text="Restart your API Sandbox" />
-            <ListItem
-              text="Copy your monster to the clipboard"
-              icon={
-                <ClipboardDocumentIcon
-                  className="h-8 w-8"
-                  onClick={() => {
-                    copyText(JSON.stringify(data));
-                  }}
+                <ListItem text="Go to the script/mods section of your Roll20 game. API Access is required, so you must have Roll20 Pro Account" />
+                <ListItem text="Create a new script, and paste the content in" />
+                <ListItem text="Restart your API Sandbox" />
+                <ListItem
+                  text={<span>Copy your monster to the clipboard</span>}
+                  icon={
+                    <ClipboardDocumentIcon
+                      className="float-right h-6 w-6"
+                      onClick={() => {
+                        copyText(JSON.stringify(data));
+                      }}
+                    />
+                  }
                 />
-              }
-            />
-            <ListItem
-              text={
-                <span>
-                  In Roll20 chat, type the command <b>!dmsidekick</b> followed
-                  by a space, paste your monster, and hit return
-                </span>
-              }
-            />
-          </ul>
-          <p>Your monster will be imported into Roll20</p>
+                <ListItem
+                  text={
+                    <span>
+                      In Roll20 chat, type the command <b>!dmsidekick</b>{" "}
+                      followed by a space, paste your monster, and hit return
+                    </span>
+                  }
+                />
+              </ul>
+              <p>Your monster will be imported into Roll20</p>
+            </>
+          )}
         </div>
         <div className="align-center center my-4 h-1 w-full bg-green-300 px-8"></div>
         <Link href="/monsters" shallow={true}>

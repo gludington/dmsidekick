@@ -67,6 +67,7 @@ export default function Page() {
     }
   );
 
+  const queryClient = useQueryClient();
   const buildMonster: (messages: string[]) => void = useMemo(() => {
     return (messages: string[]) => {
       submitMonster({ text: messages.join(". ") })
@@ -85,6 +86,12 @@ export default function Page() {
             );
           } else {
             if (id) {
+              queryClient.setQueryData(["getMonster", id], {
+                id: id,
+                complete: false,
+                monster: null,
+              });
+              queryClient.invalidateQueries(["getMonster", id]);
               refetch();
             } else {
               setId(response.data.id);
