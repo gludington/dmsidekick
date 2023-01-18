@@ -7,7 +7,7 @@ import StatBlock from "../StatBlock";
 import { ClipboardDocumentIcon } from "@heroicons/react/24/outline";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
-import { Field, FormikProvider, useFormik } from "formik";
+import { Field, FieldArray, FormikProvider, useFormik } from "formik";
 import { Monster } from "../../../types/global";
 
 function Circle() {
@@ -54,6 +54,7 @@ function useRoll20Loader() {
 }
 
 type TextFieldProps = HTMLProps<HTMLInputElement>;
+
 function TextField(props: TextFieldProps) {
   return (
     <div className="border">
@@ -64,6 +65,22 @@ function TextField(props: TextFieldProps) {
         {props.label}
       </label>
       <Field name={props.name} className="w-full" {...props} />
+    </div>
+  );
+}
+
+type TextAreaProps = HTMLProps<HTMLTextAreaElement>;
+
+function TextArea(props: TextAreaProps) {
+  return (
+    <div className="border">
+      <label
+        className="mb-1 block pr-4 font-bold text-gray-500 md:mb-0"
+        htmlFor={props.name}
+      >
+        {props.label}
+      </label>
+      <Field name={props.name} className="w-full" {...props} as="textarea" />
     </div>
   );
 }
@@ -90,9 +107,14 @@ export default function MonsterView(props: any) {
                 <TextField name="size" label="Size" />
                 <TextField name="type" label="Type" />
                 <TextField name="subType" label="Sub-Type" />
+                <TextField name="alignment" label="Alignment" />
               </div>
-              <TextField name="armorClass" label="Armor Class" type="number" />
               <div className="flex gap-3">
+                <TextField
+                  name="armorClass"
+                  label="Armor Class"
+                  type="number"
+                />
                 <TextField name="hitPoints" label="Hit Points" type="number" />
                 <TextField name="hitDice" label="Hit Dice" />
               </div>
@@ -118,17 +140,66 @@ export default function MonsterView(props: any) {
                   label="INT"
                   type="number"
                 />
-                <TextField
-                  name="attributes.wisdome"
-                  label="WIS"
-                  type="number"
-                />
+                <TextField name="attributes.wisdom" label="WIS" type="number" />
                 <TextField
                   name="attributes.charisma"
                   label="CHA"
                   type="number"
                 />
               </div>
+              <h3>Saving Throws (0 or blank to leave empty)</h3>
+              <div className="flex gap-3">
+                <TextField name="saves.strength" label="STR" type="number" />
+                <TextField name="saves.dexterity" label="DEX" type="number" />
+                <TextField
+                  name="saves.constitution"
+                  label="CON"
+                  type="number"
+                />
+                <TextField
+                  name="saves.intelligence"
+                  label="INT"
+                  type="number"
+                />
+                <TextField name="saves.wisdom" label="WIS" type="number" />
+                <TextField name="saves.charisma" label="CHA" type="number" />
+              </div>
+              <FieldArray name="specialAbilities">
+                {(arrayHelpers) => (
+                  <>
+                    <h1>
+                      Abilities{" "}
+                      <button
+                        onClick={() =>
+                          arrayHelpers.push({ name: "", description: "" })
+                        }
+                      >
+                        CLICK ME
+                      </button>
+                    </h1>
+                    <div className="mx-4 grid grid-cols-2">
+                      {values?.specialAbilities.map((spec, index) => (
+                        <>
+                          <div key={`specialAbilities.${index}`}>
+                            <TextField
+                              name={`specialAbilities.${index}.name`}
+                              label="Name"
+                            />
+                            <TextArea
+                              name={`specialAbilities.${index}.description`}
+                              label="Description"
+                              rows={4}
+                            />
+                          </div>
+                          <button onClick={() => arrayHelpers.remove(index)}>
+                            DELETE
+                          </button>
+                        </>
+                      ))}
+                    </div>
+                  </>
+                )}
+              </FieldArray>
             </div>
           </FormikProvider>
           {isRoll20Loading ? (
