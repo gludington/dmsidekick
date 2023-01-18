@@ -67,7 +67,7 @@ const columns = [
                   </span>
                   <span className="sr-only">View</span>
                 </Link>
-                <Link
+                {/*<Link
                   href={`/monsters/${info.row.getValue("id")}/export`}
                   prefetch={false}
                   className="text-indigo-600 hover:text-indigo-900"
@@ -77,6 +77,7 @@ const columns = [
                   </span>
                   <span className="sr-only">oh boy</span>
                 </Link>
+              */}
               </div>
             </div>
           </div>
