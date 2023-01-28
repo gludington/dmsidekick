@@ -11,30 +11,25 @@ import {
   Trash,
 } from "./[mid]/components";
 import { useState } from "react";
-import { FieldArray } from "formik";
+import { FieldArray, useFormikContext } from "formik";
 
-function CreatureHeading({
-  monster,
-  onToggle,
-}: {
-  monster: Monster;
-  onToggle?: () => void;
-}) {
+function CreatureHeading({ onToggle }: { onToggle?: () => void }) {
+  const { values: monster } = useFormikContext<PossiblyEditableMonster>();
+  console.warn("FUCKING", onToggle);
   return (
     <>
-      <div
-        className={`${styles.creatureHeading} flex flex-row justify-between`}
-      >
+      <div className={`${styles.creatureHeading}`}>
         <div>
           <EditableBlock
+            editable={monster.editable}
             view={
-              <>
+              <div>
                 <h1>{monster?.name}</h1>
 
                 <h2>
                   {monster?.size} {monster?.type}, {monster.alignment}
                 </h2>
-              </>
+              </div>
             }
             edit={
               <>
@@ -140,10 +135,13 @@ function TaperedRule() {
   );
 }
 
-function TopStats({ monster }: { monster: Monster }) {
+function TopStats() {
+  const { values: monster } = useFormikContext<PossiblyEditableMonster>();
+
   return (
     <div className={styles.topStats}>
       <EditableBlock
+        editable={monster.editable}
         view={
           <>
             <div className={`${styles.propertyLine} ${styles.first}`}>
@@ -174,6 +172,7 @@ function TopStats({ monster }: { monster: Monster }) {
       />
       <TaperedRule />
       <EditableBlock
+        editable={monster.editable}
         view={
           <div className={styles.abilities}>
             <div className={styles.abilityStrength}>
@@ -224,6 +223,7 @@ function TopStats({ monster }: { monster: Monster }) {
       <TaperedRule />
       <div className={`${styles.propertyLine} ${styles.first}`}>
         <EditableBlock
+          editable={monster.editable}
           view={
             <>
               <h4>Saving Throws</h4>
@@ -301,16 +301,19 @@ function ActionBlock({
   header,
   name,
   values,
+  editable,
 }: {
   header?: string;
   name: string;
   values: { name: string; desc?: string; description?: string }[];
+  editable: boolean;
 }) {
-  if (!values || values.length === 0) {
+  if (!editable && (!values || values.length === 0)) {
     return null;
   }
   return (
     <EditableBlock
+      editable={editable}
       view={
         <>
           {header ? <h3>{header}</h3> : null}
@@ -323,7 +326,7 @@ function ActionBlock({
         </>
       }
       edit={
-        <div className="grid grid-cols-[1fr_20px]">
+        <div className="grid grid-cols-edit-icon">
           <FieldArray name={name}>
             {(arrayHelpers) => (
               <>
@@ -339,7 +342,7 @@ function ActionBlock({
                   {values?.map((spec, index) => (
                     <div
                       key={`${name}.${index}.name`}
-                      className="grid grid-cols-[1fr_20px] rounded-xl border-2 border-stat-block-rust p-2"
+                      className="grid grid-cols-edit-icon rounded-xl border-2 border-stat-block-rust p-2"
                     >
                       <div className="mx-2">
                         <TextField
@@ -369,17 +372,18 @@ function ActionBlock({
   );
 }
 
+export type PossiblyEditableMonster = Monster & { editable: boolean };
+
 export default function StatBlock({
-  monster,
   isLoading,
   loadingText = "Loading Monster",
   onToggle,
 }: {
-  monster: Monster;
   isLoading: boolean;
   loadingText?: string;
   onToggle?: () => void;
 }) {
+  const { values: monster } = useFormikContext<PossiblyEditableMonster>();
   console.debug("stat block", monster);
   return (
     <div className="pb-203 flex h-[calc(100vh-40px)] flex-1 flex-col">
@@ -405,32 +409,31 @@ export default function StatBlock({
       >
         <hr className={styles.orangeBorder} />
         <div className={styles.sectionLeft}>
-          <CreatureHeading monster={monster} onToggle={onToggle} />
-          <TopStats monster={monster} />
+          <CreatureHeading onToggle={onToggle} />
+          <TopStats />
           <ActionBlock
             name="specialAbilities"
             values={monster.specialAbilities}
+            editable={monster.editable}
           />
         </div>
         <div className={styles.sectionRight}>
-          {monster?.actions.length > 0 ? (
-            <div className={styles.actions}>
-              <ActionBlock
-                header="Actions"
-                name="actions"
-                values={monster.actions}
-              />
-            </div>
-          ) : null}
-          {monster?.legendaryActions?.length > 0 ? (
-            <div className={styles.actions}>
-              <ActionBlock
-                header="Legendary Actions"
-                name="legendaryActions"
-                values={monster.legendaryActions}
-              />
-            </div>
-          ) : null}
+          <div className={styles.actions}>
+            <ActionBlock
+              header="Actions"
+              name="actions"
+              values={monster.actions}
+              editable={monster.editable}
+            />
+          </div>
+          <div className={styles.actions}>
+            <ActionBlock
+              header="Legendary Actions"
+              name="legendaryActions"
+              values={monster.legendaryActions}
+              editable={monster.editable}
+            />
+          </div>
         </div>
       </div>
     </div>

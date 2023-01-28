@@ -4,6 +4,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import type { AxiosResponse } from "axios";
 import { AxiosError } from "axios";
 import axios from "axios";
+import type { PossiblyEditableMonster } from "../StatBlock";
 import StatBlock from "../StatBlock";
 import { useState, useMemo, useRef, useEffect } from "react";
 import { useSession } from "next-auth/react";
@@ -11,6 +12,8 @@ import Loading from "../../Loading";
 import { hasRole } from "../../../utils/session";
 import { useFetchMonster } from "../../../hooks/monsters";
 import { Chat } from "../../Chat";
+import { FormikProvider, useFormik } from "formik";
+import type { Monster } from "../../../types/global";
 
 const GREETING = [
   "Hello, let's have a conversation and build a monster. Start by asking me to describe your monster, like: describe a kobold with an eye patch.",
@@ -166,6 +169,11 @@ export default function Page() {
     [session.data]
   );
 
+  const formik = useFormik<PossiblyEditableMonster>({
+    initialValues: { editable: false, ...monster },
+    onSubmit: (values: Monster) => console.warn(values),
+  });
+
   const [panel, setPanel] = useState(true);
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2">
@@ -186,12 +194,13 @@ export default function Page() {
             />
           </div>
           <div className={`h-full${!panel ? "" : " hidden sm:block"}`}>
-            <StatBlock
-              monster={monster}
-              loadingText="Preparing Stat block"
-              isLoading={isLoading}
-              onToggle={() => setPanel(!panel)}
-            />
+            <FormikProvider value={formik}>
+              <StatBlock
+                loadingText="Preparing Stat block"
+                isLoading={isLoading}
+                onToggle={() => setPanel(!panel)}
+              />
+            </FormikProvider>
           </div>
         </>
       )}

@@ -126,7 +126,7 @@ export function EditableBlock({
 }: {
   view: ReactElement;
   edit: ReactElement;
-  editable: boolean;
+  editable?: boolean;
 }) {
   const [showEdit, setShowEdit] = useState(false);
   if (editable) {

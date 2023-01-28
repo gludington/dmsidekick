@@ -1,15 +1,13 @@
 "use client";
 import Loading from "../../Loading";
 import Link from "next/link";
-import { HTMLProps, ReactElement, ReactNode, useState } from "react";
-import { useFetchMonster } from "../../../hooks/monsters";
-import StatBlock from "../StatBlock";
+import { ReactElement, ReactNode, useState } from "react";
+import StatBlock, { PossiblyEditableMonster } from "../StatBlock";
 import { ClipboardDocumentIcon } from "@heroicons/react/24/outline";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
-import { Field, FieldArray, FormikProvider, useFormik } from "formik";
+import { FormikProvider, useFormik } from "formik";
 import { Monster } from "../../../types/global";
-import { Trash } from "./components";
 
 function Circle() {
   return (
@@ -56,8 +54,8 @@ function useRoll20Loader() {
 
 export default function MonsterView(props: any) {
   const { data: roll20, isLoading: isRoll20Loading } = useRoll20Loader();
-  const formik = useFormik<Monster>({
-    initialValues: props.monster,
+  const formik = useFormik<PossiblyEditableMonster>({
+    initialValues: { editable: true, ...props.monster },
     onSubmit: (values: Monster) => console.warn(values),
   });
   const { values } = formik;
@@ -130,7 +128,7 @@ export default function MonsterView(props: any) {
         ) : null}
       </div>
       <FormikProvider value={formik}>
-        <StatBlock monster={values} isLoading={false} />
+        <StatBlock isLoading={false} />
       </FormikProvider>
       <div className="align-center center my-4 h-1 w-full bg-green-300 px-8"></div>
       <Link href="/monsters" shallow={true}>
