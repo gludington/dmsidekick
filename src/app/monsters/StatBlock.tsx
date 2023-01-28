@@ -10,12 +10,11 @@ import {
   TextField,
   Trash,
 } from "./[mid]/components";
-import { useState } from "react";
 import { FieldArray, useFormikContext } from "formik";
 
 function CreatureHeading({ onToggle }: { onToggle?: () => void }) {
   const { values: monster } = useFormikContext<PossiblyEditableMonster>();
-  console.warn("FUCKING", onToggle);
+
   return (
     <>
       <div className={`${styles.creatureHeading}`}>
