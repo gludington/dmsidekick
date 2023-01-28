@@ -3,6 +3,9 @@ const defaultTheme = require("tailwindcss/defaultTheme");
 
 module.exports = {
   content: ["./src/**/*.{js,ts,jsx,tsx}"],
+  variants: {
+    boderColor: ["focus-within"],
+  },
   theme: {
     fontSize: {
       xs: ["0.75rem", { lineHeight: "1rem" }],
@@ -20,6 +23,12 @@ module.exports = {
       "9xl": ["8rem", { lineHeight: "1" }],
     },
     extend: {
+      zIndex: {
+        "-1": "-1",
+      },
+      transformOrigin: {
+        0: "0%",
+      },
       borderRadius: {
         "4xl": "2rem",
         "5xl": "2.5rem",

@@ -3,6 +3,8 @@ import { Transition } from "@headlessui/react";
 import Loading from "../Loading";
 import type { Monster } from "../../types/global";
 import { ChatBubbleLeftEllipsisIcon } from "@heroicons/react/24/outline";
+import { EditableBlock, TextField } from "./[mid]/components";
+import { useState } from "react";
 
 function CreatureHeading({
   monster,
@@ -17,10 +19,27 @@ function CreatureHeading({
         className={`${styles.creatureHeading} flex flex-row justify-between`}
       >
         <div>
-          <h1>{monster?.name}</h1>
-          <h2>
-            {monster?.size} {monster?.type}, {monster.alignment}
-          </h2>
+          <EditableBlock
+            view={
+              <>
+                <h1>{monster?.name}</h1>
+
+                <h2>
+                  {monster?.size} {monster?.type}, {monster.alignment}
+                </h2>
+              </>
+            }
+            edit={
+              <>
+                <TextField name="name" label="Name" />
+                <div className="grid grid-cols-3">
+                  <TextField name="size" label="Size" />
+                  <TextField name="type" label="Type" />
+                  <TextField name="subType" label="Sub-Type" />
+                </div>
+              </>
+            }
+          />
         </div>
         {onToggle ? (
           <button
@@ -117,45 +136,84 @@ function TaperedRule() {
 function TopStats({ monster }: { monster: Monster }) {
   return (
     <div className={styles.topStats}>
-      <div className={`${styles.propertyLine} ${styles.first}`}>
-        <h4>Armor Class</h4> <p>{monster.armorClass}</p>
-      </div>
-      <div className={styles.propertyLine}>
-        <h4>Hit Points</h4>{" "}
-        <p>
-          {monster?.hitPoints}{" "}
-          {monster?.hitDice ? `(${monster.hitDice})` : null}
-        </p>
-      </div>
-      <div className={`${styles.propertyLine} ${styles.last}`}>
-        <h4>Speed</h4> <p>{listMap(monster?.speed)}</p>
-      </div>
+      <EditableBlock
+        view={
+          <>
+            <div className={`${styles.propertyLine} ${styles.first}`}>
+              <h4>Armor Class</h4> <p>{monster.armorClass}</p>
+            </div>
+            <div className={styles.propertyLine}>
+              <h4>Hit Points</h4>{" "}
+              <p>
+                {monster?.hitPoints}{" "}
+                {monster?.hitDice ? `(${monster.hitDice})` : null}
+              </p>
+            </div>
+            <div className={`${styles.propertyLine} ${styles.last}`}>
+              <h4>Speed</h4> <p>{listMap(monster?.speed)}</p>
+            </div>
+          </>
+        }
+        edit={
+          <>
+            <TextField name="armorClass" label="Armor Class" type="number" />
+            <div className="flex gap-3">
+              <TextField name="hitPoints" label="Hit Points" type="number" />
+              <TextField name="hitDice" label="Hit Dice" />
+            </div>
+            <TextField name="speed" label="Speed" />
+          </>
+        }
+      />
       <TaperedRule />
-      <div className={styles.abilities}>
-        <div className={styles.abilityStrength}>
-          <h4>STR</h4> <p>{mod(monster?.attributes.strength)}</p>
-        </div>
-        <div className={styles.abilityDexterity}>
-          <h4>DEX</h4>
-          <p>{mod(monster?.attributes.dexterity)}</p>
-        </div>
-        <div className={styles.abilityConstitution}>
-          <h4>CON</h4>
-          <p>{mod(monster?.attributes.constitution)}</p>
-        </div>
-        <div className={styles.abilityIntelligence}>
-          <h4>INT</h4>
-          <p>{mod(monster?.attributes.intelligence)}</p>
-        </div>
-        <div className={styles.abilityWisdom}>
-          <h4>WIS</h4>
-          <p>{mod(monster?.attributes.wisdom)}</p>
-        </div>
-        <div className={styles.abilityCharisma}>
-          <h4>CHA</h4>
-          <p>{mod(monster?.attributes.charisma)}</p>
-        </div>
-      </div>
+      <EditableBlock
+        view={
+          <div className={styles.abilities}>
+            <div className={styles.abilityStrength}>
+              <h4>STR</h4> <p>{mod(monster?.attributes.strength)}</p>
+            </div>
+            <div className={styles.abilityDexterity}>
+              <h4>DEX</h4>
+              <p>{mod(monster?.attributes.dexterity)}</p>
+            </div>
+            <div className={styles.abilityConstitution}>
+              <h4>CON</h4>
+              <p>{mod(monster?.attributes.constitution)}</p>
+            </div>
+            <div className={styles.abilityIntelligence}>
+              <h4>INT</h4>
+              <p>{mod(monster?.attributes.intelligence)}</p>
+            </div>
+            <div className={styles.abilityWisdom}>
+              <h4>WIS</h4>
+              <p>{mod(monster?.attributes.wisdom)}</p>
+            </div>
+            <div className={styles.abilityCharisma}>
+              <h4>CHA</h4>
+              <p>{mod(monster?.attributes.charisma)}</p>
+            </div>
+          </div>
+        }
+        edit={
+          <div className="flex gap-3">
+            <TextField name="attributes.strength" label="STR" type="number" />
+            <TextField name="attributes.dexterity" label="DEX" type="number" />
+            <TextField
+              name="attributes.constitution"
+              label="CON"
+              type="number"
+            />
+            <TextField
+              name="attributes.intelligence"
+              label="INT"
+              type="number"
+            />
+            <TextField name="attributes.wisdom" label="WIS" type="number" />
+            <TextField name="attributes.charisma" label="CHA" type="number" />
+          </div>
+        }
+      />
+
       <TaperedRule />
       <div className={`${styles.propertyLine} ${styles.first}`}>
         <h4>Saving Throws</h4>{" "}
@@ -235,7 +293,7 @@ export default function StatBlock({
   loadingText?: string;
   onToggle?: () => void;
 }) {
-  console.debug("stat block", monster);
+  console.warn("editable stat block", monster);
   return (
     <div className="pb-203 flex h-[calc(100vh-40px)] flex-1 flex-col">
       <Transition

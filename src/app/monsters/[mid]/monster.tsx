@@ -261,9 +261,11 @@ export default function MonsterView(props: any) {
           Back to Monsters Page
         </Link>
       </div>
-      <div className={`h-full${!panel ? "" : " hidden sm:block"}`}>
-        <StatBlock monster={values} isLoading={false} />
-      </div>
+      <FormikProvider value={formik}>
+        <div className={`h-full${!panel ? "" : " hidden sm:block"}`}>
+          <StatBlock monster={values} isLoading={false} />
+        </div>
+      </FormikProvider>
     </div>
   );
 }
