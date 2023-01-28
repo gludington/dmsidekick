@@ -54,9 +54,7 @@ function useRoll20Loader() {
 
 export default function Page(props: any) {
   const { data, isLoading } = useFetchMonster(props.params.mid);
-  const { data: roll20, isLoading: isRoll20Loading } = useRoll20Loader();
 
-  const [panel, setPanel] = useState(true);
   if (isLoading) {
     return <Loading />;
   }

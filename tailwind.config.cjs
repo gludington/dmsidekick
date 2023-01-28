@@ -23,25 +23,28 @@ module.exports = {
       "9xl": ["8rem", { lineHeight: "1" }],
     },
     extend: {
-      zIndex: {
-        "-1": "-1",
-      },
-      transformOrigin: {
-        0: "0%",
-      },
-      colors: {
-        "stat-block-rust": "#7a200d",
-      },
       borderRadius: {
         "4xl": "2rem",
         "5xl": "2.5rem",
+      },
+      colors: {
+        "stat-block-rust": "#7a200d",
       },
       fontFamily: {
         sans: ["Inter", ...defaultTheme.fontFamily.sans],
         display: ["DM Sans", ...defaultTheme.fontFamily.sans],
       },
+      gridTemplateColumns: {
+        "edit-icon": "1fr 20px",
+      },
       maxWidth: {
         "2xl": "40rem",
+      },
+      transformOrigin: {
+        0: "0%",
+      },
+      zIndex: {
+        "-1": "-1",
       },
     },
   },

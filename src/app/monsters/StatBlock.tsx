@@ -298,9 +298,11 @@ function TopStats({ monster }: { monster: Monster }) {
 }
 
 function ActionBlock({
+  header,
   name,
   values,
 }: {
+  header?: string;
   name: string;
   values: { name: string; desc?: string; description?: string }[];
 }) {
@@ -311,6 +313,7 @@ function ActionBlock({
     <EditableBlock
       view={
         <>
+          {header ? <h3>{header}</h3> : null}
           {values.map((ability) => (
             <div key={ability.name} className={styles.propertyBlock}>
               <h4>{ability.name}</h4>{" "}
@@ -320,40 +323,43 @@ function ActionBlock({
         </>
       }
       edit={
-        <div className="flex flex-wrap">
+        <div className="grid grid-cols-[1fr_20px]">
           <FieldArray name={name}>
             {(arrayHelpers) => (
               <>
-                <h1 className="w-60 flex-initial">Abilities</h1>
-                <div className="flex-none">
+                <h1>Abilities</h1>
+                <div>
                   <Plus
                     onClick={() =>
                       arrayHelpers.push({ name: "", description: "" })
                     }
                   />
                 </div>
-
-                {values?.map((spec, index) => (
-                  <div
-                    key={`${name}.${index}.name`}
-                    className="flex flex-wrap rounded-xl border-2 border-stat-block-rust p-2"
-                  >
-                    <div className="mx-2 w-44 flex-initial">
-                      <TextField name={`${name}.${index}.name`} label="Name" />
+                <div className="col-span-2">
+                  {values?.map((spec, index) => (
+                    <div
+                      key={`${name}.${index}.name`}
+                      className="grid grid-cols-[1fr_20px] rounded-xl border-2 border-stat-block-rust p-2"
+                    >
+                      <div className="mx-2">
+                        <TextField
+                          name={`${name}.${index}.name`}
+                          label="Name"
+                        />
+                      </div>
+                      <div>
+                        <Trash onClick={() => arrayHelpers.remove(index)} />
+                      </div>
+                      <div className="col-span-2 mx-2">
+                        <TextArea
+                          name={`${name}.${index}.description`}
+                          label="Description"
+                          rows={4}
+                        />
+                      </div>
                     </div>
-                    <div className="flex-none">
-                      <Trash onClick={() => arrayHelpers.remove(index)} />
-                    </div>
-                    <div className="mx-2">
-                      <TextArea
-                        name={`${name}.${index}.description`}
-                        label="Description"
-                        cols={24}
-                        rows={4}
-                      />
-                    </div>
-                  </div>
-                ))}
+                  ))}
+                </div>
               </>
             )}
           </FieldArray>
@@ -374,7 +380,7 @@ export default function StatBlock({
   loadingText?: string;
   onToggle?: () => void;
 }) {
-  console.warn("editable stat block", monster);
+  console.debug("stat block", monster);
   return (
     <div className="pb-203 flex h-[calc(100vh-40px)] flex-1 flex-col">
       <Transition
@@ -409,14 +415,17 @@ export default function StatBlock({
         <div className={styles.sectionRight}>
           {monster?.actions.length > 0 ? (
             <div className={styles.actions}>
-              <h3>Actions</h3>
-              <ActionBlock name="actions" values={monster.actions} />
+              <ActionBlock
+                header="Actions"
+                name="actions"
+                values={monster.actions}
+              />
             </div>
           ) : null}
           {monster?.legendaryActions?.length > 0 ? (
             <div className={styles.actions}>
-              <h3>Legendary Actions</h3>
               <ActionBlock
+                header="Legendary Actions"
                 name="legendaryActions"
                 values={monster.legendaryActions}
               />

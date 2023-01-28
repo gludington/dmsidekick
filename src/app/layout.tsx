@@ -29,10 +29,8 @@ export default function Layout({ children }: { children: ReactNode }) {
             <header>
               <Header />
             </header>
-            <main className="mx-auto h-full max-w-7xl py-6 sm:px-6 lg:px-8">
-              {/* Replace with your content */}
+            <main className="h-100 mx-auto max-w-7xl py-6 sm:px-6 lg:px-8">
               <div className="px-4 py-2 sm:px-0">{children}</div>
-              {/* /End replace */}
             </main>
             <footer className="h-10 bg-gray-800 text-center text-gray-300">
               Copyright &copy; 2023 DM Sidekick

@@ -105,7 +105,7 @@ export function TextArea(props: TextAreaProps) {
     <div className="relative my-4 w-full border-b-2 border-black focus-within:border-blue-500">
       <Field
         name={props.name}
-        className="block h-full appearance-none bg-transparent focus:outline-none"
+        className="block w-full appearance-none bg-transparent focus:outline-none"
         {...props}
         as="textarea"
       />
@@ -122,22 +122,27 @@ export function TextArea(props: TextAreaProps) {
 export function EditableBlock({
   view,
   edit,
+  editable = true,
 }: {
   view: ReactElement;
   edit: ReactElement;
+  editable: boolean;
 }) {
   const [showEdit, setShowEdit] = useState(false);
-  if (showEdit) {
+  if (editable) {
+    if (showEdit) {
+      return (
+        <div className="grid w-full grid-cols-edit-icon p-2">
+          <div>{edit}</div> <Check onClick={() => setShowEdit(false)} />
+        </div>
+      );
+    }
     return (
-      <>
-        {edit} <Check onClick={() => setShowEdit(false)} />
-      </>
+      <div className="grid w-full grid-cols-edit-icon p-2">
+        <div>{view}</div>
+        <Pencil className="h-4 w-4" onClick={() => setShowEdit(true)} />
+      </div>
     );
   }
-  return (
-    <>
-      {view}
-      <Pencil onClick={() => setShowEdit(true)} />
-    </>
-  );
+  return <>{view}</>;
 }
