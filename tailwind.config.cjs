@@ -29,6 +29,9 @@ module.exports = {
       transformOrigin: {
         0: "0%",
       },
+      colors: {
+        "stat-block-rust": "#7a200d",
+      },
       borderRadius: {
         "4xl": "2rem",
         "5xl": "2.5rem",

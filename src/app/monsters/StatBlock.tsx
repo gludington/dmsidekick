@@ -3,8 +3,15 @@ import { Transition } from "@headlessui/react";
 import Loading from "../Loading";
 import type { Monster } from "../../types/global";
 import { ChatBubbleLeftEllipsisIcon } from "@heroicons/react/24/outline";
-import { EditableBlock, TextField } from "./[mid]/components";
+import {
+  EditableBlock,
+  Plus,
+  TextArea,
+  TextField,
+  Trash,
+} from "./[mid]/components";
 import { useState } from "react";
+import { FieldArray } from "formik";
 
 function CreatureHeading({
   monster,
@@ -216,15 +223,42 @@ function TopStats({ monster }: { monster: Monster }) {
 
       <TaperedRule />
       <div className={`${styles.propertyLine} ${styles.first}`}>
-        <h4>Saving Throws</h4>{" "}
-        <p>
-          {savingThrow("STR", monster.saves.strength)}
-          {savingThrow("DEX", monster?.saves.dexterity)}
-          {savingThrow("CON", monster?.saves.constitution)}
-          {savingThrow("INT", monster?.saves.intelligence)}
-          {savingThrow("WIS", monster?.saves.wisdom)}
-          {savingThrow("CHA", monster?.saves.charisma)}
-        </p>
+        <EditableBlock
+          view={
+            <>
+              <h4>Saving Throws</h4>
+              <p>
+                {savingThrow("STR", monster.saves.strength)}
+                {savingThrow("DEX", monster?.saves.dexterity)}
+                {savingThrow("CON", monster?.saves.constitution)}
+                {savingThrow("INT", monster?.saves.intelligence)}
+                {savingThrow("WIS", monster?.saves.wisdom)}
+                {savingThrow("CHA", monster?.saves.charisma)}
+              </p>
+            </>
+          }
+          edit={
+            <>
+              <h4>Saving Throws (0 or blank to omit)</h4>
+              <div className="flex gap-3">
+                <TextField name="saves.strength" label="STR" type="number" />
+                <TextField name="saves.dexterity" label="DEX" type="number" />
+                <TextField
+                  name="saves.constitution"
+                  label="CON"
+                  type="number"
+                />
+                <TextField
+                  name="saves.intelligence"
+                  label="INT"
+                  type="number"
+                />
+                <TextField name="saves.wisdom" label="WIS" type="number" />
+                <TextField name="saves.charisma" label="CHA" type="number" />
+              </div>
+            </>
+          }
+        />
       </div>
       <div className={styles.propertyLine}>
         <h4>Skills</h4> <p>{listNumberMap(monster?.skills)}</p>
@@ -264,21 +298,68 @@ function TopStats({ monster }: { monster: Monster }) {
 }
 
 function ActionBlock({
+  name,
   values,
 }: {
+  name: string;
   values: { name: string; desc?: string; description?: string }[];
 }) {
   if (!values || values.length === 0) {
     return null;
   }
   return (
-    <>
-      {values.map((ability) => (
-        <div key={ability.name} className={styles.propertyBlock}>
-          <h4>{ability.name}</h4> <p>{ability.desc || ability.description}</p>
+    <EditableBlock
+      view={
+        <>
+          {values.map((ability) => (
+            <div key={ability.name} className={styles.propertyBlock}>
+              <h4>{ability.name}</h4>{" "}
+              <p>{ability.desc || ability.description}</p>
+            </div>
+          ))}
+        </>
+      }
+      edit={
+        <div className="flex flex-wrap">
+          <FieldArray name={name}>
+            {(arrayHelpers) => (
+              <>
+                <h1 className="w-60 flex-initial">Abilities</h1>
+                <div className="flex-none">
+                  <Plus
+                    onClick={() =>
+                      arrayHelpers.push({ name: "", description: "" })
+                    }
+                  />
+                </div>
+
+                {values?.map((spec, index) => (
+                  <div
+                    key={`${name}.${index}.name`}
+                    className="flex flex-wrap rounded-xl border-2 border-stat-block-rust p-2"
+                  >
+                    <div className="mx-2 w-44 flex-initial">
+                      <TextField name={`${name}.${index}.name`} label="Name" />
+                    </div>
+                    <div className="flex-none">
+                      <Trash onClick={() => arrayHelpers.remove(index)} />
+                    </div>
+                    <div className="mx-2">
+                      <TextArea
+                        name={`${name}.${index}.description`}
+                        label="Description"
+                        cols={24}
+                        rows={4}
+                      />
+                    </div>
+                  </div>
+                ))}
+              </>
+            )}
+          </FieldArray>
         </div>
-      ))}
-    </>
+      }
+    />
   );
 }
 
@@ -320,19 +401,25 @@ export default function StatBlock({
         <div className={styles.sectionLeft}>
           <CreatureHeading monster={monster} onToggle={onToggle} />
           <TopStats monster={monster} />
-          <ActionBlock values={monster.specialAbilities} />
+          <ActionBlock
+            name="specialAbilities"
+            values={monster.specialAbilities}
+          />
         </div>
         <div className={styles.sectionRight}>
           {monster?.actions.length > 0 ? (
             <div className={styles.actions}>
               <h3>Actions</h3>
-              <ActionBlock values={monster.actions} />
+              <ActionBlock name="actions" values={monster.actions} />
             </div>
           ) : null}
           {monster?.legendaryActions?.length > 0 ? (
             <div className={styles.actions}>
               <h3>Legendary Actions</h3>
-              <ActionBlock values={monster.legendaryActions} />
+              <ActionBlock
+                name="legendaryActions"
+                values={monster.legendaryActions}
+              />
             </div>
           ) : null}
         </div>

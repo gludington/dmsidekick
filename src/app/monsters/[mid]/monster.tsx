@@ -9,6 +9,7 @@ import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { Field, FieldArray, FormikProvider, useFormik } from "formik";
 import { Monster } from "../../../types/global";
+import { Trash } from "./components";
 
 function Circle() {
   return (
@@ -191,9 +192,7 @@ export default function MonsterView(props: any) {
                               rows={4}
                             />
                           </div>
-                          <button onClick={() => arrayHelpers.remove(index)}>
-                            DELETE
-                          </button>
+                          <Trash onClick={() => arrayHelpers.remove(index)} />
                         </>
                       ))}
                     </div>
