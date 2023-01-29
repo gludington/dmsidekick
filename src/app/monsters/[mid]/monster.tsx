@@ -68,13 +68,13 @@ export default function MonsterView(props: { monster: Monster }) {
   console.debug(props.monster, deleteMonster);
   return (
     <>
-      <div className="mx-auto mt-2 flex max-w-md flex-auto justify-between gap-2">
+      <div className="mx-auto mt-2 flex flex-auto justify-between gap-2">
         <h1 className="text-l font-extrabold tracking-tight text-gray-600  sm:text-xl">
           {values.name}
         </h1>
         <div className="flex gap-4">
           <Save
-            className="h-[20px] w-[20px]"
+            className="standard-button h-[30px] w-[30px]"
             onClick={(evt) => {
               saveMonster(values);
               evt.stopPropagation();
@@ -82,12 +82,12 @@ export default function MonsterView(props: { monster: Monster }) {
           />
           {props.monster.id ? (
             <Trash
-              className="h-[20px] w-[20px]"
+              className="standard-button h-[30px] w-[30px]"
               onClick={() => deleteMonster()}
             />
           ) : null}
           <Share
-            className="h-[20px] w-[20px]"
+            className="standard-button h-[30px] w-[30px]"
             onClick={() => setShowOptions(!showOptions)}
           />
         </div>

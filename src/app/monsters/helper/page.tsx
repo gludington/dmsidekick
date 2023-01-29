@@ -173,7 +173,13 @@ export default function Page() {
     initialValues: { editable: false, ...monster },
     onSubmit: (values: Monster) => console.warn(values),
   });
+  const { setValues } = formik;
 
+  useEffect(() => {
+    if (monster) {
+      setValues({ editable: false, ...monster });
+    }
+  }, [monster, setValues]);
   const [panel, setPanel] = useState(true);
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2">

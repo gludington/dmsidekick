@@ -162,6 +162,7 @@ export const useFetchMonster = (id: string | undefined) => {
       },
     }
   );
+
   return {
     id,
     data: monsterRef.current,

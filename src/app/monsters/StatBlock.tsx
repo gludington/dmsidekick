@@ -811,6 +811,7 @@ export default function StatBlock({
           <TopStats />
           <ActionBlock
             name="specialAbilities"
+            header={monster.editable ? "Abilities" : undefined}
             values={monster.specialAbilities}
             editable={monster.editable}
           />

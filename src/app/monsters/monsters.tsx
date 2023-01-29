@@ -15,8 +15,6 @@ import Loading from "../Loading";
 import { Pencil, Plus, Share } from "./[mid]/components";
 const HELPER = createColumnHelper<Monster>();
 
-const BUTTON_CLS =
-  "inline-flex items-center justify-center rounded-md border border-transparent bg-indigo-200 p-[2px] text-sm font-medium text-indigo-800 text-white shadow-sm hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 sm:w-auto";
 const columns = [
   HELPER.accessor("id", {}),
   HELPER.accessor("type", {}),
@@ -53,14 +51,17 @@ const columns = [
         scope="col"
         className="flex justify-end gap-2 py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6"
       >
-        <Link href="/monsters/helper">
-          <button title="Add New Monster" className={BUTTON_CLS}>
+        <Link href="/monsters/new">
+          <button title="Add New Monster" className="standard-button">
             <Plus className="h-6 w-6" />
           </button>
           <span className="sr-only">Add New Monster</span>
         </Link>
         <Link href="/monsters/helper">
-          <button title="Add New Monster with Helper" className={BUTTON_CLS}>
+          <button
+            title="Add New Monster with Helper"
+            className="standard-button"
+          >
             <Plus className="h-6 w-6" />
             <Image
               className="h-6 w-6"
@@ -83,7 +84,7 @@ const columns = [
           <Link href={`/monsters/${info.row.getValue("id")}`}>
             <button
               title={`Edit ${info.row.getValue("name")}`}
-              className={BUTTON_CLS}
+              className="standard-button"
             >
               <Pencil />
             </button>
@@ -94,7 +95,7 @@ const columns = [
           <Link href={`/monsters/${info.row.getValue("id")}`}>
             <button
               title={`Edit ${info.row.getValue("name")}`}
-              className={BUTTON_CLS}
+              className="standard-button"
             >
               <Share />
             </button>
