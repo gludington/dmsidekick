@@ -17,29 +17,50 @@ export default async function index(req: NextApiRequest, res: NextApiResponse) {
     res.status(403);
     res.end();
   }
-  const reqParams = req.query;
+  if (req.method === "POST") {
+    const created = await prisma.monster.create({
+      data: {
+        created: new Date(),
+        prompt: "",
+        userId: session?.user?.id as string,
+        output: JSON.stringify(req.body),
+      },
+    });
+    return res.status(200).json({
+      id: created.id,
+      complete: true,
+      monster: { ...JSON.parse(created.output as string), id: created.id },
+    });
+  } else {
+    await getMonsters(req, res);
+  }
 
-  const page = asInt(reqParams.page, 1) - 1;
-  const size = asInt(reqParams.size, 10);
+  async function getMonsters(req: NextApiRequest, res: NextApiResponse) {
+    console.warn(req.method);
+    const reqParams = req.query;
 
-  const params = {
-    where: { userId: session?.user?.id, output: { not: null } },
-  };
+    const page = asInt(reqParams.page, 1) - 1;
+    const size = asInt(reqParams.size, 10);
 
-  const results = await prisma.$transaction([
-    prisma.monster.count(params),
-    prisma.monster.findMany({ ...params, skip: page * size, take: size }),
-  ]);
-  res.status(200).send({
-    page: page,
-    size: size,
-    total: results[0],
-    content: results[1].map((m) => {
-      if (m.output) {
-        return { id: m.id, ...JSON.parse(m.output) };
-      } else {
-        return m;
-      }
-    }),
-  });
+    const params = {
+      where: { userId: session?.user?.id, output: { not: null } },
+    };
+
+    const results = await prisma.$transaction([
+      prisma.monster.count(params),
+      prisma.monster.findMany({ ...params, skip: page * size, take: size }),
+    ]);
+    res.status(200).send({
+      page: page,
+      size: size,
+      total: results[0],
+      content: results[1].map((m) => {
+        if (m.output) {
+          return { id: m.id, ...JSON.parse(m.output) };
+        } else {
+          return m;
+        }
+      }),
+    });
+  }
 }
