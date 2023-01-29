@@ -3,24 +3,60 @@ import { Transition } from "@headlessui/react";
 import Loading from "../Loading";
 import type { Monster } from "../../types/global";
 import { ChatBubbleLeftEllipsisIcon } from "@heroicons/react/24/outline";
+import type { TextFieldProps } from "./[mid]/components";
+import {
+  EditableBlock,
+  Plus,
+  TextArea,
+  TextField,
+  Trash,
+} from "./[mid]/components";
+import {
+  FieldArray,
+  FormikProvider,
+  useFormik,
+  useFormikContext,
+} from "formik";
+import { useEffect, useMemo, useRef } from "react";
 
-function CreatureHeading({
-  monster,
-  onToggle,
-}: {
-  monster: Monster;
-  onToggle?: () => void;
-}) {
+function CreatureHeading({ onToggle }: { onToggle?: () => void }) {
+  const { values: monster } = useFormikContext<PossiblyEditableMonster>();
+
   return (
     <>
-      <div
-        className={`${styles.creatureHeading} flex flex-row justify-between`}
-      >
+      <div className={`${styles.creatureHeading}`}>
         <div>
-          <h1>{monster?.name}</h1>
-          <h2>
-            {monster?.size} {monster?.type}, {monster.alignment}
-          </h2>
+          <EditableBlock
+            editable={monster.editable}
+            view={
+              <div>
+                <h1>{monster?.name}</h1>
+
+                <h2>
+                  {monster?.size} {monster?.type}, {monster.alignment}
+                </h2>
+              </div>
+            }
+            edit={
+              <>
+                <TextField name="name" label="Name" />
+                <div className="grid grid-cols-4 gap-2">
+                  <TextField name="size" label="Size" addClass="text-sm" />
+                  <TextField name="type" label="Type" addClass="text-sm" />
+                  <TextField
+                    name="subType"
+                    label="Sub-Type"
+                    addClass="text-sm"
+                  />
+                  <TextField
+                    name="alignment"
+                    label="Alignemnt"
+                    addClass="text-sm"
+                  />
+                </div>
+              </>
+            }
+          />
         </div>
         {onToggle ? (
           <button
@@ -114,91 +150,444 @@ function TaperedRule() {
   );
 }
 
-function TopStats({ monster }: { monster: Monster }) {
+function useComponentWillUnmount(cleanupCallback: () => void) {
+  const callbackRef = useRef(cleanupCallback);
+  callbackRef.current = cleanupCallback; // always up to date
+  useEffect(() => {
+    return () => callbackRef.current();
+  }, []);
+}
+
+function StringListEditor({
+  header,
+  values,
+  onClose,
+}: {
+  header: string;
+  values: string[];
+  onClose: (values: string[]) => void;
+}) {
+  const formik = useFormik<{ arr: string[] }>({
+    initialValues: { arr: values },
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
+    onSubmit: () => {},
+  });
+
+  useComponentWillUnmount(() => {
+    onClose(formik.values.arr);
+  });
+  return (
+    <FormikProvider value={formik}>
+      <FieldArray name="arr">
+        {(arrayHelpers) => (
+          <>
+            <div className="grid grid-cols-edit-icon">
+              <h4>{header}</h4>
+              <div>
+                <Plus
+                  onClick={() => {
+                    arrayHelpers.push("");
+                  }}
+                />
+              </div>
+            </div>
+            <div className="grid grid-cols-edit-icon">
+              {formik.values.arr.map((spec, index) => (
+                <>
+                  <div className="grid grid-cols-2">
+                    <TextField
+                      key={`${header}_${index}`}
+                      name={`arr[${index}]`}
+                    />
+                  </div>
+                  <Trash onClick={() => arrayHelpers.remove(index)} />
+                </>
+              ))}
+            </div>
+          </>
+        )}
+      </FieldArray>
+    </FormikProvider>
+  );
+}
+
+function MapSubForm({
+  header,
+  nameLabel,
+  valueLabel,
+  values,
+  typeProps,
+  onClose,
+}: {
+  header: string;
+  nameLabel: string;
+  valueLabel: string;
+  values: { [key: string]: string | number };
+  typeProps?: TextFieldProps;
+  onClose: (values: { [key: string]: string | number }) => void;
+}) {
+  const arr = useMemo(
+    () =>
+      Object.keys(values).map((name) => {
+        return { name: name, value: values[name] };
+      }),
+    [values]
+  );
+  const formik = useFormik({
+    initialValues: { arr: arr },
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
+    onSubmit: () => {},
+  });
+
+  useComponentWillUnmount(() => {
+    const toSubmit: { [key: string]: string | number } = {};
+    formik.values.arr.forEach((val) => {
+      if (val.name?.length && val.value && String(val.value).length) {
+        toSubmit[val.name] = val.value;
+      }
+    });
+    onClose(toSubmit);
+  });
+
+  return (
+    <FormikProvider value={formik}>
+      <FieldArray name="arr">
+        {(arrayHelpers) => (
+          <>
+            <div className="grid grid-cols-edit-icon">
+              <h4>{header}</h4>
+              <div>
+                <Plus
+                  onClick={() => {
+                    arrayHelpers.push({ name: "", value: "" });
+                  }}
+                />
+              </div>
+            </div>
+            <div className="grid grid-cols-edit-icon">
+              {formik.values.arr.map((spec, index) => (
+                <>
+                  <div className="grid grid-cols-2">
+                    <TextField
+                      key={`${spec}_${index}.name`}
+                      name={`arr[${index}].name`}
+                      label={nameLabel}
+                      onChange={(evt) => {
+                        formik.setFieldValue(
+                          `arr[${index}].name`,
+                          evt.currentTarget.value
+                        );
+                      }}
+                    />
+                    <TextField
+                      key={`${spec}_${index}.value`}
+                      name={`arr[${index}].value`}
+                      label={valueLabel}
+                      onChange={(evt) => {
+                        formik.setFieldValue(
+                          `arr[${index}].value`,
+                          evt.currentTarget.value
+                        );
+                      }}
+                      {...typeProps}
+                    />
+                  </div>
+                  <Trash onClick={() => arrayHelpers.remove(index)} />
+                </>
+              ))}
+            </div>
+          </>
+        )}
+      </FieldArray>
+    </FormikProvider>
+  );
+}
+
+function TopStats() {
+  const { values: monster, setFieldValue } =
+    useFormikContext<PossiblyEditableMonster>();
+
   return (
     <div className={styles.topStats}>
+      <EditableBlock
+        editable={monster.editable}
+        view={
+          <>
+            <div className={`${styles.propertyLine} ${styles.first}`}>
+              <h4>Armor Class</h4> <p>{monster.armorClass}</p>
+            </div>
+            <div className={styles.propertyLine}>
+              <h4>Hit Points</h4>{" "}
+              <p>
+                {monster?.hitPoints}{" "}
+                {monster?.hitDice ? `(${monster.hitDice})` : null}
+              </p>
+            </div>
+            <div className={`${styles.propertyLine} ${styles.last}`}>
+              <h4>Speed</h4> <p>{listMap(monster?.speed)}</p>
+            </div>
+          </>
+        }
+        edit={
+          <>
+            <TextField name="armorClass" label="Armor Class" type="number" />
+            <div className="flex gap-3">
+              <TextField name="hitPoints" label="Hit Points" type="number" />
+              <TextField name="hitDice" label="Hit Dice" />
+            </div>
+            <MapSubForm
+              header="Speed"
+              nameLabel="Type"
+              valueLabel="Speed"
+              values={monster.speed || {}}
+              onClose={(values: { [key: string]: string | number }) => {
+                setFieldValue("speed", values);
+              }}
+            />
+          </>
+        }
+      />
+      <TaperedRule />
+      <EditableBlock
+        editable={monster.editable}
+        view={
+          <div className={styles.abilities}>
+            <div className={styles.abilityStrength}>
+              <h4>STR</h4> <p>{mod(monster?.attributes.strength)}</p>
+            </div>
+            <div className={styles.abilityDexterity}>
+              <h4>DEX</h4>
+              <p>{mod(monster?.attributes.dexterity)}</p>
+            </div>
+            <div className={styles.abilityConstitution}>
+              <h4>CON</h4>
+              <p>{mod(monster?.attributes.constitution)}</p>
+            </div>
+            <div className={styles.abilityIntelligence}>
+              <h4>INT</h4>
+              <p>{mod(monster?.attributes.intelligence)}</p>
+            </div>
+            <div className={styles.abilityWisdom}>
+              <h4>WIS</h4>
+              <p>{mod(monster?.attributes.wisdom)}</p>
+            </div>
+            <div className={styles.abilityCharisma}>
+              <h4>CHA</h4>
+              <p>{mod(monster?.attributes.charisma)}</p>
+            </div>
+          </div>
+        }
+        edit={
+          <div className="flex gap-3">
+            <TextField name="attributes.strength" label="STR" type="number" />
+            <TextField name="attributes.dexterity" label="DEX" type="number" />
+            <TextField
+              name="attributes.constitution"
+              label="CON"
+              type="number"
+            />
+            <TextField
+              name="attributes.intelligence"
+              label="INT"
+              type="number"
+            />
+            <TextField name="attributes.wisdom" label="WIS" type="number" />
+            <TextField name="attributes.charisma" label="CHA" type="number" />
+          </div>
+        }
+      />
+
+      <TaperedRule />
       <div className={`${styles.propertyLine} ${styles.first}`}>
-        <h4>Armor Class</h4> <p>{monster.armorClass}</p>
+        <EditableBlock
+          editable={monster.editable}
+          view={
+            <>
+              <h4>Saving Throws</h4>
+              <p className="px-2">
+                {savingThrow("STR", monster.saves.strength)}
+                {savingThrow("DEX", monster?.saves.dexterity)}
+                {savingThrow("CON", monster?.saves.constitution)}
+                {savingThrow("INT", monster?.saves.intelligence)}
+                {savingThrow("WIS", monster?.saves.wisdom)}
+                {savingThrow("CHA", monster?.saves.charisma)}
+              </p>
+            </>
+          }
+          edit={
+            <>
+              <h4>Saving Throws (0 or blank to omit)</h4>
+              <div className="flex gap-3">
+                <TextField name="saves.strength" label="STR" type="number" />
+                <TextField name="saves.dexterity" label="DEX" type="number" />
+                <TextField
+                  name="saves.constitution"
+                  label="CON"
+                  type="number"
+                />
+                <TextField
+                  name="saves.intelligence"
+                  label="INT"
+                  type="number"
+                />
+                <TextField name="saves.wisdom" label="WIS" type="number" />
+                <TextField name="saves.charisma" label="CHA" type="number" />
+              </div>
+            </>
+          }
+        />
       </div>
       <div className={styles.propertyLine}>
-        <h4>Hit Points</h4>{" "}
-        <p>
-          {monster?.hitPoints}{" "}
-          {monster?.hitDice ? `(${monster.hitDice})` : null}
-        </p>
-      </div>
-      <div className={`${styles.propertyLine} ${styles.last}`}>
-        <h4>Speed</h4> <p>{listMap(monster?.speed)}</p>
-      </div>
-      <TaperedRule />
-      <div className={styles.abilities}>
-        <div className={styles.abilityStrength}>
-          <h4>STR</h4> <p>{mod(monster?.attributes.strength)}</p>
-        </div>
-        <div className={styles.abilityDexterity}>
-          <h4>DEX</h4>
-          <p>{mod(monster?.attributes.dexterity)}</p>
-        </div>
-        <div className={styles.abilityConstitution}>
-          <h4>CON</h4>
-          <p>{mod(monster?.attributes.constitution)}</p>
-        </div>
-        <div className={styles.abilityIntelligence}>
-          <h4>INT</h4>
-          <p>{mod(monster?.attributes.intelligence)}</p>
-        </div>
-        <div className={styles.abilityWisdom}>
-          <h4>WIS</h4>
-          <p>{mod(monster?.attributes.wisdom)}</p>
-        </div>
-        <div className={styles.abilityCharisma}>
-          <h4>CHA</h4>
-          <p>{mod(monster?.attributes.charisma)}</p>
-        </div>
-      </div>
-      <TaperedRule />
-      <div className={`${styles.propertyLine} ${styles.first}`}>
-        <h4>Saving Throws</h4>{" "}
-        <p>
-          {savingThrow("STR", monster.saves.strength)}
-          {savingThrow("DEX", monster?.saves.dexterity)}
-          {savingThrow("CON", monster?.saves.constitution)}
-          {savingThrow("INT", monster?.saves.intelligence)}
-          {savingThrow("WIS", monster?.saves.wisdom)}
-          {savingThrow("CHA", monster?.saves.charisma)}
-        </p>
-      </div>
-      <div className={styles.propertyLine}>
-        <h4>Skills</h4> <p>{listNumberMap(monster?.skills)}</p>
+        <EditableBlock
+          editable={monster.editable}
+          view={
+            <>
+              <h4>Skills</h4> <p>{listNumberMap(monster?.skills)}</p>
+            </>
+          }
+          edit={
+            <>
+              <MapSubForm
+                header="Skills"
+                nameLabel="Skill"
+                valueLabel="Bonus"
+                values={monster.skills || {}}
+                onClose={(values: { [key: string]: string | number }) => {
+                  setFieldValue("skills", values);
+                }}
+                typeProps={{ type: "number" }}
+              />
+            </>
+          }
+        />
       </div>
       <div className={`${styles.propertyLine}`}>
-        <h4>Damage Resistances</h4> <p>{list(monster?.damageResistances)} </p>
+        <EditableBlock
+          editable={monster.editable}
+          view={
+            <>
+              <h4>Damage Resistances</h4>{" "}
+              <p>{list(monster?.damageResistances)} </p>
+            </>
+          }
+          edit={
+            <StringListEditor
+              header="Damage Resistances"
+              values={monster?.damageResistances || []}
+              onClose={(values) => setFieldValue("damageResistances", values)}
+            />
+          }
+        />
       </div>
       <div
         className={`${styles.propertyLine}${
           monster?.damageResistances?.length > 0 ? ` ${styles.first}` : ""
         }`}
       >
-        <h4>Damage Immunities</h4> <p>{list(monster?.damageImmunities)} </p>
+        <EditableBlock
+          editable={monster.editable}
+          view={
+            <>
+              <h4>Damage Immunities</h4>{" "}
+              <p>{list(monster?.damageImmunities)} </p>
+            </>
+          }
+          edit={
+            <StringListEditor
+              header="Damage Immunities"
+              values={monster?.damageImmunities || []}
+              onClose={(values) => setFieldValue("damageImmunities", values)}
+            />
+          }
+        />
+      </div>
+      <div className={`${styles.propertyLine}`}>
+        <EditableBlock
+          editable={monster.editable}
+          view={
+            <>
+              <h4>Damage Vulnerabilities</h4>{" "}
+              <p>{list(monster?.damageVulnerabilities)} </p>
+            </>
+          }
+          edit={
+            <StringListEditor
+              header="Damage Vulnerabilities"
+              values={monster?.damageVulnerabilities || []}
+              onClose={(values) =>
+                setFieldValue("damageVulnerabilities", values)
+              }
+            />
+          }
+        />
       </div>
       <div className={styles.propertyLine}>
-        <h4>Condition Immunities</h4>{" "}
-        <p>{list(monster?.conditionImmunities)}</p>
+        <EditableBlock
+          editable={monster.editable}
+          view={
+            <>
+              <h4>Condition Immunities</h4>{" "}
+              <p>{list(monster?.conditionImmunities)} </p>
+            </>
+          }
+          edit={
+            <StringListEditor
+              header="Condition Immunities"
+              values={monster?.conditionImmunities || []}
+              onClose={(values) => setFieldValue("conditionImmunities", values)}
+            />
+          }
+        />
       </div>
       <div className={styles.propertyLine}>
-        <h4>Senses</h4>{" "}
-        <p>
-          {list(monster?.senses)}
-          {/*monster?.perception
-            ? `passive Perception ${monster.perception}`
-  : ""*/}
-        </p>
+        <EditableBlock
+          editable={monster.editable}
+          view={
+            <>
+              <h4>Senses</h4> <p>{list(monster?.senses)} </p>
+            </>
+          }
+          edit={
+            <StringListEditor
+              header="Senses"
+              values={monster?.senses || []}
+              onClose={(values) => setFieldValue("senses", values)}
+            />
+          }
+        />
       </div>
       <div className={styles.propertyLine}>
-        <h4>Languages</h4> <p>{list(monster?.languages)}</p>
+        <EditableBlock
+          editable={monster.editable}
+          view={
+            <>
+              <h4>Languages</h4> <p>{list(monster?.languages)} </p>
+            </>
+          }
+          edit={
+            <StringListEditor
+              header="Languages"
+              values={monster?.languages || []}
+              onClose={(values) => setFieldValue("languages", values)}
+            />
+          }
+        />
       </div>
       <div className={`${styles.propertyLine} ${styles.last}`}>
-        <h4>Challenge</h4> <p>: {monster?.challengeRating}</p>
+        <EditableBlock
+          editable={monster.editable}
+          view={
+            <>
+              <h4>Challenge</h4> <p>: {monster?.challengeRating}</p>
+            </>
+          }
+          edit={
+            <>
+              <h4>Challenge</h4>
+              <TextField name={`challengeRating`} label="Challenge Rating" />
+            </>
+          }
+        />
       </div>
       <TaperedRule />
     </div>
@@ -206,35 +595,193 @@ function TopStats({ monster }: { monster: Monster }) {
 }
 
 function ActionBlock({
+  header,
+  name,
   values,
+  editable,
 }: {
-  values: { name: string; desc?: string; description?: string }[];
+  header?: string;
+  name: string;
+  values: {
+    name: string;
+    desc?: string;
+    description?: string;
+    attack?: {
+      type?: string;
+      rangeType?: string;
+      toHit?: number;
+      reach?: string;
+      target?: string;
+      damage?: string;
+      damageType?: string;
+      damageTwo?: string;
+      damageTwoType?: string;
+    };
+  }[];
+  editable: boolean;
 }) {
-  if (!values || values.length === 0) {
+  const formik = useFormikContext();
+  if (!editable && (!values || values.length === 0)) {
     return null;
   }
   return (
-    <>
-      {values.map((ability) => (
-        <div key={ability.name} className={styles.propertyBlock}>
-          <h4>{ability.name}</h4> <p>{ability.desc || ability.description}</p>
+    <EditableBlock
+      editable={editable}
+      view={
+        <>
+          {header ? <h3>{header}</h3> : null}
+          {values.map((ability) => (
+            <div key={ability.name} className={styles.propertyBlock}>
+              <h4>{ability.name}</h4>{" "}
+              <p>{ability.desc || ability.description}</p>
+            </div>
+          ))}
+        </>
+      }
+      edit={
+        <div className="grid grid-cols-edit-icon">
+          <FieldArray name={name}>
+            {(arrayHelpers) => (
+              <>
+                <h1>{header}</h1>
+                <div>
+                  <Plus
+                    onClick={() =>
+                      arrayHelpers.push({ name: "", description: "" })
+                    }
+                  />
+                </div>
+                <div className="col-span-2">
+                  {values?.map((spec, index) => (
+                    <div
+                      key={`${name}.${index}.name`}
+                      className="grid grid-cols-edit-icon rounded-xl border-2 border-stat-block-rust p-2"
+                    >
+                      <div className="mx-2">
+                        <TextField
+                          name={`${name}.${index}.name`}
+                          label="Name"
+                        />
+                      </div>
+                      <div>
+                        <Trash onClick={() => arrayHelpers.remove(index)} />
+                      </div>
+                      <div>
+                        <label
+                          className="px-2 text-sm"
+                          htmlFor={`${name}.${index}.isAttack`}
+                        >
+                          Is Attack:
+                        </label>
+                        <input
+                          id={`${name}.${index}.isAttack`}
+                          type="checkbox"
+                          checked={Boolean(spec.attack)}
+                          onChange={(evt) => {
+                            if (evt.target.checked) {
+                              formik.setFieldValue(`${name}.${index}.attack`, {
+                                rangeType: "Melee",
+                                type: "Weapon",
+                                target: "One target",
+                                toHit: 0,
+                                damage: "1d6",
+                              });
+                            } else {
+                              formik.setFieldValue(
+                                `${name}.${index}.attack`,
+                                undefined
+                              );
+                            }
+                          }}
+                        />
+                      </div>
+
+                      {spec.attack ? (
+                        <>
+                          <div className="col-span-2 mx-2 grid grid-cols-2">
+                            <TextField
+                              name={`${name}.${index}.attack.rangeType`}
+                              label="Range"
+                              addClass="text-sm"
+                            />
+                            <TextField
+                              name={`${name}.${index}.attack.type`}
+                              label="Type"
+                              addClass="text-sm"
+                            />
+                            <TextField
+                              name={`${name}.${index}.attack.reach`}
+                              label="Reach"
+                              addClass="text-sm"
+                            />
+                            <TextField
+                              name={`${name}.${index}.attack.target`}
+                              label="Target"
+                              addClass="text-sm"
+                            />
+                          </div>
+                          <div className="col-span-2 mx-2 grid grid-cols-3">
+                            <TextField
+                              name={`${name}.${index}.attack.toHit`}
+                              label="To Hit"
+                              type="number"
+                              addClass="text-sm"
+                            />
+                            <TextField
+                              name={`${name}.${index}.attack.damage`}
+                              label="Damage"
+                              addClass="text-sm"
+                            />
+                            <TextField
+                              name={`${name}.${index}.attack.damageType`}
+                              label="Type"
+                              addClass="text-sm"
+                            />
+                            <div></div>
+                            <TextField
+                              name={`${name}.${index}.attack.damageTwo`}
+                              label="Damage Two"
+                              addClass="text-sm"
+                            />
+                            <TextField
+                              name={`${name}.${index}.attack.damageTwoType`}
+                              label="Damage Two Type"
+                              addClass="text-sm"
+                            />
+                          </div>
+                        </>
+                      ) : null}
+                      <div className="col-span-2 mx-2">
+                        <TextArea
+                          name={`${name}.${index}.description`}
+                          label="Description"
+                          rows={4}
+                        />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </>
+            )}
+          </FieldArray>
         </div>
-      ))}
-    </>
+      }
+    />
   );
 }
 
+export type PossiblyEditableMonster = Monster & { editable: boolean };
+
 export default function StatBlock({
-  monster,
   isLoading,
   loadingText = "Loading Monster",
   onToggle,
 }: {
-  monster: Monster;
   isLoading: boolean;
   loadingText?: string;
   onToggle?: () => void;
 }) {
+  const { values: monster } = useFormikContext<PossiblyEditableMonster>();
   console.debug("stat block", monster);
   return (
     <div className="pb-203 flex h-[calc(100vh-40px)] flex-1 flex-col">
@@ -260,23 +807,31 @@ export default function StatBlock({
       >
         <hr className={styles.orangeBorder} />
         <div className={styles.sectionLeft}>
-          <CreatureHeading monster={monster} onToggle={onToggle} />
-          <TopStats monster={monster} />
-          <ActionBlock values={monster.specialAbilities} />
+          <CreatureHeading onToggle={onToggle} />
+          <TopStats />
+          <ActionBlock
+            name="specialAbilities"
+            values={monster.specialAbilities}
+            editable={monster.editable}
+          />
         </div>
         <div className={styles.sectionRight}>
-          {monster?.actions.length > 0 ? (
-            <div className={styles.actions}>
-              <h3>Actions</h3>
-              <ActionBlock values={monster.actions} />
-            </div>
-          ) : null}
-          {monster?.legendaryActions?.length > 0 ? (
-            <div className={styles.actions}>
-              <h3>Legendary Actions</h3>
-              <ActionBlock values={monster.legendaryActions} />
-            </div>
-          ) : null}
+          <div className={styles.actions}>
+            <ActionBlock
+              header="Actions"
+              name="actions"
+              values={monster.actions}
+              editable={monster.editable}
+            />
+          </div>
+          <div className={styles.actions}>
+            <ActionBlock
+              header="Legendary Actions"
+              name="legendaryActions"
+              values={monster.legendaryActions}
+              editable={monster.editable}
+            />
+          </div>
         </div>
       </div>
     </div>

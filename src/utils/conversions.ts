@@ -1,9 +1,5 @@
-import type {
-  Action,
-  Attack,
-  Monster,
-  NameAndDescription,
-} from "../types/global";
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import type { Action, Monster, NameAndDescription } from "../types/global";
 import { parseAction } from "./actions";
 
 export function toJSON(input: string): any {
@@ -12,7 +8,12 @@ export function toJSON(input: string): any {
 }
 
 function toList(
-  value: string | string[] | { [key: string]: any } | undefined | null
+  value:
+    | string
+    | string[]
+    | { [key: string]: string | number }
+    | undefined
+    | null
 ): string[] {
   if (!value) {
     return [];
@@ -28,7 +29,12 @@ function toList(
 }
 
 function toListFromDelimited(
-  value: string | string[] | { [key: string]: any } | undefined | null,
+  value:
+    | string
+    | string[]
+    | { [key: string]: string | number }
+    | undefined
+    | null,
   delimiter: string
 ) {
   if (typeof value === "string") {
@@ -144,6 +150,13 @@ function specialAbilities(input: any): NameAndDescription[] {
   return [];
 }
 
+function convertSpeed(input: any) {
+  if (typeof input === "string") {
+    return { walk: input };
+  }
+  return input;
+}
+
 export function convert(input: any): Monster {
   const monster: Monster = {
     name: input.name,
@@ -154,7 +167,7 @@ export function convert(input: any): Monster {
     armorClass: input.armor_class,
     hitPoints: input.hit_points,
     hitDice: input.hit_dice,
-    speed: input.speed,
+    speed: convertSpeed(input.speed),
     attributes: {
       strength: input.strength,
       dexterity: input.dexterity,

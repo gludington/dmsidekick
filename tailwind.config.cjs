@@ -3,6 +3,9 @@ const defaultTheme = require("tailwindcss/defaultTheme");
 
 module.exports = {
   content: ["./src/**/*.{js,ts,jsx,tsx}"],
+  variants: {
+    boderColor: ["focus-within"],
+  },
   theme: {
     fontSize: {
       xs: ["0.75rem", { lineHeight: "1rem" }],
@@ -24,12 +27,24 @@ module.exports = {
         "4xl": "2rem",
         "5xl": "2.5rem",
       },
+      colors: {
+        "stat-block-rust": "#7a200d",
+      },
       fontFamily: {
         sans: ["Inter", ...defaultTheme.fontFamily.sans],
         display: ["DM Sans", ...defaultTheme.fontFamily.sans],
       },
+      gridTemplateColumns: {
+        "edit-icon": "1fr 20px",
+      },
       maxWidth: {
         "2xl": "40rem",
+      },
+      transformOrigin: {
+        0: "0%",
+      },
+      zIndex: {
+        "-1": "-1",
       },
     },
   },

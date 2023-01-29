@@ -1,11 +1,41 @@
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import type { Monster, MonsterSearchResults } from "../types/global";
 
 const MAX_ATTEMPTS = 20;
 const GET_INTERVAL = 4000;
+
+export const NEW_MONSTER: Monster = {
+  name: "My New Monster",
+  size: "Small",
+  type: "Construct",
+  alignment: "Lawful Neutral",
+  armorClass: 10,
+  speed: { walk: "30ft" },
+  hitPoints: 7,
+  attributes: {
+    strength: 10,
+    dexterity: 10,
+    constitution: 10,
+    intelligence: 10,
+    wisdom: 10,
+    charisma: 20,
+  },
+  saves: {},
+  skills: {},
+  damageResistances: [],
+  damageImmunities: [],
+  conditionImmunities: [],
+  senses: [],
+  languages: [],
+  challengeRating: "",
+  damageVulnerabilities: [],
+  specialAbilities: [],
+  actions: [],
+  legendaryActions: [],
+};
 
 export const DEFAULT_MONSTER: Monster = {
   name: "DM Sidekick",
@@ -80,7 +110,7 @@ export const useFetchMonsters = () => {
 };
 
 export const useFetchMonster = (id: string | undefined) => {
-  const monsterRef = useRef<Monster>(DEFAULT_MONSTER);
+  const monsterRef = useRef<Monster>(id ? NEW_MONSTER : DEFAULT_MONSTER);
   const counterRef = useRef<number>(0);
   const queryClient = useQueryClient();
 
@@ -95,6 +125,11 @@ export const useFetchMonster = (id: string | undefined) => {
     async () => {
       setIsError(false);
       if (id) {
+        if (id === "new") {
+          monsterRef.current = NEW_MONSTER;
+          counterRef.current = 1;
+          return { id: null, complete: true, monster: NEW_MONSTER };
+        }
         setIsFetching(true);
         return await axios
           .get(`/api/monsters/${id}`)
@@ -127,7 +162,6 @@ export const useFetchMonster = (id: string | undefined) => {
       },
     }
   );
-
   return {
     id,
     data: monsterRef.current,
@@ -136,3 +170,52 @@ export const useFetchMonster = (id: string | undefined) => {
     refetch,
   };
 };
+
+export function useMonsterQueries(id?: string) {
+  const router = useRouter();
+  const queryClient = useQueryClient();
+  const {
+    mutateAsync: deleteMonster,
+    isLoading: isDeleting,
+    error: deleteError,
+  } = useMutation(
+    ["monsterDelete", id],
+    () => {
+      return axios.delete(`/api/monsters/${id}`);
+    },
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries(["getMonsters"]);
+        router.push("/monsters");
+      },
+    }
+  );
+  const {
+    mutateAsync: saveMonster,
+    isLoading: isSaving,
+    error: saveError,
+  } = useMutation(
+    ["monsterSave", id],
+    (values: Monster) => {
+      if (id) {
+        return axios.post(`/api/monsters/${id}`, values);
+      } else {
+        return axios.post(`/api/monsters`, values);
+      }
+    },
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries(["getMonsters"]);
+        //router.push("/monsters");
+      },
+    }
+  );
+  return {
+    deleteMonster,
+    isDeleting,
+    deleteError,
+    saveMonster,
+    isSaving,
+    saveError,
+  };
+}

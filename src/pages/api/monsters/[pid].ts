@@ -7,6 +7,7 @@ import { hasRole } from "../../../utils/session";
 import { convert, toJSON } from "../../../utils/conversions";
 import { prisma } from "../../../server/db/client";
 import logger from "../../../server/common/logger";
+import type { Monster } from "../../../types/global";
 
 export default async function index(req: NextApiRequest, res: NextApiResponse) {
   const session = await unstable_getServerSession(req, res, authOptions);
@@ -25,7 +26,58 @@ export default async function index(req: NextApiRequest, res: NextApiResponse) {
       break;
     default:
       const id = (Array.isArray(pid) ? pid[0] : pid) as string;
-      await getMonster(id, req, res);
+      switch (req.method) {
+        case "DELETE":
+          await deleteMonster(id, req, res);
+          break;
+        case "POST":
+          await saveMonster(id, req, res);
+          break;
+        default:
+          await getMonster(id, req, res);
+      }
+  }
+}
+
+async function saveMonster(
+  id: string,
+  req: NextApiRequest,
+  res: NextApiResponse
+): Promise<void> {
+  const monstery = req.body as Monster;
+  const updated = await prisma.monster.update({
+    where: {
+      id: id,
+    },
+    data: {
+      output: JSON.stringify(monstery),
+    },
+  });
+  if (updated?.output) {
+    return res.status(200).json({
+      id,
+      complete: true,
+      monster: { ...JSON.parse(updated.output), id },
+    });
+  } else {
+    return res.status(500).json({ id, message: "Error saving monster" });
+  }
+}
+
+async function deleteMonster(
+  id: string,
+  req: NextApiRequest,
+  res: NextApiResponse
+): Promise<void> {
+  const deleted = await prisma.monster.delete({
+    where: {
+      id: id,
+    },
+  });
+  if (deleted) {
+    return res.status(200).json({ id, message: "Monster deleted" });
+  } else {
+    return res.status(500).json({ id, message: "Error deleting monster" });
   }
 }
 
@@ -54,9 +106,11 @@ async function getMonster(
     return;
   }
   if (monster.output) {
-    return res
-      .status(200)
-      .json({ id, complete: true, monster: JSON.parse(monster.output) });
+    return res.status(200).json({
+      id,
+      complete: true,
+      monster: { ...JSON.parse(monster.output), id },
+    });
   } else {
     return res.status(200).json({ id, complete: false, monster: null });
   }

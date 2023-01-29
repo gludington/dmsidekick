@@ -24,17 +24,15 @@ export default function Layout({ children }: { children: ReactNode }) {
             type="text/css"
           />
         </head>
-        <body className="flex h-screen flex-col justify-between">
+        <body className="flex h-screen flex-col justify-start">
           <SessionProvider>
-            <header>
+            <header className="fixed top-0 z-50 w-full">
               <Header />
             </header>
-            <main className="mx-auto h-full max-w-7xl py-6 sm:px-6 lg:px-8">
-              {/* Replace with your content */}
+            <main className="h-100 mx-auto w-full max-w-7xl py-14 sm:px-6 lg:px-8">
               <div className="px-4 py-2 sm:px-0">{children}</div>
-              {/* /End replace */}
             </main>
-            <footer className="h-10 bg-gray-800 text-center text-gray-300">
+            <footer className="fixed bottom-0 h-10 w-full bg-gray-800 text-center text-gray-300">
               Copyright &copy; 2023 DM Sidekick
             </footer>
           </SessionProvider>
