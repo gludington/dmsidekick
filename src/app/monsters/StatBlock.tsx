@@ -2,7 +2,10 @@ import styles from "./statblock.module.css";
 import { Transition } from "@headlessui/react";
 import Loading from "../Loading";
 import type { Monster } from "../../types/global";
-import { ChatBubbleLeftEllipsisIcon } from "@heroicons/react/24/outline";
+import {
+  ChatBubbleLeftEllipsisIcon,
+  EyeIcon,
+} from "@heroicons/react/24/outline";
 import type { TextFieldProps } from "./[mid]/components";
 import {
   EditableBlock,
@@ -21,7 +24,7 @@ import { useEffect, useMemo, useRef } from "react";
 
 function CreatureHeading({ onToggle }: { onToggle?: () => void }) {
   const { values: monster } = useFormikContext<PossiblyEditableMonster>();
-
+  console.warn(onToggle);
   return (
     <>
       <div className={`${styles.creatureHeading}`}>
@@ -30,8 +33,20 @@ function CreatureHeading({ onToggle }: { onToggle?: () => void }) {
             editable={monster.editable}
             view={
               <div>
-                <h1>{monster?.name}</h1>
-
+                {onToggle ? (
+                  <div className="flex justify-between">
+                    <h1>{monster?.name}</h1>
+                    <button
+                      type="button"
+                      className="inline-flex h-6 w-6 items-center justify-center rounded-lg border text-gray-500 transition duration-500 ease-in-out hover:bg-gray-300 focus:outline-none sm:h-10 sm:w-10"
+                      onClick={() => onToggle()}
+                    >
+                      <EyeIcon className="v-6 h-6" />
+                    </button>
+                  </div>
+                ) : (
+                  <h1>{monster?.name}</h1>
+                )}
                 <h2>
                   {monster?.size} {monster?.type}, {monster.alignment}
                 </h2>

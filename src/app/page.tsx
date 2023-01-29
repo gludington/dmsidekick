@@ -21,11 +21,9 @@ export default function Page() {
           building a Dungeons and Dragons 5e Stat Block from the conversation.
         </p>
         <iframe
-          width="560"
-          height="315"
+          className="mx-auto h-[211px] w-[375-px] sm:h-[315px] sm:w-[560px]"
           src="https://www.youtube.com/embed/xIZRr7FopGs"
           title="DM Sidekick creates a Roman Centurion"
-          frameBorder="0"
           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
           allowFullScreen
         ></iframe>

@@ -136,12 +136,7 @@ export default function Monsters() {
       ) : null}
       <div className="px-4 sm:px-6 lg:px-8">
         <div className="sm:flex sm:items-center">
-          <div className="sm:flex-auto">
-            <h1 className="text-xl font-semibold text-gray-900">Monsters</h1>
-            <p className="mt-2 text-sm text-gray-700">
-              A list of all the monsters in your account.
-            </p>
-          </div>
+          <h1 className="text-l font-semibold text-gray-900">Your Monsters</h1>
         </div>
         <div className="mt-8 flex flex-col">
           <div className="-my-2 -mx-4 overflow-x-auto sm:-mx-6 lg:-mx-8">
