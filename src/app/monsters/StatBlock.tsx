@@ -24,7 +24,7 @@ import { useEffect, useMemo, useRef } from "react";
 
 function CreatureHeading({ onToggle }: { onToggle?: () => void }) {
   const { values: monster } = useFormikContext<PossiblyEditableMonster>();
-  console.warn(onToggle);
+
   return (
     <>
       <div className={`${styles.creatureHeading}`}>
