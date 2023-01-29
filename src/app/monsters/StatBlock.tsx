@@ -10,7 +10,16 @@ import {
   TextField,
   Trash,
 } from "./[mid]/components";
-import { FieldArray, useFormikContext } from "formik";
+import {
+  FieldArray,
+  Form,
+  Formik,
+  FormikContext,
+  FormikProvider,
+  useFormik,
+  useFormikContext,
+} from "formik";
+import { useEffect, useMemo, useRef } from "react";
 
 function CreatureHeading({ onToggle }: { onToggle?: () => void }) {
   const { values: monster } = useFormikContext<PossiblyEditableMonster>();
@@ -143,8 +152,101 @@ function TaperedRule() {
   );
 }
 
+function useComponentWillUnmount(cleanupCallback = () => {}) {
+  const callbackRef = useRef(cleanupCallback);
+  callbackRef.current = cleanupCallback; // always up to date
+  useEffect(() => {
+    return () => callbackRef.current();
+  }, []);
+}
+
+function SpeedForm({
+  values,
+  onClose,
+}: {
+  values: { [key: string]: string | number };
+  onClose: (values: { [key: string]: string | number }) => void;
+}) {
+  const arr = useMemo(
+    () =>
+      Object.keys(values).map((name) => {
+        return { name: name, value: values[name] };
+      }),
+    [values]
+  );
+  const formik = useFormik({
+    initialValues: { speed: arr },
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
+    onSubmit: () => {},
+  });
+
+  useComponentWillUnmount(() => {
+    const toSubmit: { [key: string]: string | number } = {};
+    formik.values.speed.forEach((val) => {
+      if (val.name?.length && val.value && String(val.value).length) {
+        toSubmit[val.name] = val.value;
+      }
+    });
+    onClose(toSubmit);
+  });
+
+  return (
+    <FormikProvider value={formik}>
+      <FieldArray name="speed">
+        {(arrayHelpers) => (
+          <>
+            <div className="grid grid-cols-edit-icon">
+              <h4>Speed</h4>
+              <div>
+                <Plus
+                  onClick={() => {
+                    arrayHelpers.push({ name: "", value: "" });
+                  }}
+                />
+              </div>
+            </div>
+            <div className="grid grid-cols-edit-icon">
+              {formik.values.speed.map((spec, index) => (
+                <>
+                  <div className="grid grid-cols-2">
+                    <TextField
+                      key={`${spec}_${index}.name`}
+                      name={`speed[${index}].name`}
+                      label="Type"
+                      onChange={(evt) => {
+                        console.warn(evt.target.value);
+                        formik.setFieldValue(
+                          `speed[${index}].name`,
+                          evt.target.value
+                        );
+                      }}
+                    />
+                    <TextField
+                      key={`${spec}_${index}.value`}
+                      name={`speed[${index}].value`}
+                      label="Speed"
+                      onChange={(evt) => {
+                        formik.setFieldValue(
+                          `speed[${index}].value`,
+                          evt.target.value
+                        );
+                      }}
+                    />
+                  </div>
+                  <Trash onClick={() => arrayHelpers.remove(index)} />
+                </>
+              ))}
+            </div>
+          </>
+        )}
+      </FieldArray>
+    </FormikProvider>
+  );
+}
+
 function TopStats() {
-  const { values: monster } = useFormikContext<PossiblyEditableMonster>();
+  const { values: monster, setFieldValue } =
+    useFormikContext<PossiblyEditableMonster>();
 
   return (
     <div className={styles.topStats}>
@@ -174,7 +276,12 @@ function TopStats() {
               <TextField name="hitPoints" label="Hit Points" type="number" />
               <TextField name="hitDice" label="Hit Dice" />
             </div>
-            <TextField name="speed" label="Speed" />
+            <SpeedForm
+              values={monster.speed}
+              onClose={(values: { [key: string]: string | number }) => {
+                setFieldValue("speed", values);
+              }}
+            />
           </>
         }
       />
@@ -235,7 +342,7 @@ function TopStats() {
           view={
             <>
               <h4>Saving Throws</h4>
-              <p>
+              <p className="px-2">
                 {savingThrow("STR", monster.saves.strength)}
                 {savingThrow("DEX", monster?.saves.dexterity)}
                 {savingThrow("CON", monster?.saves.constitution)}

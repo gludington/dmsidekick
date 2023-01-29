@@ -1,9 +1,4 @@
-import type {
-  Action,
-  Attack,
-  Monster,
-  NameAndDescription,
-} from "../types/global";
+import type { Action, Monster, NameAndDescription } from "../types/global";
 import { parseAction } from "./actions";
 
 export function toJSON(input: string): any {
@@ -144,6 +139,13 @@ function specialAbilities(input: any): NameAndDescription[] {
   return [];
 }
 
+function convertSpeed(input: any) {
+  if (typeof input === "string") {
+    return { walk: input };
+  }
+  return input;
+}
+
 export function convert(input: any): Monster {
   const monster: Monster = {
     name: input.name,
@@ -154,7 +156,7 @@ export function convert(input: any): Monster {
     armorClass: input.armor_class,
     hitPoints: input.hit_points,
     hitDice: input.hit_dice,
-    speed: input.speed,
+    speed: convertSpeed(input.speed),
     attributes: {
       strength: input.strength,
       dexterity: input.dexterity,
