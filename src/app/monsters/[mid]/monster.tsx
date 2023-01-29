@@ -5,7 +5,7 @@ import type { ReactElement, ReactNode } from "react";
 import { useState } from "react";
 import type { PossiblyEditableMonster } from "../StatBlock";
 import StatBlock from "../StatBlock";
-import { ClipboardDocumentIcon, TrashIcon } from "@heroicons/react/24/outline";
+import { ClipboardDocumentIcon } from "@heroicons/react/24/outline";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { FormikProvider, useFormik } from "formik";
@@ -56,7 +56,7 @@ function useRoll20Loader() {
   return { data, isLoading };
 }
 
-export default function MonsterView(props: any) {
+export default function MonsterView(props: { monster: Monster }) {
   const { data: roll20, isLoading: isRoll20Loading } = useRoll20Loader();
   const formik = useFormik<PossiblyEditableMonster>({
     initialValues: { editable: true, ...props.monster },
@@ -64,8 +64,7 @@ export default function MonsterView(props: any) {
   });
   const { values } = formik;
   const [showOptions, setShowOptions] = useState(false);
-  const { deleteMonster, isDeleting, saveMonster, isSaving } =
-    useMonsterQueries(props.monster.id);
+  const { deleteMonster, saveMonster } = useMonsterQueries(props.monster.id);
   console.debug(props.monster, deleteMonster);
   return (
     <>
@@ -81,10 +80,12 @@ export default function MonsterView(props: any) {
               evt.stopPropagation();
             }}
           />
-          <Trash
-            className="h-[20px] w-[20px]"
-            onClick={() => deleteMonster(props.monster.id)}
-          />
+          {props.monster.id ? (
+            <Trash
+              className="h-[20px] w-[20px]"
+              onClick={() => deleteMonster()}
+            />
+          ) : null}
           <Share
             className="h-[20px] w-[20px]"
             onClick={() => setShowOptions(!showOptions)}

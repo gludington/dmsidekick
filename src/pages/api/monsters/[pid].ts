@@ -7,7 +7,7 @@ import { hasRole } from "../../../utils/session";
 import { convert, toJSON } from "../../../utils/conversions";
 import { prisma } from "../../../server/db/client";
 import logger from "../../../server/common/logger";
-import { Monster } from "../../../types/global";
+import type { Monster } from "../../../types/global";
 
 export default async function index(req: NextApiRequest, res: NextApiResponse) {
   const session = await unstable_getServerSession(req, res, authOptions);

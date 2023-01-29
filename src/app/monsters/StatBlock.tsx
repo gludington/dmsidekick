@@ -150,7 +150,7 @@ function TaperedRule() {
   );
 }
 
-function useComponentWillUnmount(cleanupCallback = () => {}) {
+function useComponentWillUnmount(cleanupCallback: () => void) {
   const callbackRef = useRef(cleanupCallback);
   callbackRef.current = cleanupCallback; // always up to date
   useEffect(() => {

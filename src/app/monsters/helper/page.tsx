@@ -110,7 +110,7 @@ export default function Page() {
           );
         });
     };
-  }, []);
+  }, [id, queryClient, refetch, submitMonster]);
   const streamSubmit = useMemo(() => {
     return ({
       text,
@@ -119,13 +119,13 @@ export default function Page() {
       text: string;
       callback: (chunk: string) => void;
     }) => {
-      return new Promise((resolve, reject) => {
+      return new Promise((resolve) => {
         const es: EventSource = new EventSource(
           `/api/monsters/chat?text=${text}`,
           {}
         );
         es.addEventListener("open", () => console.debug("open"));
-        es.addEventListener("error", (e) => {
+        es.addEventListener("error", () => {
           callback("Please log in if you have not done so.");
           resolve("DONE");
         });

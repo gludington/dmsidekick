@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import type { Action, Monster, NameAndDescription } from "../types/global";
 import { parseAction } from "./actions";
 

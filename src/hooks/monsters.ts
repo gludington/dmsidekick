@@ -137,7 +137,7 @@ export const useFetchMonster = (id: string | undefined) => {
   };
 };
 
-export function useMonsterQueries(id: string) {
+export function useMonsterQueries(id?: string) {
   const router = useRouter();
   const queryClient = useQueryClient();
   const {

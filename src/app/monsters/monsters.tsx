@@ -18,7 +18,7 @@ const columns = [
   HELPER.accessor("type", {}),
   HELPER.accessor("subType", {}),
   HELPER.accessor("name", {
-    header: (info) => (
+    header: () => (
       <th
         scope="col"
         className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6"
@@ -44,7 +44,7 @@ const columns = [
     footer: (info) => info.column.id,
   }),
   HELPER.accessor("actions", {
-    header: (info) => (
+    header: () => (
       <th
         scope="col"
         className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6"
@@ -78,7 +78,7 @@ const columns = [
 ];
 
 export default function Monsters() {
-  const { data, isLoading, isError, isPreviousData } = useFetchMonsters();
+  const { data, isLoading, isPreviousData } = useFetchMonsters();
 
   const table = useReactTable({
     data: data?.content || [],
