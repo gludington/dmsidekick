@@ -158,6 +158,59 @@ function useComponentWillUnmount(cleanupCallback: () => void) {
   }, []);
 }
 
+function StringListEditor({
+  header,
+  values,
+  onClose,
+}: {
+  header: string;
+  values: string[];
+  onClose: (values: string[]) => void;
+}) {
+  const formik = useFormik<{ arr: string[] }>({
+    initialValues: { arr: values },
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
+    onSubmit: () => {},
+  });
+
+  useComponentWillUnmount(() => {
+    onClose(formik.values.arr);
+  });
+  return (
+    <FormikProvider value={formik}>
+      <FieldArray name="arr">
+        {(arrayHelpers) => (
+          <>
+            <div className="grid grid-cols-edit-icon">
+              <h4>{header}</h4>
+              <div>
+                <Plus
+                  onClick={() => {
+                    arrayHelpers.push("");
+                  }}
+                />
+              </div>
+            </div>
+            <div className="grid grid-cols-edit-icon">
+              {formik.values.arr.map((spec, index) => (
+                <>
+                  <div className="grid grid-cols-2">
+                    <TextField
+                      key={`${header}_${index}`}
+                      name={`arr[${index}]`}
+                    />
+                  </div>
+                  <Trash onClick={() => arrayHelpers.remove(index)} />
+                </>
+              ))}
+            </div>
+          </>
+        )}
+      </FieldArray>
+    </FormikProvider>
+  );
+}
+
 function MapSubForm({
   header,
   nameLabel,
@@ -408,29 +461,133 @@ function TopStats() {
           }
         />
       </div>
-
       <div className={`${styles.propertyLine}`}>
-        <h4>Damage Resistances</h4> <p>{list(monster?.damageResistances)} </p>
+        <EditableBlock
+          editable={monster.editable}
+          view={
+            <>
+              <h4>Damage Resistances</h4>{" "}
+              <p>{list(monster?.damageResistances)} </p>
+            </>
+          }
+          edit={
+            <StringListEditor
+              header="Damage Resistances"
+              values={monster?.damageResistances || []}
+              onClose={(values) => setFieldValue("damageResistances", values)}
+            />
+          }
+        />
       </div>
       <div
         className={`${styles.propertyLine}${
           monster?.damageResistances?.length > 0 ? ` ${styles.first}` : ""
         }`}
       >
-        <h4>Damage Immunities</h4> <p>{list(monster?.damageImmunities)} </p>
+        <EditableBlock
+          editable={monster.editable}
+          view={
+            <>
+              <h4>Damage Immunities</h4>{" "}
+              <p>{list(monster?.damageImmunities)} </p>
+            </>
+          }
+          edit={
+            <StringListEditor
+              header="Damage Immunities"
+              values={monster?.damageImmunities || []}
+              onClose={(values) => setFieldValue("damageImmunities", values)}
+            />
+          }
+        />
+      </div>
+      <div className={`${styles.propertyLine}`}>
+        <EditableBlock
+          editable={monster.editable}
+          view={
+            <>
+              <h4>Damage Vulnerabilities</h4>{" "}
+              <p>{list(monster?.damageVulnerabilities)} </p>
+            </>
+          }
+          edit={
+            <StringListEditor
+              header="Damage Vulnerabilities"
+              values={monster?.damageVulnerabilities || []}
+              onClose={(values) =>
+                setFieldValue("damageVulnerabilities", values)
+              }
+            />
+          }
+        />
       </div>
       <div className={styles.propertyLine}>
-        <h4>Condition Immunities</h4>{" "}
-        <p>{list(monster?.conditionImmunities)}</p>
+        <EditableBlock
+          editable={monster.editable}
+          view={
+            <>
+              <h4>Condition Immunities</h4>{" "}
+              <p>{list(monster?.conditionImmunities)} </p>
+            </>
+          }
+          edit={
+            <StringListEditor
+              header="Condition Immunities"
+              values={monster?.conditionImmunities || []}
+              onClose={(values) => setFieldValue("conditionImmunities", values)}
+            />
+          }
+        />
       </div>
       <div className={styles.propertyLine}>
-        <h4>Senses</h4> <p>{list(monster?.senses)}</p>
+        <EditableBlock
+          editable={monster.editable}
+          view={
+            <>
+              <h4>Senses</h4> <p>{list(monster?.senses)} </p>
+            </>
+          }
+          edit={
+            <StringListEditor
+              header="Senses"
+              values={monster?.senses || []}
+              onClose={(values) => setFieldValue("senses", values)}
+            />
+          }
+        />
       </div>
       <div className={styles.propertyLine}>
-        <h4>Languages</h4> <p>{list(monster?.languages)}</p>
+        <EditableBlock
+          editable={monster.editable}
+          view={
+            <>
+              <h4>Languages</h4> <p>{list(monster?.languages)} </p>
+            </>
+          }
+          edit={
+            <StringListEditor
+              header="Languages"
+              values={monster?.languages || []}
+              onClose={(values) => setFieldValue("languages", values)}
+            />
+          }
+        />
       </div>
       <div className={`${styles.propertyLine} ${styles.last}`}>
-        <h4>Challenge</h4> <p>: {monster?.challengeRating}</p>
+        <EditableBlock
+          editable={monster.editable}
+          view={
+            <>
+              <h4>Challenge</h4> <p>: {monster?.challengeRating}</p>
+            </>
+          }
+          edit={
+            <>
+              <h4>Challenge</h4>
+              <TextField name={`challengeRating`} label="Challenge Rating" />
+            </>
+          }
+        />
       </div>
       <TaperedRule />
     </div>
@@ -450,12 +607,13 @@ function ActionBlock({
     desc?: string;
     description?: string;
     attack?: {
-      rangeType: string;
-      type: string;
-      target: string;
-      toHit: number;
-      damage: string;
-      damageType: string;
+      type?: string;
+      rangeType?: string;
+      toHit?: number;
+      reach?: string;
+      target?: string;
+      damage?: string;
+      damageType?: string;
       damageTwo?: string;
       damageTwoType?: string;
     };
@@ -510,7 +668,7 @@ function ActionBlock({
                       </div>
                       <div>
                         <label
-                          className="px-2"
+                          className="px-2 text-sm"
                           htmlFor={`${name}.${index}.isAttack`}
                         >
                           Is Attack:
@@ -520,7 +678,6 @@ function ActionBlock({
                           type="checkbox"
                           checked={Boolean(spec.attack)}
                           onChange={(evt) => {
-                            console.warn(evt.target.checked);
                             if (evt.target.checked) {
                               formik.setFieldValue(`${name}.${index}.attack`, {
                                 rangeType: "Melee",
@@ -540,42 +697,59 @@ function ActionBlock({
                       </div>
 
                       {spec.attack ? (
-                        <div className="col-span-2 mx-2 grid grid-cols-3">
-                          <TextField
-                            name={`${name}.${index}.attack.rangeType`}
-                            label="Range"
-                          />
-                          <TextField
-                            name={`${name}.${index}.attack.type`}
-                            label="Type"
-                          />
-                          <TextField
-                            name={`${name}.${index}.attack.target`}
-                            label="Target"
-                          />
-                          <TextField
-                            name={`${name}.${index}.attack.toHit`}
-                            label="To Hit"
-                            type="number"
-                          />
-                          <TextField
-                            name={`${name}.${index}.attack.damage`}
-                            label="Damage"
-                          />
-                          <TextField
-                            name={`${name}.${index}.attack.damageType`}
-                            label="Type"
-                          />
-                          <div></div>
-                          <TextField
-                            name={`${name}.${index}.attack.damageTwo`}
-                            label="Damage Two"
-                          />
-                          <TextField
-                            name={`${name}.${index}.attack.damageTwoType`}
-                            label="Damage Two Type"
-                          />
-                        </div>
+                        <>
+                          <div className="col-span-2 mx-2 grid grid-cols-2">
+                            <TextField
+                              name={`${name}.${index}.attack.rangeType`}
+                              label="Range"
+                              addClass="text-sm"
+                            />
+                            <TextField
+                              name={`${name}.${index}.attack.type`}
+                              label="Type"
+                              addClass="text-sm"
+                            />
+                            <TextField
+                              name={`${name}.${index}.attack.reach`}
+                              label="Reach"
+                              addClass="text-sm"
+                            />
+                            <TextField
+                              name={`${name}.${index}.attack.target`}
+                              label="Target"
+                              addClass="text-sm"
+                            />
+                          </div>
+                          <div className="col-span-2 mx-2 grid grid-cols-3">
+                            <TextField
+                              name={`${name}.${index}.attack.toHit`}
+                              label="To Hit"
+                              type="number"
+                              addClass="text-sm"
+                            />
+                            <TextField
+                              name={`${name}.${index}.attack.damage`}
+                              label="Damage"
+                              addClass="text-sm"
+                            />
+                            <TextField
+                              name={`${name}.${index}.attack.damageType`}
+                              label="Type"
+                              addClass="text-sm"
+                            />
+                            <div></div>
+                            <TextField
+                              name={`${name}.${index}.attack.damageTwo`}
+                              label="Damage Two"
+                              addClass="text-sm"
+                            />
+                            <TextField
+                              name={`${name}.${index}.attack.damageTwoType`}
+                              label="Damage Two Type"
+                              addClass="text-sm"
+                            />
+                          </div>
+                        </>
                       ) : null}
                       <div className="col-span-2 mx-2">
                         <TextArea

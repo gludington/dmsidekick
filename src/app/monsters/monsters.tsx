@@ -1,6 +1,7 @@
 "use client";
 import { useFetchMonsters } from "../../hooks/monsters";
 import type { Monster } from "../../types/global";
+import Image from "next/image";
 
 import {
   createColumnHelper,
@@ -11,8 +12,11 @@ import {
 import Link from "next/link";
 import TableFooter from "../TableFooter";
 import Loading from "../Loading";
+import { Pencil, Plus, Share } from "./[mid]/components";
 const HELPER = createColumnHelper<Monster>();
 
+const BUTTON_CLS =
+  "inline-flex items-center justify-center rounded-md border border-transparent bg-indigo-200 p-[2px] text-sm font-medium text-indigo-800 text-white shadow-sm hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 sm:w-auto";
 const columns = [
   HELPER.accessor("id", {}),
   HELPER.accessor("type", {}),
@@ -47,29 +51,57 @@ const columns = [
     header: () => (
       <th
         scope="col"
-        className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6"
+        className="flex justify-end gap-2 py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6"
       >
-        Actions
+        <Link href="/monsters/helper">
+          <button title="Add New Monster" className={BUTTON_CLS}>
+            <Plus className="h-6 w-6" />
+          </button>
+          <span className="sr-only">Add New Monster</span>
+        </Link>
+        <Link href="/monsters/helper">
+          <button title="Add New Monster with Helper" className={BUTTON_CLS}>
+            <Plus className="h-6 w-6" />
+            <Image
+              className="h-6 w-6"
+              width="40"
+              height="40"
+              src="/dmsidekick.png"
+              alt="DM Sidekick"
+            />
+          </button>
+          <span className="sr-only">Add New Monster with Helper</span>
+        </Link>
       </th>
     ),
     cell: (info) => (
       <>
-        <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm sm:pl-6">
-          <div className="flex items-center">
-            <div className="ml-4">
-              <div className="font-medium text-gray-900">
-                <Link
-                  href={`/monsters/${info.row.getValue("id")}`}
-                  className="text-indigo-600 hover:text-indigo-900"
-                >
-                  <span className="inline-flex rounded-full bg-green-100 px-2 text-xs font-semibold leading-5 text-green-800">
-                    View
-                  </span>
-                  <span className="sr-only">View</span>
-                </Link>
-              </div>
-            </div>
-          </div>
+        <td
+          scope="col"
+          className="flex justify-end gap-2 py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6"
+        >
+          <Link href={`/monsters/${info.row.getValue("id")}`}>
+            <button
+              title={`Edit ${info.row.getValue("name")}`}
+              className={BUTTON_CLS}
+            >
+              <Pencil />
+            </button>
+            <span className="sr-only">
+              {`Edit ${info.row.getValue("name")}`}
+            </span>
+          </Link>
+          <Link href={`/monsters/${info.row.getValue("id")}`}>
+            <button
+              title={`Edit ${info.row.getValue("name")}`}
+              className={BUTTON_CLS}
+            >
+              <Share />
+            </button>
+            <span className="sr-only">
+              {`Export ${info.row.getValue("name")}`}
+            </span>
+          </Link>
         </td>
       </>
     ),
@@ -108,16 +140,6 @@ export default function Monsters() {
             <p className="mt-2 text-sm text-gray-700">
               A list of all the monsters in your account.
             </p>
-          </div>
-          <div className="mt-4 space-x-4 sm:mt-0 sm:ml-16 sm:flex-none">
-            <Link href="/monsters/helper">
-              <button
-                type="button"
-                className="inline-flex items-center justify-center rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 sm:w-auto"
-              >
-                Add Monster with Helper
-              </button>
-            </Link>
           </div>
         </div>
         <div className="mt-8 flex flex-col">

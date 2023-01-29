@@ -68,8 +68,8 @@ export default function MonsterView(props: { monster: Monster }) {
   console.debug(props.monster, deleteMonster);
   return (
     <>
-      <div className="mx-auto flex max-w-md flex-auto justify-between">
-        <h1 className="mb-8 text-xl font-extrabold tracking-tight text-gray-600  sm:text-2xl">
+      <div className="mx-auto mt-2 flex max-w-md flex-auto justify-between gap-2">
+        <h1 className="text-l font-extrabold tracking-tight text-gray-600  sm:text-xl">
           {values.name}
         </h1>
         <div className="flex gap-4">
