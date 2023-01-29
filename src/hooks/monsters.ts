@@ -162,7 +162,6 @@ export const useFetchMonster = (id: string | undefined) => {
       },
     }
   );
-  console.warn("FUCK", id, monsterRef.current);
   return {
     id,
     data: monsterRef.current,

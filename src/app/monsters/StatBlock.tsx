@@ -643,7 +643,7 @@ function ActionBlock({
           <FieldArray name={name}>
             {(arrayHelpers) => (
               <>
-                <h1>Abilities</h1>
+                <h1>{header}</h1>
                 <div>
                   <Plus
                     onClick={() =>
