@@ -92,6 +92,7 @@ const columns = [
               {`Edit ${info.row.getValue("name")}`}
             </span>
           </Link>
+          {/*
           <Link href={`/monsters/${info.row.getValue("id")}`}>
             <button
               title={`Edit ${info.row.getValue("name")}`}
@@ -103,6 +104,7 @@ const columns = [
               {`Export ${info.row.getValue("name")}`}
             </span>
           </Link>
+    */}
         </td>
       </>
     ),
