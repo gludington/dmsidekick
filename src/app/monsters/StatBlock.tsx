@@ -445,9 +445,24 @@ function ActionBlock({
 }: {
   header?: string;
   name: string;
-  values: { name: string; desc?: string; description?: string }[];
+  values: {
+    name: string;
+    desc?: string;
+    description?: string;
+    attack?: {
+      rangeType: string;
+      type: string;
+      target: string;
+      toHit: number;
+      damage: string;
+      damageType: string;
+      damageTwo?: string;
+      damageTwoType?: string;
+    };
+  }[];
   editable: boolean;
 }) {
+  const formik = useFormikContext();
   if (!editable && (!values || values.length === 0)) {
     return null;
   }
@@ -493,6 +508,75 @@ function ActionBlock({
                       <div>
                         <Trash onClick={() => arrayHelpers.remove(index)} />
                       </div>
+                      <div>
+                        <label
+                          className="px-2"
+                          htmlFor={`${name}.${index}.isAttack`}
+                        >
+                          Is Attack:
+                        </label>
+                        <input
+                          id={`${name}.${index}.isAttack`}
+                          type="checkbox"
+                          checked={Boolean(spec.attack)}
+                          onChange={(evt) => {
+                            console.warn(evt.target.checked);
+                            if (evt.target.checked) {
+                              formik.setFieldValue(`${name}.${index}.attack`, {
+                                rangeType: "Melee",
+                                type: "Weapon",
+                                target: "One target",
+                                toHit: 0,
+                                damage: "1d6",
+                              });
+                            } else {
+                              formik.setFieldValue(
+                                `${name}.${index}.attack`,
+                                undefined
+                              );
+                            }
+                          }}
+                        />
+                      </div>
+
+                      {spec.attack ? (
+                        <div className="col-span-2 mx-2 grid grid-cols-3">
+                          <TextField
+                            name={`${name}.${index}.attack.rangeType`}
+                            label="Range"
+                          />
+                          <TextField
+                            name={`${name}.${index}.attack.type`}
+                            label="Type"
+                          />
+                          <TextField
+                            name={`${name}.${index}.attack.target`}
+                            label="Target"
+                          />
+                          <TextField
+                            name={`${name}.${index}.attack.toHit`}
+                            label="To Hit"
+                            type="number"
+                          />
+                          <TextField
+                            name={`${name}.${index}.attack.damage`}
+                            label="Damage"
+                          />
+                          <TextField
+                            name={`${name}.${index}.attack.damageType`}
+                            label="Type"
+                          />
+                          <div></div>
+                          <TextField
+                            name={`${name}.${index}.attack.damageTwo`}
+                            label="Damage Two"
+                          />
+                          <TextField
+                            name={`${name}.${index}.attack.damageTwoType`}
+                            label="Damage Two Type"
+                          />
+                        </div>
+                      ) : null}
                       <div className="col-span-2 mx-2">
                         <TextArea
                           name={`${name}.${index}.description`}
