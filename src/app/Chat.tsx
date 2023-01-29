@@ -199,7 +199,7 @@ export const Chat = forwardRef(
               messagesRef.current.scrollTop = messagesRef.current.scrollHeight;
             }
           }
-        ).then((rsp) => {
+        ).then(() => {
           if (messagesRef?.current) {
             messagesRef.current.scrollTop = messagesRef.current.scrollHeight;
           }
@@ -447,7 +447,7 @@ export const Chat = forwardRef(
                   type="button"
                   disabled={disabled}
                   className="inline-flex h-full items-center justify-center rounded-lg bg-blue-500 px-1 py-2 text-white transition duration-500 ease-in-out hover:bg-blue-400 focus:outline-none disabled:opacity-20"
-                  onClick={(evt) => {
+                  onClick={() => {
                     setSubmission(text);
                   }}
                 >

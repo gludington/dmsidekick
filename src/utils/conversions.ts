@@ -7,7 +7,12 @@ export function toJSON(input: string): any {
 }
 
 function toList(
-  value: string | string[] | { [key: string]: any } | undefined | null
+  value:
+    | string
+    | string[]
+    | { [key: string]: string | number }
+    | undefined
+    | null
 ): string[] {
   if (!value) {
     return [];
@@ -23,7 +28,12 @@ function toList(
 }
 
 function toListFromDelimited(
-  value: string | string[] | { [key: string]: any } | undefined | null,
+  value:
+    | string
+    | string[]
+    | { [key: string]: string | number }
+    | undefined
+    | null,
   delimiter: string
 ) {
   if (typeof value === "string") {

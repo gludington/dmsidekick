@@ -24,7 +24,7 @@ export function Save(props: HeroIconProps) {
       version="1.1"
       id="Layer_1"
       viewBox="0 0 64 64"
-      enable-background="new 0 0 64 64"
+      enableBackground="new 0 0 64 64"
       className="h-6 w-6"
       {...props}
     >
@@ -74,7 +74,9 @@ export function Pencil(props: HeroIconProps) {
   return <PencilIcon className="h-6 w-6" {...props} />;
 }
 
-type TextFieldProps = HTMLProps<HTMLInputElement> & { addClass?: string };
+export type TextFieldProps = HTMLProps<HTMLInputElement> & {
+  addClass?: string;
+};
 
 export function TextField(props: TextFieldProps) {
   return (
@@ -128,13 +130,13 @@ export function EditableBlock({
   if (editable) {
     if (showEdit) {
       return (
-        <div className="grid w-full grid-cols-edit-icon p-2">
+        <div className="grid w-full grid-cols-edit-icon">
           <div>{edit}</div> <Check onClick={() => setShowEdit(false)} />
         </div>
       );
     }
     return (
-      <div className="grid w-full grid-cols-edit-icon p-2">
+      <div className="grid w-full grid-cols-edit-icon">
         <div>{view}</div>
         <Pencil className="h-4 w-4" onClick={() => setShowEdit(true)} />
       </div>

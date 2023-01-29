@@ -3,6 +3,7 @@ import { Transition } from "@headlessui/react";
 import Loading from "../Loading";
 import type { Monster } from "../../types/global";
 import { ChatBubbleLeftEllipsisIcon } from "@heroicons/react/24/outline";
+import type { TextFieldProps } from "./[mid]/components";
 import {
   EditableBlock,
   Plus,
@@ -12,9 +13,6 @@ import {
 } from "./[mid]/components";
 import {
   FieldArray,
-  Form,
-  Formik,
-  FormikContext,
   FormikProvider,
   useFormik,
   useFormikContext,
@@ -160,11 +158,19 @@ function useComponentWillUnmount(cleanupCallback = () => {}) {
   }, []);
 }
 
-function SpeedForm({
+function MapSubForm({
+  header,
+  nameLabel,
+  valueLabel,
   values,
+  typeProps,
   onClose,
 }: {
+  header: string;
+  nameLabel: string;
+  valueLabel: string;
   values: { [key: string]: string | number };
+  typeProps?: TextFieldProps;
   onClose: (values: { [key: string]: string | number }) => void;
 }) {
   const arr = useMemo(
@@ -175,14 +181,14 @@ function SpeedForm({
     [values]
   );
   const formik = useFormik({
-    initialValues: { speed: arr },
+    initialValues: { arr: arr },
     // eslint-disable-next-line @typescript-eslint/no-empty-function
     onSubmit: () => {},
   });
 
   useComponentWillUnmount(() => {
     const toSubmit: { [key: string]: string | number } = {};
-    formik.values.speed.forEach((val) => {
+    formik.values.arr.forEach((val) => {
       if (val.name?.length && val.value && String(val.value).length) {
         toSubmit[val.name] = val.value;
       }
@@ -192,11 +198,11 @@ function SpeedForm({
 
   return (
     <FormikProvider value={formik}>
-      <FieldArray name="speed">
+      <FieldArray name="arr">
         {(arrayHelpers) => (
           <>
             <div className="grid grid-cols-edit-icon">
-              <h4>Speed</h4>
+              <h4>{header}</h4>
               <div>
                 <Plus
                   onClick={() => {
@@ -206,31 +212,31 @@ function SpeedForm({
               </div>
             </div>
             <div className="grid grid-cols-edit-icon">
-              {formik.values.speed.map((spec, index) => (
+              {formik.values.arr.map((spec, index) => (
                 <>
                   <div className="grid grid-cols-2">
                     <TextField
                       key={`${spec}_${index}.name`}
-                      name={`speed[${index}].name`}
-                      label="Type"
+                      name={`arr[${index}].name`}
+                      label={nameLabel}
                       onChange={(evt) => {
-                        console.warn(evt.target.value);
                         formik.setFieldValue(
-                          `speed[${index}].name`,
-                          evt.target.value
+                          `arr[${index}].name`,
+                          evt.currentTarget.value
                         );
                       }}
                     />
                     <TextField
                       key={`${spec}_${index}.value`}
-                      name={`speed[${index}].value`}
-                      label="Speed"
+                      name={`arr[${index}].value`}
+                      label={valueLabel}
                       onChange={(evt) => {
                         formik.setFieldValue(
-                          `speed[${index}].value`,
-                          evt.target.value
+                          `arr[${index}].value`,
+                          evt.currentTarget.value
                         );
                       }}
+                      {...typeProps}
                     />
                   </div>
                   <Trash onClick={() => arrayHelpers.remove(index)} />
@@ -276,8 +282,11 @@ function TopStats() {
               <TextField name="hitPoints" label="Hit Points" type="number" />
               <TextField name="hitDice" label="Hit Dice" />
             </div>
-            <SpeedForm
-              values={monster.speed}
+            <MapSubForm
+              header="Speed"
+              nameLabel="Type"
+              valueLabel="Speed"
+              values={monster.speed || {}}
               onClose={(values: { [key: string]: string | number }) => {
                 setFieldValue("speed", values);
               }}
@@ -376,8 +385,30 @@ function TopStats() {
         />
       </div>
       <div className={styles.propertyLine}>
-        <h4>Skills</h4> <p>{listNumberMap(monster?.skills)}</p>
+        <EditableBlock
+          editable={monster.editable}
+          view={
+            <>
+              <h4>Skills</h4> <p>{listNumberMap(monster?.skills)}</p>
+            </>
+          }
+          edit={
+            <>
+              <MapSubForm
+                header="Skills"
+                nameLabel="Skill"
+                valueLabel="Bonus"
+                values={monster.skills || {}}
+                onClose={(values: { [key: string]: string | number }) => {
+                  setFieldValue("skills", values);
+                }}
+                typeProps={{ type: "number" }}
+              />
+            </>
+          }
+        />
       </div>
+
       <div className={`${styles.propertyLine}`}>
         <h4>Damage Resistances</h4> <p>{list(monster?.damageResistances)} </p>
       </div>
@@ -393,13 +424,7 @@ function TopStats() {
         <p>{list(monster?.conditionImmunities)}</p>
       </div>
       <div className={styles.propertyLine}>
-        <h4>Senses</h4>{" "}
-        <p>
-          {list(monster?.senses)}
-          {/*monster?.perception
-            ? `passive Perception ${monster.perception}`
-  : ""*/}
-        </p>
+        <h4>Senses</h4> <p>{list(monster?.senses)}</p>
       </div>
       <div className={styles.propertyLine}>
         <h4>Languages</h4> <p>{list(monster?.languages)}</p>

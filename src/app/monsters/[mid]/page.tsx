@@ -52,7 +52,7 @@ function useRoll20Loader() {
   return { data, isLoading };
 }
 
-export default function Page(props: any) {
+export default function Page(props: { params: { mid: string } }) {
   const { data, isLoading } = useFetchMonster(props.params.mid);
 
   if (isLoading) {

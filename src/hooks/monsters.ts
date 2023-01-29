@@ -167,7 +167,6 @@ export function useMonsterQueries(id: string) {
     },
     {
       onSuccess: () => {
-        console.warn("SAVED FUCKER");
         queryClient.invalidateQueries(["getMonsters"]);
         //router.push("/monsters");
       },

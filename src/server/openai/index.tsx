@@ -1,4 +1,4 @@
-import { NextApiRequest, NextApiResponse } from "next";
+import type { NextApiResponse } from "next";
 import type {
   CreateCompletionResponse,
   ListEnginesResponse,
@@ -43,7 +43,7 @@ export const streamCompletion = async (
 ): Promise<void> => {
   if (!prompt) {
     res.status(400).json({ error: "a 'text' parameter is required" });
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       resolve();
     });
   }
@@ -68,7 +68,7 @@ export const streamCompletion = async (
   if (!response.ok) {
     throw new Error(`unexpected response ${response.statusText}`);
   }
-  return new Promise(async (resolve, reject) => {
+  return new Promise(async (resolve) => {
     res.writeHead(200, {
       "Access-Control-Allow-Origin": "*",
       "Content-Type": "text/event-stream; charset=utf-8",
@@ -80,6 +80,7 @@ export const streamCompletion = async (
     res.flushHeaders();
     res.write(Buffer.from("retry: 1000\n\n"));
     try {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       for await (const chunk of response?.body as any) {
         if (response.body) {
           const output = chunk.toString().substring(5);
@@ -104,6 +105,7 @@ export const streamCompletion = async (
           resolve();
         }
       }
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (err: any) {
       console.warn("error from ChatGPT", err.stack);
       res.end();
