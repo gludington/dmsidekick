@@ -33,10 +33,19 @@ function CreatureHeading({ onToggle }: { onToggle?: () => void }) {
             edit={
               <>
                 <TextField name="name" label="Name" />
-                <div className="grid grid-cols-3">
-                  <TextField name="size" label="Size" />
-                  <TextField name="type" label="Type" />
-                  <TextField name="subType" label="Sub-Type" />
+                <div className="grid grid-cols-4 gap-2">
+                  <TextField name="size" label="Size" addClass="text-sm" />
+                  <TextField name="type" label="Type" addClass="text-sm" />
+                  <TextField
+                    name="subType"
+                    label="Sub-Type"
+                    addClass="text-sm"
+                  />
+                  <TextField
+                    name="alignment"
+                    label="Alignemnt"
+                    addClass="text-sm"
+                  />
                 </div>
               </>
             }

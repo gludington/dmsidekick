@@ -1,6 +1,6 @@
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import type { Monster, MonsterSearchResults } from "../types/global";
 
@@ -136,3 +136,49 @@ export const useFetchMonster = (id: string | undefined) => {
     refetch,
   };
 };
+
+export function useMonsterQueries(id: string) {
+  const router = useRouter();
+  const queryClient = useQueryClient();
+  const {
+    mutateAsync: deleteMonster,
+    isLoading: isDeleting,
+    error: deleteError,
+  } = useMutation(
+    ["monsterDelete", id],
+    () => {
+      return axios.delete(`/api/monsters/${id}`);
+    },
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries(["getMonsters"]);
+        router.push("/monsters");
+      },
+    }
+  );
+  const {
+    mutateAsync: saveMonster,
+    isLoading: isSaving,
+    error: saveError,
+  } = useMutation(
+    ["monsterSave", id],
+    (values: Monster) => {
+      return axios.post(`/api/monsters/${id}`, values);
+    },
+    {
+      onSuccess: () => {
+        console.warn("SAVED FUCKER");
+        queryClient.invalidateQueries(["getMonsters"]);
+        //router.push("/monsters");
+      },
+    }
+  );
+  return {
+    deleteMonster,
+    isDeleting,
+    deleteError,
+    saveMonster,
+    isSaving,
+    saveError,
+  };
+}

@@ -1,13 +1,17 @@
 "use client";
 import Loading from "../../Loading";
 import Link from "next/link";
-import { ReactElement, ReactNode, useState } from "react";
-import StatBlock, { PossiblyEditableMonster } from "../StatBlock";
-import { ClipboardDocumentIcon } from "@heroicons/react/24/outline";
+import type { ReactElement, ReactNode } from "react";
+import { useState } from "react";
+import type { PossiblyEditableMonster } from "../StatBlock";
+import StatBlock from "../StatBlock";
+import { ClipboardDocumentIcon, TrashIcon } from "@heroicons/react/24/outline";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { FormikProvider, useFormik } from "formik";
-import { Monster } from "../../../types/global";
+import type { Monster } from "../../../types/global";
+import { useMonsterQueries } from "../../../hooks/monsters";
+import { DoubleUp, Save, Share, Trash } from "./components";
 
 function Circle() {
   return (
@@ -60,73 +64,93 @@ export default function MonsterView(props: any) {
   });
   const { values } = formik;
   const [showOptions, setShowOptions] = useState(false);
+  const { deleteMonster, isDeleting, saveMonster, isSaving } =
+    useMonsterQueries(props.monster.id);
+  console.debug(props.monster, deleteMonster);
   return (
     <>
-      <div className="mx-auto max-w-md px-6 sm:max-w-3xl lg:max-w-7xl lg:px-8">
-        <h1 className="mb-8 text-4xl font-extrabold tracking-tight  text-gray-600">
+      <div className="mx-auto flex max-w-md flex-auto justify-between">
+        <h1 className="mb-8 text-xl font-extrabold tracking-tight text-gray-600  sm:text-2xl">
           {values.name}
         </h1>
-        <div onClick={() => setShowOptions(!showOptions)}>
-          {showOptions ? "Hide" : "Show"} Options
+        <div className="flex gap-4">
+          <Save
+            className="h-[20px] w-[20px]"
+            onClick={(evt) => {
+              saveMonster(values);
+              evt.stopPropagation();
+            }}
+          />
+          <Trash
+            className="h-[20px] w-[20px]"
+            onClick={() => deleteMonster(props.monster.id)}
+          />
+          <Share
+            className="h-[20px] w-[20px]"
+            onClick={() => setShowOptions(!showOptions)}
+          />
         </div>
-        {showOptions ? (
-          <>
-            {isRoll20Loading ? (
-              <Loading />
-            ) : (
-              <>
-                <h2 className="mb-8 text-xl font-extrabold tracking-tight  text-gray-600">
+      </div>
+      {showOptions ? (
+        <div>
+          {isRoll20Loading ? (
+            <Loading />
+          ) : (
+            <>
+              <div className="flex justify-between">
+                <h2 className="text-l mb-8 font-extrabold tracking-tight text-gray-600">
                   Exporting - Roll20
                 </h2>
-                <ul className="max-w-md list-inside space-y-1">
-                  <ListItem
-                    text={
-                      <span>
-                        Copy the API script to clipboard (sorry no one-click
-                        install yet; you may also find it{" "}
-                        <Link href="/scripts/roll20.js" target="_new">
-                          Here
-                        </Link>
-                      </span>
-                    }
-                    icon={
-                      <ClipboardDocumentIcon
-                        className="float-right h-8 w-8"
-                        onClick={() => {
-                          copyText(roll20);
-                        }}
-                      />
-                    }
-                  />
-                  <ListItem text="Go to the script/mods section of your Roll20 game. API Access is required, so you must have Roll20 Pro Account" />
-                  <ListItem text="Create a new script, and paste the content in" />
-                  <ListItem text="Restart your API Sandbox" />
-                  <ListItem
-                    text={<span>Copy your monster to the clipboard</span>}
-                    icon={
-                      <ClipboardDocumentIcon
-                        className="float-right h-6 w-6"
-                        onClick={() => {
-                          copyText(JSON.stringify(values));
-                        }}
-                      />
-                    }
-                  />
-                  <ListItem
-                    text={
-                      <span>
-                        In Roll20 chat, type the command <b>!dmsidekick</b>{" "}
-                        followed by a space, paste your monster, and hit return
-                      </span>
-                    }
-                  />
-                </ul>
-                <p>Your monster will be imported into Roll20</p>
-              </>
-            )}
-          </>
-        ) : null}
-      </div>
+                <DoubleUp onClick={() => setShowOptions(false)} />
+              </div>
+              <ul className="max-w-md list-inside space-y-1">
+                <ListItem
+                  text={
+                    <span>
+                      Copy the API script to clipboard (sorry no one-click
+                      install yet; you may also find it{" "}
+                      <Link href="/scripts/roll20.js" target="_new">
+                        Here
+                      </Link>
+                    </span>
+                  }
+                  icon={
+                    <ClipboardDocumentIcon
+                      className="float-right h-8 w-8"
+                      onClick={() => {
+                        copyText(roll20);
+                      }}
+                    />
+                  }
+                />
+                <ListItem text="Go to the script/mods section of your Roll20 game. API Access is required, so you must have Roll20 Pro Account" />
+                <ListItem text="Create a new script, and paste the content in" />
+                <ListItem text="Restart your API Sandbox" />
+                <ListItem
+                  text={<span>Copy your monster to the clipboard</span>}
+                  icon={
+                    <ClipboardDocumentIcon
+                      className="float-right h-6 w-6"
+                      onClick={() => {
+                        copyText(JSON.stringify(values));
+                      }}
+                    />
+                  }
+                />
+                <ListItem
+                  text={
+                    <span>
+                      In Roll20 chat, type the command <b>!dmsidekick</b>{" "}
+                      followed by a space, paste your monster, and hit return
+                    </span>
+                  }
+                />
+              </ul>
+              <p>Your monster will be imported into Roll20</p>
+            </>
+          )}
+        </div>
+      ) : null}
       <FormikProvider value={formik}>
         <StatBlock isLoading={false} />
       </FormikProvider>

@@ -1,91 +1,87 @@
+import {
+  CheckCircleIcon,
+  ChevronDoubleUpIcon,
+  PencilIcon,
+  PlusCircleIcon,
+  ShareIcon,
+  TrashIcon,
+} from "@heroicons/react/24/outline";
 import { Field } from "formik";
-import { HTMLProps, ReactElement, useState } from "react";
+import type { HTMLProps, ReactElement } from "react";
+import { useState } from "react";
 
-export function Check(props: HTMLProps<SVGElement>) {
+type HeroIconProps = React.ComponentProps<"svg"> & {
+  title?: string;
+  titleId?: string;
+};
+
+export function Save(props: HeroIconProps) {
   return (
     <svg
-      xmlns="http://www.w3.org/2000/svg"
-      fill="none"
-      viewBox="0 0 24 24"
-      strokeWidth={1.5}
-      stroke="currentColor"
+      fill="#000000"
+      height="800px"
+      width="800px"
+      version="1.1"
+      id="Layer_1"
+      viewBox="0 0 64 64"
+      enable-background="new 0 0 64 64"
       className="h-6 w-6"
       {...props}
     >
-      <path
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-      />
+      <g id="Floppy-disk">
+        <path d="M35.2673988,6.0411h-7.9999981v10h7.9999981V6.0411z M33.3697014,14.1434002h-4.2046013V7.9387999h4.2046013V14.1434002z" />
+        <path
+          d="M41,47.0410995H21c-0.5527992,0-1,0.4472008-1,1c0,0.5527,0.4472008,1,1,1h20c0.5527,0,1-0.4473,1-1
+		C42,47.4883003,41.5527,47.0410995,41,47.0410995z"
+        />
+        <path
+          d="M41,39.0410995H21c-0.5527992,0-1,0.4472008-1,1c0,0.5527,0.4472008,1,1,1h20c0.5527,0,1-0.4473,1-1
+		C42,39.4883003,41.5527,39.0410995,41,39.0410995z"
+        />
+        <path d="M12,56.0410995h38v-26H12V56.0410995z M14,32.0410995h34v22H14V32.0410995z" />
+        <path
+          d="M49.3811989,0.0411L49.3610992,0H7C4.7908001,0,3,1.7909,3,4v56c0,2.2092018,1.7908001,4,4,4h50
+		c2.2090988,0,4-1.7907982,4-4V11.6962996L49.3811989,0.0411z M39.9604988,2.0804999v17.9211006H14.0394001V2.0804999H39.9604988z
+		 M59,60c0,1.1027985-0.8972015,2-2,2H7c-1.1027999,0-2-0.8972015-2-2V4c0-1.1027999,0.8972001-2,2-2h5v20.0410995h30V2h6.5099983
+		L59,12.5228996V60z"
+        />
+      </g>
     </svg>
   );
 }
 
-export function Plus(props: HTMLProps<SVGElement>) {
-  return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      fill="none"
-      viewBox="0 0 24 24"
-      strokeWidth={1.5}
-      stroke="currentColor"
-      className="h-6 w-6"
-      {...props}
-    >
-      <path
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        d="M12 9v6m3-3H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"
-      />
-    </svg>
-  );
+export function DoubleUp(props: HeroIconProps) {
+  return <ChevronDoubleUpIcon className="h-6 w-6" {...props} />;
 }
-export function Trash(props: HTMLProps<SVGElement>) {
-  return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      fill="none"
-      viewBox="0 0 24 24"
-      strokeWidth={1.5}
-      stroke="currentColor"
-      className="h-6 w-6"
-      {...props}
-    >
-      <path
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"
-      />
-    </svg>
-  );
+
+export function Share(props: HeroIconProps) {
+  return <ShareIcon className="h-6 w-6" {...props} />;
 }
-export function Pencil(props: HTMLProps<SVGElement>) {
-  return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      fill="none"
-      viewBox="0 0 24 24"
-      strokeWidth={1.5}
-      stroke="currentColor"
-      className="h-6 w-6"
-      {...props}
-    >
-      <path
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L6.832 19.82a4.5 4.5 0 01-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 011.13-1.897L16.863 4.487zm0 0L19.5 7.125"
-      />
-    </svg>
-  );
+
+export function Check(props: HeroIconProps) {
+  return <CheckCircleIcon className="h-6 w-6" {...props} />;
 }
-type TextFieldProps = HTMLProps<HTMLInputElement>;
+
+export function Plus(props: HeroIconProps) {
+  return <PlusCircleIcon className="h-6 w-6" {...props} />;
+}
+
+export function Trash(props: HeroIconProps) {
+  return <TrashIcon className="h-6 w-6" {...props} />;
+}
+
+export function Pencil(props: HeroIconProps) {
+  return <PencilIcon className="h-6 w-6" {...props} />;
+}
+
+type TextFieldProps = HTMLProps<HTMLInputElement> & { addClass?: string };
 
 export function TextField(props: TextFieldProps) {
   return (
     <div className="relative my-4 border-b-2 focus-within:border-blue-500">
       <Field
         name={props.name}
-        className="block w-full appearance-none bg-transparent focus:outline-none"
+        className={`${props.addClass} block w-full appearance-none bg-transparent focus:outline-none`}
         {...props}
       />
       <label
